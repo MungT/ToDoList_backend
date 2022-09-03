@@ -31,7 +31,7 @@ public class MemberService {
         member.setNickname(socialMemberRequestDto.getNickname());
         member.setHighschool(socialMemberRequestDto.getHighschool());
         member.setGrade(socialMemberRequestDto.getGrade());
-
+        System.out.println(member);
         return memberRepository.save(member);
     }
 }

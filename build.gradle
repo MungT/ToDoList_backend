@@ -1,0 +1,80 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.3'
+    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    //쿼리dsl
+//    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+    id 'java'
+}
+
+group = 'com.sparta'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+//    // lombok 에서 mapstruct binding 해주는 기능이 추가되었습니다.!
+//    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+//    annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
+//    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+//    //쿼리dsl
+//    implementation 'com.querydsl:querydsl-jpa'
+//    implementation 'com.querydsl:querydsl-apt'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.h2database:h2'
+//    runtimeOnly 'mysql:mysql-connector-java'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+//    //시큐리티 관련
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    testImplementation 'org.springframework.security:spring-security-test'
+//
+//    //jwt관련
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+    //카카오 로그인 관련
+    implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.6.3'
+
+    //JsonOBJECT 관련 의존성
+    implementation 'org.json:json:20200518'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
+    //	이미지업로드 aws관련 의존성
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.0.1.RELEASE'
+//    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+////querydsl 추가 시작
+//def querydslDir = "$buildDir/generated/querydsl"
+//querydsl {
+//    jpa = true
+//    querydslSourcesDir = querydslDir
+//}
+//sourceSets {
+//    main.java.srcDir querydslDir
+//}
+//configurations {
+//    querydsl.extendsFrom compileClasspath
+//}
+//compileQuerydsl {
+//    options.annotationProcessorPath = configurations.querydsl
+//}
+////querydsl 추가 끝

@@ -22,7 +22,6 @@ public class Member {
 
   private String nickname;
 
-
   private String socialId;
 
   @Enumerated(EnumType.STRING)

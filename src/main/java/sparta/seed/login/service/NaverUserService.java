@@ -83,17 +83,24 @@ public class NaverUserService {
     // POST 요청 보내기
     HttpEntity<MultiValueMap<String, String>> naverToken = new HttpEntity<>(body, headers);
     RestTemplate restTemplate = new RestTemplate();
-    ResponseEntity<String> response = restTemplate.exchange(
-            "https://nid.naver.com/oauth2.0/token",
-            HttpMethod.POST,
-            naverToken,
-            String.class
-    );
+    String result = restTemplate.postForObject("https://nid.naver.com/oauth2.0/token",naverToken,String.class);
+//    ResponseEntity<String> response = restTemplate.exchange(
+//            "https://nid.naver.com/oauth2.0/token",
+//            HttpMethod.POST,
+//            naverToken,
+//            String.class
+//    );
 
     // response에서 엑세스토큰 가져오기
-    String responseBody = response.getBody();
+//    String responseBody = response.getBody();
     ObjectMapper objectMapper = new ObjectMapper();
-    JsonNode responseToken = objectMapper.readTree(responseBody);
+//      Member member = null;
+//    try {
+//      member = objectMapper.readValue(result, Member.class);
+//    }catch (JsonProcessingException e) {
+//      e.printStackTrace();
+//    }
+    JsonNode responseToken = objectMapper.readTree(result);
     return responseToken.get("access_token").asText();
   }
 

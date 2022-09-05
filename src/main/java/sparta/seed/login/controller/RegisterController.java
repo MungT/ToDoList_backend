@@ -28,8 +28,8 @@ public class RegisterController {
         .body(memberService.checkNickname(nicknameRequestDto.getNickname()));
     }
 
-    @GetMapping("/api/signup")
-    public ResponseEntity<Member> signup(SocialMemberRequestDto socialMemberRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+    @PostMapping("/api/signup")
+    public ResponseEntity<Member> signup(@RequestBody SocialMemberRequestDto socialMemberRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
         return ResponseEntity.ok()
                 .body(memberService.signup(socialMemberRequestDto,userDetailsImpl));
     }

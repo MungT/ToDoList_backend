@@ -152,7 +152,7 @@ public class KakaoUserService {
     UserDetailsImpl member = new UserDetailsImpl(kakaoUser);
     Authentication authentication = new UsernamePasswordAuthenticationToken(member, null, member.getAuthorities());
     //토큰생성
-    MemberResponseDto memberResponseDto = tokenProvider.generateTokenDto(authentication, member);
+    MemberResponseDto memberResponseDto = tokenProvider.generateTokenDto(authentication);
     response.setHeader("Authorization", "Bearer " + memberResponseDto.getAccessToken());
     response.setHeader("Access-Token-Expire-Time", String.valueOf(memberResponseDto.getAccessTokenExpiresIn()));
     //로그인이 실제로 일어나는 부분

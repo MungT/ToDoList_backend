@@ -43,7 +43,7 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public MemberResponseDto generateTokenDto(Authentication authentication, UserDetailsImpl member) {
+    public MemberResponseDto generateTokenDto(Authentication authentication) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -109,7 +109,7 @@ public class TokenProvider {
                 .id(Long.valueOf(claims.getSubject()))
                 .build();
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new UserDetailsImpl(member);
+        UserDetailsImpl principal = new UserDetailsImpl(member);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 

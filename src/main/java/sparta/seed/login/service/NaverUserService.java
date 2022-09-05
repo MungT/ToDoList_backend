@@ -12,18 +12,16 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.domain.Authority;
 import sparta.seed.login.domain.Member;
-import sparta.seed.login.dto.SocialMemberRequestDto;
 import sparta.seed.login.dto.MemberResponseDto;
-import sparta.seed.jwt.TokenProvider;
+import sparta.seed.login.dto.SocialMemberRequestDto;
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 
@@ -131,17 +129,17 @@ public class NaverUserService {
     }
     String nickname = "N" + "_" + rdNick;
 
-    String profileImage = jsonNode.get("response").get("profile_image").asText();
-    String naverDefaultImg = "https://ssl.pstatic.net/static/pwe/address/img_profile.png";
+//    String profileImage = jsonNode.get("response").get("profile_image").asText();
+//    String naverDefaultImg = "https://ssl.pstatic.net/static/pwe/address/img_profile.png";
     String defaultImage = "https://mytest-coffick.s3.ap-northeast-2.amazonaws.com/coffindBasicImage.png";
-    if (profileImage==null || profileImage.equals(naverDefaultImg))
-      profileImage = defaultImage; // 우리 사이트 기본 이미지
+//    if (profileImage==null || profileImage.equals(naverDefaultImg))
+//      profileImage = defaultImage; // 우리 사이트 기본 이미지
 
     return SocialMemberRequestDto.builder()
             .socialId(socialId)
             .username(username)
             .nickname(nickname)
-            .profileImage(profileImage)
+            .profileImage(defaultImage)
             .build();
   }
 
@@ -176,9 +174,8 @@ public class NaverUserService {
 
   // 4. 시큐리티 강제 로그인
   private Authentication securityLogin(Member foundUser) {
-    UserDetails userDetails = new UserDetailsImpl(foundUser);
-    Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-    SecurityContextHolder.getContext().setAuthentication(authentication);
+    UserDetailsImpl userDetailsImpl = new UserDetailsImpl(foundUser);
+    Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsImpl, null, userDetailsImpl.getAuthorities());
     //여기까진 평범한 로그인과 같음, 네이버 강제로그인 시도까지 함
     return authentication;
   }
@@ -186,7 +183,7 @@ public class NaverUserService {
   // 5. jwt 토큰 발급
   private MemberResponseDto jwtToken(Authentication authentication,HttpServletResponse response) {
     UserDetailsImpl member = ((UserDetailsImpl) authentication.getPrincipal());
-    MemberResponseDto responseDto = tokenProvider.generateTokenDto(authentication, member);
+    MemberResponseDto responseDto = tokenProvider.generateTokenDto(authentication);
     String token = responseDto.getAccessToken();
     response.addHeader("Authorization", "Bearer " + token);
     return MemberResponseDto.builder()

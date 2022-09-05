@@ -176,7 +176,7 @@ public class GoogleUserService {
   private MemberResponseDto jwtToken(Authentication authentication, HttpServletResponse response) {
     //여기부터 토큰 프론트에 넘기는것
     UserDetailsImpl member = ((UserDetailsImpl) authentication.getPrincipal());
-    MemberResponseDto responseDto = tokenProvider.generateTokenDto(authentication, member);
+    MemberResponseDto responseDto = tokenProvider.generateTokenDto(authentication);
     String token = responseDto.getAccessToken();
     response.addHeader("Authorization", "Bearer " + token);
     return MemberResponseDto.builder()

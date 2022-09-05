@@ -125,16 +125,16 @@ public class GoogleUserService {
     String nickname = jsonNode.get("name").asText();
 
     // 구글에서 이미지 가져오기
-    String profileImage = jsonNode.get("picture").asText();
-    String defaultImage = "https://hanghae99-8d-tm.s3.ap-northeast-2.amazonaws.com/defaultImage.png";
-    if (profileImage == null) {
-      profileImage = defaultImage;
-    }
+//    String profileImage = jsonNode.get("picture").asText();
+    String defaultImage = "https://mytest-coffick.s3.ap-northeast-2.amazonaws.com/coffindBasicImage.png";
+//    if (profileImage == null) {
+//      profileImage = defaultImage;
+//    }
     return SocialMemberRequestDto.builder()
             .socialId(socialId)
             .username(userEmail)
             .nickname(nickname)
-            .profileImage(profileImage)
+            .profileImage(defaultImage)
             .build();
   }
 

@@ -104,7 +104,7 @@ public class TokenProvider {
                                                                 .map(SimpleGrantedAuthority::new)
                                                                 .collect(Collectors.toList());
 
-        if(Authority.ROLE_USER.equals(claims.get(AUTHORITIES_KEY))){
+        if(Authority.ROLE_USER.toString().equals(claims.get(AUTHORITIES_KEY))){
             authority = Authority.ROLE_USER;
         } else {
             authority = Authority.ROLE_ADMIN;

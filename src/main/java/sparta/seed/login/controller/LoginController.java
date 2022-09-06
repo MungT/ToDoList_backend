@@ -23,6 +23,7 @@ public class LoginController {
 
   @GetMapping("/user/kakao/callback")
   public MemberResponseDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+    System.out.println(code);
     return kakaoUserService.kakaoLogin(code, response);
   }
 

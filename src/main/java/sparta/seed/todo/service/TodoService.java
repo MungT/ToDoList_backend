@@ -21,13 +21,10 @@ public class TodoService {
     private final TodoRepository todoRepository;
     private final TimeCustom timeCustom;
 
-//    public TodoResponseDto getTodo() {
-//        Timestamp date = 2022-09-05;
-//
-//    }
+
 
     public TodoResponseDto addTodo(TodoRequestDto todoRequestDto) {
-
+        timeCustom.customTime();
         Todo todo = Todo.builder()
                 .content(todoRequestDto.getContent())
                 .isComplete(todoRequestDto.isComplete())

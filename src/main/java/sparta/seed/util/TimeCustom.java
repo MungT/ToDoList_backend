@@ -33,7 +33,7 @@ public class TimeCustom {
 //        String time = formatedNow.split("\\s+")[1];
 //        System.out.println(time);
         Calendar calendar = Calendar.getInstance();
-        if(calendar.getTime().getHours()>=5){
+        if(calendar.getTime().getHours()>4){
             return formatter.format(calendar.getTime()).split("\\s+")[0];
 
         } else{

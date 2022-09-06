@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import sparta.seed.login.domain.Authority;
+import sparta.seed.login.domain.Member;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -26,11 +27,16 @@ public class Todo {
 
   private String addDate;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(nullable = false)
+  private Member member;
+
   @Builder
-  public Todo(Long id, String content, Boolean isComplete, String addDate) {
+  public Todo(Long id, String content, Boolean isComplete, String addDate, Member member) {
     this.id = id;
     this.content = content;
     this.isComplete = isComplete;
     this.addDate = addDate;
+    this.member = member;
   }
 }

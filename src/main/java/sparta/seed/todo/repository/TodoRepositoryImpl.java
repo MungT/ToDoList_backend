@@ -1,23 +1,14 @@
 package sparta.seed.todo.repository;
 
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
-import sparta.seed.todo.domain.QTodo;
+import sparta.seed.login.domain.Member;
 import sparta.seed.todo.dto.QTodoResponseDto;
 import sparta.seed.todo.dto.TodoResponseDto;
-import sparta.seed.todo.dto.TodoSearchCondition;
-
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 
-import static org.springframework.util.ObjectUtils.isEmpty;
-import static sparta.seed.todo.domain.QTodo.*;
+import static sparta.seed.todo.domain.QTodo.todo;
 
 
 public class TodoRepositoryImpl implements TodoRepositoryCustom {
@@ -37,11 +28,12 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
 //                .where(todo.createdAt.between(condition.getSearchStartDate(), condition.getSearchEndDate()))
 //                .fetch();
 //    }
-    public List<TodoResponseDto> findAllbyAddDate(String addDate){
+    public List<TodoResponseDto> findAllbyAddDateAndMember(String addDate, Member member){
         return queryFactory
                 .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate))
                 .from(todo)
-                .where(todo.addDate.eq(addDate))
+                .where(todo.member.eq(member),
+                        todo.addDate.eq(addDate))
                 .fetch();
     }
 }

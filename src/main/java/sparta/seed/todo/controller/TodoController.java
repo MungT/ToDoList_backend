@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Todo;
 import sparta.seed.todo.dto.TodoRequestDto;
@@ -32,9 +33,10 @@ public class TodoController {
             .body(todoService.addTodo(todoRequestDto,userDetailsImpl));
   }
 
-//  @PutMapping("/api/todo/{todoId}")
-//  public ResponseEntity<TodoResponseDto> updateTodo(@PathVariable Long todoId, @Valid @RequestBody TodoRequestDto todoRequestDto){
-//    return ResponseEntity.ok()
-//            .body(todoService.updateTodo(todoId, todoRequestDto));
-//  }
+  @PutMapping("/api/todo/{todoId}")
+  public ResponseEntity<String> updateTodo(@PathVariable Long todoId, @Valid @RequestBody TodoRequestDto todoRequestDto){
+    todoService.updateTodo(todoId, todoRequestDto);
+    return ResponseEntity.ok()
+            .body(Message.TODO_UPDATE_SUCCESS.getMessage());
+  }
 }

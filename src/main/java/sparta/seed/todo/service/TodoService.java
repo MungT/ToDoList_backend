@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sparta.seed.exception.CustomException;
+import sparta.seed.exception.ErrorCode;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Todo;
 import sparta.seed.todo.dto.TodoRequestDto;
@@ -50,7 +53,12 @@ public class TodoService {
                 .addDate(todo.getAddDate())
                 .build();
     }
-//    public TodoResponseDto updateTodo(Long todoId, TodoRequestDto todoRequestDto) {
-//
-//    }
+
+    @Transactional
+    public void updateTodo(Long todoId, TodoRequestDto todoRequestDto) {
+        Todo todo = todoRepository.findById(todoId).orElseThrow(
+                () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
+        );
+        todo.update(todoRequestDto);
+    }
 }

@@ -11,8 +11,8 @@ public class TodoResponseDto {
     private boolean isComplete;
     private String addDate;
 
-    @QueryProjection
     @Builder
+    @QueryProjection
     public TodoResponseDto(long todoId, String content, boolean isComplete, String addDate) {
         this.todoId = todoId;
         this.content = content;

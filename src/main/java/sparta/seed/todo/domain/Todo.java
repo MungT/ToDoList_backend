@@ -6,9 +6,11 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import sparta.seed.login.domain.Authority;
 import sparta.seed.login.domain.Member;
+import sparta.seed.todo.dto.TodoRequestDto;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -39,4 +41,10 @@ public class Todo {
     this.addDate = addDate;
     this.member = member;
   }
+
+  public void update(TodoRequestDto todoRequestDto) {
+    this.content = todoRequestDto.getContent();
+    this.isComplete = todoRequestDto.isComplete();
+  }
+
 }

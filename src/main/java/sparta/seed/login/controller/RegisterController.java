@@ -10,6 +10,7 @@ import sparta.seed.login.dto.NicknameRequestDto;
 import sparta.seed.login.dto.SocialMemberRequestDto;
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.login.service.MemberService;
+import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.validation.Valid;
@@ -25,7 +26,7 @@ public class RegisterController {
     @PostMapping("/api/check-nickname")
     public ResponseEntity<String> checkNickname(@Valid @RequestBody NicknameRequestDto nicknameRequestDto){
         return ResponseEntity.ok()
-        .body(memberService.checkNickname(nicknameRequestDto.getNickname()));
+        .body( memberService.checkNickname(nicknameRequestDto.getNickname()));
     }
 
     @PostMapping("/api/signup")

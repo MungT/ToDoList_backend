@@ -9,13 +9,15 @@ public class TodoResponseDto {
     private long todoId;
     private String content;
     private boolean isComplete;
+    private String addDate;
 
     @QueryProjection
     @Builder
-    public TodoResponseDto(long todoId, String content, boolean isComplete) {
+    public TodoResponseDto(long todoId, String content, boolean isComplete, String addDate) {
         this.todoId = todoId;
         this.content = content;
         this.isComplete = isComplete;
+        this.addDate = addDate;
     }
 }
 

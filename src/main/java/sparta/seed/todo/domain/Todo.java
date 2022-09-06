@@ -24,10 +24,13 @@ public class Todo {
   @CreationTimestamp
   private Timestamp createdAt;
 
+  private String addDate;
+
   @Builder
-  public Todo(Long id, String content, Boolean isComplete) {
+  public Todo(Long id, String content, Boolean isComplete, String addDate) {
     this.id = id;
     this.content = content;
     this.isComplete = isComplete;
+    this.addDate = addDate;
   }
 }

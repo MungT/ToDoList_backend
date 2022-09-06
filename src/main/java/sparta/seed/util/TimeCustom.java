@@ -3,6 +3,7 @@ package sparta.seed.util;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 @Component
@@ -24,5 +25,20 @@ public class TimeCustom {
 // 포맷팅 현재 날짜/시간 출력
         System.out.println(formatedNow); // 2022년 05월 03일 14시 43분 32초
         return formatedNow;
+    }
+
+    public String addDate(){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        String formatedNow = formatter.format(now);
+//        String time = formatedNow.split("\\s+")[1];
+//        System.out.println(time);
+        Calendar calendar = Calendar.getInstance();
+        if(calendar.getTime().getHours()>=5){
+            return formatter.format(calendar.getTime()).split("\\s+")[0];
+
+        } else{
+            calendar.add(Calendar.HOUR, -24);
+            return formatter.format(calendar.getTime()).split("\\s+")[0];
+        }
     }
 }

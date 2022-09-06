@@ -10,6 +10,7 @@ public class TodoResponseDto {
     private String content;
     private boolean isComplete;
     private String addDate;
+    private long count;
 
     @Builder
     @QueryProjection
@@ -18,6 +19,13 @@ public class TodoResponseDto {
         this.content = content;
         this.isComplete = isComplete;
         this.addDate = addDate;
+    }
+
+    @QueryProjection
+    public TodoResponseDto(boolean isComplete, String addDate, long count){
+        this.isComplete = isComplete;
+        this.addDate = addDate;
+        this.count = count;
     }
 }
 

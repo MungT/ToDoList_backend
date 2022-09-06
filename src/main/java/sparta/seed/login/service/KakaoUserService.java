@@ -3,7 +3,6 @@ package sparta.seed.login.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -21,11 +20,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import sparta.seed.login.domain.Authority;
 import sparta.seed.login.domain.Member;
+import sparta.seed.login.domain.RefreshToken;
 import sparta.seed.login.dto.SocialMemberRequestDto;
 import sparta.seed.login.dto.MemberResponseDto;
 import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.repository.MemberRepository;
 //import sparta.seed.repository.RefreshTokenRepository;
+import sparta.seed.login.repository.RefreshTokenRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +40,7 @@ public class KakaoUserService {
   private final PasswordEncoder passwordEncoder;
   private final TokenProvider tokenProvider;
   private final MemberRepository memberRepository;
-//  private final RefreshTokenRepository refreshTokenRepository;
+  private final RefreshTokenRepository refreshTokenRepository;
 
 
 

@@ -2,10 +2,8 @@ package sparta.seed.login.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import sparta.seed.login.dto.MemberResponseDto;
 import sparta.seed.login.service.GoogleUserService;
 import sparta.seed.login.service.KakaoUserService;
@@ -36,4 +34,5 @@ public class LoginController {
   public MemberResponseDto naverLogin(@RequestParam String code, @RequestParam String state, HttpServletResponse response) throws JsonProcessingException {
     return naverUserService.naverLogin(code, state, response);
   }
+
 }

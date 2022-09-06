@@ -26,7 +26,6 @@ public class Todo {
 
   @CreationTimestamp
   private Timestamp createdAt;
-
   private String addDate;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -46,5 +45,4 @@ public class Todo {
     this.content = todoRequestDto.getContent();
     this.isComplete = todoRequestDto.getIsComplete();
   }
-
 }

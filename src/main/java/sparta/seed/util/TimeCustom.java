@@ -32,7 +32,7 @@ public class TimeCustom {
 //        String formatedNow = formatter.format(now);
 //        String time = formatedNow.split("\\s+")[1];
 //        System.out.println(time);
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(); //Thu May 03 14:43:32 KST 2022
         if(calendar.getTime().getHours()>4){
             return formatter.format(calendar.getTime()).split("\\s+")[0];
 

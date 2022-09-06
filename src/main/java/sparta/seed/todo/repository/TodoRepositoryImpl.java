@@ -18,6 +18,25 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+    public List<TodoResponseDto> findAllbyAddDateAndMember(String addDate, Member member){
+        return queryFactory
+                .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate))
+                .from(todo)
+                .where(todo.member.eq(member),
+                        todo.addDate.eq(addDate))
+                .fetch();
+    }
+
+    public List<TodoResponseDto> getAchievementRateByDate(String addDate, Member member){
+        return queryFactory
+                .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
+                .from(todo)
+                .where(todo.member.eq(member),
+                        todo.addDate.eq(addDate))
+                .groupBy(todo.isComplete)
+                .fetch();
+    }
+
     //회원명, 팀명, 나이(ageGoe, ageLoe)
 //    @Override
 //    public List<TodoResponseDto> search(TodoSearchCondition condition) {
@@ -28,12 +47,5 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
 //                .where(todo.createdAt.between(condition.getSearchStartDate(), condition.getSearchEndDate()))
 //                .fetch();
 //    }
-    public List<TodoResponseDto> findAllbyAddDateAndMember(String addDate, Member member){
-        return queryFactory
-                .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate))
-                .from(todo)
-                .where(todo.member.eq(member),
-                        todo.addDate.eq(addDate))
-                .fetch();
-    }
+
 }

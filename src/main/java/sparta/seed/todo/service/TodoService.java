@@ -10,6 +10,7 @@ import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Todo;
+import sparta.seed.todo.dto.AchievementResponseDto;
 import sparta.seed.todo.dto.TodoRequestDto;
 import sparta.seed.todo.dto.TodoResponseDto;
 import sparta.seed.todo.repository.TodoRepository;
@@ -29,9 +30,6 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
     private final TimeCustom timeCustom;
-
-
-
 
     public List<TodoResponseDto> getTodo(UserDetailsImpl userDetails) {
         String addDate = timeCustom.addDate();
@@ -79,4 +77,15 @@ public class TodoService {
             throw new CustomException(ErrorCode.NOT_WRITER);
     }
 
+    public AchievementResponseDto getAchievementRate(UserDetailsImpl userDetailsImpl){
+        String addDate = timeCustom.addDate();
+        List<TodoResponseDto> todoResponseDtoList = todoRepository.getAchievementRateByDate(addDate, userDetailsImpl.getMember());
+        long totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
+        float percent = (float) todoResponseDtoList.get(1).getCount()/totalCnt;
+        return AchievementResponseDto.builder()
+                .totalCnt(totalCnt)
+                .completeCnt(todoResponseDtoList.get(1).getCount())
+                .achievementRate(Math.round(percent*10000)/100.0 +"%")
+                .build();
+    }
 }

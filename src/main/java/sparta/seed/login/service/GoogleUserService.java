@@ -3,6 +3,7 @@ package sparta.seed.login.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.util.StandardCharset;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -26,6 +27,8 @@ import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -70,7 +73,15 @@ public class GoogleUserService {
     // 헤더에 Content-type 지정
     HttpHeaders headers = new HttpHeaders();
     headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-
+    //code 출력
+    System.out.println(code);
+//    String decodedCode = "";
+//    try {
+//      decodedCode = java.net.URLDecoder.decode(code, StandardCharsets.UTF_8.name());
+//    } catch (UnsupportedEncodingException e) {
+//      throw new RuntimeException(e);
+//    }
+//    System.out.println(decodedCode);
     // 바디에 필요한 정보 담기
     MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
     body.add("client_id", googleClientId);

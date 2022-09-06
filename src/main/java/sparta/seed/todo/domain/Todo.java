@@ -44,7 +44,7 @@ public class Todo {
 
   public void update(TodoRequestDto todoRequestDto) {
     this.content = todoRequestDto.getContent();
-    this.isComplete = todoRequestDto.isComplete();
+    this.isComplete = todoRequestDto.getIsComplete();
   }
 
 }

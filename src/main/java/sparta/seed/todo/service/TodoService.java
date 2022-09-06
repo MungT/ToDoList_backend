@@ -2,6 +2,7 @@ package sparta.seed.todo.service;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ public class TodoService {
 
 
 
+
     public List<TodoResponseDto> getTodo(UserDetailsImpl userDetails) {
         String addDate = timeCustom.addDate();
         return todoRepository.findAllbyAddDateAndMember(addDate,userDetails.getMember());
@@ -40,7 +42,7 @@ public class TodoService {
         timeCustom.customTime();
         Todo todo = Todo.builder()
                 .content(todoRequestDto.getContent())
-                .isComplete(todoRequestDto.isComplete())
+                .isComplete(todoRequestDto.getIsComplete())
                 .addDate(timeCustom.addDate())
                 .member(userDetailsImpl.getMember())
                 .build();
@@ -55,10 +57,26 @@ public class TodoService {
     }
 
     @Transactional
-    public void updateTodo(Long todoId, TodoRequestDto todoRequestDto) {
+    public void updateTodo(Long todoId, TodoRequestDto todoRequestDto, UserDetailsImpl userDetailsImpl) {
         Todo todo = todoRepository.findById(todoId).orElseThrow(
                 () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
         );
+        isWriter(todo, userDetailsImpl);
         todo.update(todoRequestDto);
     }
+
+    public void deleteTodo(Long todoId, UserDetailsImpl userDetailsImpl) {
+        Todo todo = todoRepository.findById(todoId).orElseThrow(
+                () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
+        );
+        isWriter(todo, userDetailsImpl);
+        todoRepository.deleteById(todoId);
+    }
+
+    public void isWriter(Todo todo, UserDetailsImpl userDetailsImpl){
+
+        if(!todo.getMember().getId().equals(userDetailsImpl.getMember().getId()))
+            throw new CustomException(ErrorCode.NOT_WRITER);
+    }
+
 }

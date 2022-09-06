@@ -5,7 +5,8 @@ public enum Message {
     //멤버 관련
     AVAILABLE_NICK("사용 가능한 닉네임 입니다."),
     //투두 관련
-    TODO_UPDATE_SUCCESS("투두 수정 완료");
+    TODO_UPDATE_SUCCESS("투두 수정 완료"),
+    TODO_DELETE_SUCCESS("투두 삭제 완료");
 
     private final String message;
 

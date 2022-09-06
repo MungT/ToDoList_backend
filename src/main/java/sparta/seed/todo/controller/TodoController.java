@@ -34,9 +34,19 @@ public class TodoController {
   }
 
   @PutMapping("/api/todo/{todoId}")
-  public ResponseEntity<String> updateTodo(@PathVariable Long todoId, @Valid @RequestBody TodoRequestDto todoRequestDto){
-    todoService.updateTodo(todoId, todoRequestDto);
+  public ResponseEntity<String> updateTodo(
+          @PathVariable Long todoId,
+          @Valid @RequestBody TodoRequestDto todoRequestDto,
+          @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+    todoService.updateTodo(todoId, todoRequestDto, userDetailsImpl);
     return ResponseEntity.ok()
             .body(Message.TODO_UPDATE_SUCCESS.getMessage());
+  }
+
+  @DeleteMapping("/api/todo/{todoId}")
+  public ResponseEntity<String> deleteTodo(@PathVariable Long todoId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    todoService.deleteTodo(todoId, userDetails);
+    return ResponseEntity.ok()
+            .body(Message.TODO_DELETE_SUCCESS.getMessage());
   }
 }

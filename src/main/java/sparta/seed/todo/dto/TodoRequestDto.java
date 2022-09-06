@@ -13,5 +13,5 @@ public class TodoRequestDto {
     @Size(min=2, max=15, message = "투두 내용은 2~12자리여야 합니다.")
     private String content;
 
-    private boolean isComplete;
+    private Boolean isComplete;
 }

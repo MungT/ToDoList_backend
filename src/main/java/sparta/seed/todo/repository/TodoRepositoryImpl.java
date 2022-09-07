@@ -32,7 +32,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .fetch();
     }
 
-    public List<TodoResponseDto> getAchievementRateByDate(LocalDate addDate, Member member) {
+    public List<TodoResponseDto> getAchievementRateByDate(LocalDate addDate, Member member){
         return queryFactory
                 .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
                 .from(todo)

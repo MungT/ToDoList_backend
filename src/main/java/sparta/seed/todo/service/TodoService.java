@@ -24,7 +24,6 @@ public class TodoService {
     private final TimeCustom timeCustom;
 
 
-
     public List<TodoResponseDto> getTodo(UserDetailsImpl userDetails) {
         LocalDate currentDate = timeCustom.currentDate();
         return todoRepository.findAllbyAddDateAndMember(currentDate, userDetails.getMember());
@@ -84,7 +83,7 @@ public class TodoService {
                 .build();
     }
 
-//    public TodoDateResponseDto getDaylyAchievementRate(UserDetailsImpl userDetailsImpl) {
+    //    public TodoDateResponseDto getDaylyAchievementRate(UserDetailsImpl userDetailsImpl) {
 //        return todoRepository.getDaylyAchievementRate(userDetailsImpl.getMember());
 //    }
     public List<AchievementResponseDto> getWeeklyAchievementRate(UserDetailsImpl userDetailsImpl) {
@@ -97,27 +96,42 @@ public class TodoService {
 
         List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
 
+
+//            for(LocalDate ifStartDate = startDate; ifStartDate.isBefore(lastTodoAddDate); ifStartDate{
         do {
             List<TodoResponseDto> todoResponseDtoList = todoRepository.getWeeklyAchievementRate(startDate, endDate, userDetailsImpl.getMember());
-            long totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
-            float percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
+            long totalCnt = 0;
+            float percent = 0;
+            if (todoResponseDtoList.size() != 0) {
+                totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
+                percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
 
-            achievementResponseDtoList.add(AchievementResponseDto.builder()
-                    .totalCnt(totalCnt)
-                    .completeCnt(todoResponseDtoList.get(1).getCount())
-                    .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
-                    .build());
+                achievementResponseDtoList.add(AchievementResponseDto.builder()
+                        .totalCnt(totalCnt)
+                        .completeCnt(todoResponseDtoList.get(1).getCount())
+                        .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
+                        .build());
+            } else {
+                achievementResponseDtoList.add(AchievementResponseDto.builder()
+                        .totalCnt(totalCnt)
+                        .completeCnt(0)
+                        .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
+                        .build());
+            }
 
-            if(endDate.equals(lastTodoAddDate))
+
+            if (endDate.equals(lastTodoAddDate))
                 break;
 
             startDate = endDate.plusDays(1);
             endDate = endDate.plusDays(7);
 
-            if(endDate.isAfter(lastTodoAddDate)){
+            if (endDate.isAfter(lastTodoAddDate)) {
                 endDate = lastTodoAddDate;
             }
+
         } while (lastTodoAddDate.isAfter(startDate));
+
 
         return achievementResponseDtoList;
     }

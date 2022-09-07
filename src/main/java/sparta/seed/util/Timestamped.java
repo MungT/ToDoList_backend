@@ -1,6 +1,5 @@
 package sparta.seed.util;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,13 +15,12 @@ import java.time.LocalDateTime;
 @Getter // 이걸 빠뜨리는 실수 많이 하는데 빠드리면 Timestamped를 못가져간다.
 public abstract class Timestamped { //abstract클래스는 new Timestamped와 같이 생성할 수 없다. 상속으로만 사용가능 - 추상클래스는 상속 받아서 각자 구현해줘야하기 때문
 
-
+    //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     @CreatedDate //생성시간
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDateTime createdAt; //LocalDateTime 시간을 나타내는 자료형
 
+    //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     @LastModifiedDate//수정시간
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
 

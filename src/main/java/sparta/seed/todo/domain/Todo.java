@@ -4,45 +4,51 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 import sparta.seed.login.domain.Authority;
 import sparta.seed.login.domain.Member;
 import sparta.seed.todo.dto.TodoRequestDto;
+import sparta.seed.util.Timestamped;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class Todo {
+public class Todo extends Timestamped{
 
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-  private String content;
-  private Boolean isComplete;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
+    private String content;
+    @Column(nullable = false)
+    private Boolean isComplete;
 
-  @CreationTimestamp
-  private Timestamp createdAt;
-  private String addDate;
+    @Column(nullable = false)
+    private LocalDate addDate;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(nullable = false)
-  private Member member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private Member member;
 
-  @Builder
-  public Todo(Long id, String content, Boolean isComplete, String addDate, Member member) {
-    this.id = id;
-    this.content = content;
-    this.isComplete = isComplete;
-    this.addDate = addDate;
-    this.member = member;
-  }
+    @Builder
+    public Todo(Long id, String content, Boolean isComplete, LocalDate addDate, Member member) {
+        this.id = id;
+        this.content = content;
+        this.isComplete = isComplete;
+        this.addDate = addDate;
+        this.member = member;
+    }
 
-  public void update(TodoRequestDto todoRequestDto) {
-    this.content = todoRequestDto.getContent();
-    this.isComplete = todoRequestDto.getIsComplete();
-  }
+    public void update(TodoRequestDto todoRequestDto) {
+        this.content = todoRequestDto.getContent();
+        this.isComplete = todoRequestDto.getIsComplete();
+    }
 }

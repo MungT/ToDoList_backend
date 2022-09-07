@@ -48,7 +48,7 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-//    @Transactional
+    @Transactional
     public MemberResponseDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {

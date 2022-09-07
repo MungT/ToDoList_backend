@@ -6,6 +6,7 @@ import sparta.seed.todo.dto.QTodoResponseDto;
 import sparta.seed.todo.dto.TodoResponseDto;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.List;
 
 import static sparta.seed.todo.domain.QTodo.todo;
@@ -18,7 +19,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<TodoResponseDto> findAllbyAddDateAndMember(String addDate, Member member){
+    public List<TodoResponseDto> findAllbyAddDateAndMember(LocalDate addDate, Member member){
         return queryFactory
                 .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate))
                 .from(todo)
@@ -27,7 +28,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .fetch();
     }
 
-    public List<TodoResponseDto> getAchievementRateByDate(String addDate, Member member){
+    public List<TodoResponseDto> getAchievementRateByDate(LocalDate addDate, Member member){
         return queryFactory
                 .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
                 .from(todo)
@@ -37,15 +38,13 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .fetch();
     }
 
-    //회원명, 팀명, 나이(ageGoe, ageLoe)
-//    @Override
-//    public List<TodoResponseDto> search(TodoSearchCondition condition) {
+//    public List<TodoResponseDto> getWeeklyAchievementRate(String stardDate, String endDate, Member member){
 //        return queryFactory
-//                .select(new QTodoResponseDto(todo.id, todo.content,todo.isComplete))
+//                .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
 //                .from(todo)
-//                .where(todo.createdAt.between
-//                .where(todo.createdAt.between(condition.getSearchStartDate(), condition.getSearchEndDate()))
+//                .where(todo.member.eq(member),
+//                        todo.addDate.between("2022-09-07", "2022-09-11"))
+//                .groupBy(todo.isComplete)
 //                .fetch();
 //    }
-
 }

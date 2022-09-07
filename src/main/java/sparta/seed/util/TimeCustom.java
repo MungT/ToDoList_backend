@@ -1,8 +1,13 @@
 package sparta.seed.util;
 
+import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Component;
+import sparta.seed.todo.domain.Todo;
+import sparta.seed.todo.dto.FirstWeekResponseDto;
 
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -27,18 +32,27 @@ public class TimeCustom {
         return formatedNow;
     }
 
-    public String addDate(){
+    public LocalDate currentDate(){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 //        String formatedNow = formatter.format(now);
 //        String time = formatedNow.split("\\s+")[1];
 //        System.out.println(time);
         Calendar calendar = Calendar.getInstance(); //Thu May 03 14:43:32 KST 2022
         if(calendar.getTime().getHours()>4){
-            return formatter.format(calendar.getTime()).split("\\s+")[0];
+            return LocalDate.parse(formatter.format(calendar.getTime()).split("\\s+")[0]);
 
         } else{
             calendar.add(Calendar.HOUR, -24);
-            return formatter.format(calendar.getTime()).split("\\s+")[0];
+            return LocalDate.parse(formatter.format(calendar.getTime()).split("\\s+")[0]);
         }
+    }
+
+    public FirstWeekResponseDto getDayOfWeek(LocalDate firstDate){
+
+//        LocalDate localLastDate = LocalDate.parse(lastDate);
+        int dayOfWeekValue = firstDate.getDayOfWeek().getValue();
+        LocalDate startDate = firstDate;
+        LocalDate endDate = firstDate.plusDays(7-dayOfWeekValue);
+        return new FirstWeekResponseDto(startDate, endDate);
     }
 }

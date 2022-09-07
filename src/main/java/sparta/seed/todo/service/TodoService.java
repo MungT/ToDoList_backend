@@ -8,15 +8,13 @@ import sparta.seed.exception.ErrorCode;
 import sparta.seed.login.domain.Member;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Todo;
-import sparta.seed.todo.dto.AchievementResponseDto;
-import sparta.seed.todo.dto.FirstWeekResponseDto;
-import sparta.seed.todo.dto.TodoRequestDto;
-import sparta.seed.todo.dto.TodoResponseDto;
+import sparta.seed.todo.dto.*;
 import sparta.seed.todo.repository.TodoRepository;
 import sparta.seed.util.TimeCustom;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -99,21 +97,43 @@ public class TodoService {
                 .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
                 .build();
     }
-    public LocalDate getTodoList(UserDetailsImpl userDetailsImpl){
-        return todoRepository.getFirstTodoAddDate(userDetailsImpl.getMember());
-    }
-    public AchievementResponseDto getWeeklyAchievementRate(Todo todo, UserDetailsImpl userDetailsImpl) {
 
-        FirstWeekResponseDto firstWeekResponseDto = timeCustom.getDayOfWeek(todo.getAddDate()); //getAddDate가 아닌 최초 투두의 addDate가 와야함.
+//    public TodoDateResponseDto getTodoDateResponseDto(UserDetailsImpl userDetailsImpl) {
+//        return todoRepository.getFirstandLastTodoAddDate(userDetailsImpl.getMember());
+//    }
+
+    public List<AchievementResponseDto> getWeeklyAchievementRate(UserDetailsImpl userDetailsImpl) {
+        TodoDateResponseDto todoDateResponseDto = todoRepository.getFirstandLastTodoAddDate(userDetailsImpl.getMember());
+        LocalDate firstTodoAddDate = todoDateResponseDto.getFirstTodoAddDate();
+        LocalDate lastTodoAddDate = todoDateResponseDto.getLastTodoAddDate();
+        FirstWeekResponseDto firstWeekResponseDto = timeCustom.getDayOfWeek(firstTodoAddDate);
         LocalDate startDate = firstWeekResponseDto.getStartDate();
         LocalDate endDate = firstWeekResponseDto.getEndDate();
-        List<TodoResponseDto> todoResponseDtoList = todoRepository.getWeeklyAchievementRate(startDate, endDate, userDetailsImpl.getMember());
-        long totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
-        float percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
-        return AchievementResponseDto.builder()
-                .totalCnt(totalCnt)
-                .completeCnt(todoResponseDtoList.get(1).getCount())
-                .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
-                .build();
+
+        List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
+
+        do {
+            List<TodoResponseDto> todoResponseDtoList = todoRepository.getWeeklyAchievementRate(startDate, endDate, userDetailsImpl.getMember());
+            long totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
+            float percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
+
+            achievementResponseDtoList.add(AchievementResponseDto.builder()
+                    .totalCnt(totalCnt)
+                    .completeCnt(todoResponseDtoList.get(1).getCount())
+                    .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
+                    .build());
+
+            if(endDate.equals(lastTodoAddDate))
+                break;
+
+            startDate = endDate.plusDays(1);
+            endDate = endDate.plusDays(7);
+
+            if(endDate.isAfter(lastTodoAddDate)){
+                endDate = lastTodoAddDate;
+            }
+        } while (lastTodoAddDate.isAfter(startDate));
+
+        return achievementResponseDtoList;
     }
 }

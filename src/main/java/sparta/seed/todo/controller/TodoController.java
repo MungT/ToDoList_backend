@@ -7,10 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Todo;
-import sparta.seed.todo.dto.AchievementResponseDto;
-import sparta.seed.todo.dto.TodoRequestDto;
-import sparta.seed.todo.dto.TodoResponseDto;
-import sparta.seed.todo.dto.TodoSearchCondition;
+import sparta.seed.todo.dto.*;
 import sparta.seed.todo.service.TodoService;
 
 import javax.validation.Valid;
@@ -59,15 +56,14 @@ public class TodoController {
                 .body(todoService.getAchievementRate(userDetailsImpl));
     }
 
+//    @GetMapping("/api/test")
+//    public ResponseEntity<TodoDateResponseDto> getTodoDateResponseDto(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+//        return ResponseEntity.ok()
+//                .body(todoService.getTodoDateResponseDto(userDetailsImpl));
+//    }
     @GetMapping("/api/todo/achievement/weekly")
-    public ResponseEntity<AchievementResponseDto> getWeeklyAchievementRate(Todo todo, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+    public ResponseEntity<List<AchievementResponseDto>> getWeeklyAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         return ResponseEntity.ok()
-                .body(todoService.getWeeklyAchievementRate(todo, userDetailsImpl));
-    }
-
-    @GetMapping("/api/todo/list")
-    public ResponseEntity<LocalDate> getTodoList(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
-        return ResponseEntity.ok()
-                .body(todoService.getTodoList(userDetailsImpl));
+                .body(todoService.getWeeklyAchievementRate(userDetailsImpl));
     }
 }

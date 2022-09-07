@@ -1,9 +1,12 @@
 package sparta.seed.todo.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import sparta.seed.login.domain.Member;
 import sparta.seed.todo.domain.Todo;
+import sparta.seed.todo.dto.QTodoDateResponseDto;
 import sparta.seed.todo.dto.QTodoResponseDto;
+import sparta.seed.todo.dto.TodoDateResponseDto;
 import sparta.seed.todo.dto.TodoResponseDto;
 
 import javax.persistence.EntityManager;
@@ -20,7 +23,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<TodoResponseDto> findAllbyAddDateAndMember(LocalDate addDate, Member member){
+    public List<TodoResponseDto> findAllbyAddDateAndMember(LocalDate addDate, Member member) {
         return queryFactory
                 .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate))
                 .from(todo)
@@ -29,7 +32,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .fetch();
     }
 
-    public List<TodoResponseDto> getAchievementRateByDate(LocalDate addDate, Member member){
+    public List<TodoResponseDto> getAchievementRateByDate(LocalDate addDate, Member member) {
         return queryFactory
                 .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
                 .from(todo)
@@ -39,21 +42,21 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .fetch();
     }
 
-    public List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member){
+    public List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member) {
         return queryFactory
-                .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
+                .select(new QTodoResponseDto(todo.isComplete, todo.count()))
                 .from(todo)
-                .where(todo.member.eq(member),
-                        todo.addDate.between(stardDate, endDate))
+//                .where(todo.member.eq(member), //가짜데이터라 주석처리
+                .where(todo.addDate.between(stardDate, endDate))
                 .groupBy(todo.isComplete)
                 .fetch();
     }
-    public LocalDate getFirstTodoAddDate(Member member){
-        return queryFactory
-                .select(todo.addDate.min())
-                .from(todo)
-                .where(todo.member.eq(member))
-                .fetchOne();
 
+    public TodoDateResponseDto getFirstandLastTodoAddDate(Member member) {
+        return queryFactory
+                .select(new QTodoDateResponseDto(todo.addDate.min(), todo.addDate.max()))
+                .from(todo)
+//                .where(todo.member.eq(member))   //가짜데이터를 사용했기때문에 주석처리
+                .fetchOne();
     }
 }

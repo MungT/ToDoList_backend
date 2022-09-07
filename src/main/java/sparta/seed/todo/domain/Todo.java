@@ -35,7 +35,7 @@ public class Todo extends Timestamped{
     private LocalDate addDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "member_id", nullable = true)
     private Member member;
 
     @Builder

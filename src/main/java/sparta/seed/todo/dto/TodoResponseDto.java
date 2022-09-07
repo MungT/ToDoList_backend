@@ -29,5 +29,11 @@ public class TodoResponseDto {
         this.addDate = addDate;
         this.count = count;
     }
+
+    @QueryProjection
+    public TodoResponseDto(boolean isComplete, long count){
+        this.isComplete = isComplete;
+        this.count = count;
+    }
 }
 

@@ -14,6 +14,7 @@ import sparta.seed.todo.dto.TodoSearchCondition;
 import sparta.seed.todo.service.TodoService;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -56,5 +57,17 @@ public class TodoController {
     public ResponseEntity<AchievementResponseDto> getAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         return ResponseEntity.ok()
                 .body(todoService.getAchievementRate(userDetailsImpl));
+    }
+
+    @GetMapping("/api/todo/achievement/weekly")
+    public ResponseEntity<AchievementResponseDto> getWeeklyAchievementRate(Todo todo, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+        return ResponseEntity.ok()
+                .body(todoService.getWeeklyAchievementRate(todo, userDetailsImpl));
+    }
+
+    @GetMapping("/api/todo/list")
+    public ResponseEntity<LocalDate> getTodoList(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+        return ResponseEntity.ok()
+                .body(todoService.getTodoList(userDetailsImpl));
     }
 }

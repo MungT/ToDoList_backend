@@ -84,7 +84,7 @@ public class TodoService {
         Member member = userDetailsImpl.getMember();
         isWriter(todo, member);
         isPassedAvailableTime(todo);
-//        System.out.println(getWeeklyAchievementRate(todo, member));
+
         todoRepository.deleteById(todoId);
     }
 
@@ -99,11 +99,21 @@ public class TodoService {
                 .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
                 .build();
     }
+    public LocalDate getTodoList(UserDetailsImpl userDetailsImpl){
+        return todoRepository.getFirstTodoAddDate(userDetailsImpl.getMember());
+    }
+    public AchievementResponseDto getWeeklyAchievementRate(Todo todo, UserDetailsImpl userDetailsImpl) {
 
-//    public AchievementResponseDto getWeeklyAchievementRate(Todo todo, Member member) {
-//        FirstWeekResponseDto firstWeekResponseDto = timeCustom.getDayOfWeek(todo.getAddDate()); //getAddDate가 아닌 최초 투두의 addDate가 와야함.
-//        String startDate = firstWeekResponseDto.getStartDate().toString();
-//        String endDate = firstWeekResponseDto.getEndDate().toString();
-//        List<TodoResponseDto> todoResponseDtoList = todoRepository.getWeeklyAchievementRate(startDate, endDate, member);
-//    }
+        FirstWeekResponseDto firstWeekResponseDto = timeCustom.getDayOfWeek(todo.getAddDate()); //getAddDate가 아닌 최초 투두의 addDate가 와야함.
+        LocalDate startDate = firstWeekResponseDto.getStartDate();
+        LocalDate endDate = firstWeekResponseDto.getEndDate();
+        List<TodoResponseDto> todoResponseDtoList = todoRepository.getWeeklyAchievementRate(startDate, endDate, userDetailsImpl.getMember());
+        long totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
+        float percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
+        return AchievementResponseDto.builder()
+                .totalCnt(totalCnt)
+                .completeCnt(todoResponseDtoList.get(1).getCount())
+                .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
+                .build();
+    }
 }

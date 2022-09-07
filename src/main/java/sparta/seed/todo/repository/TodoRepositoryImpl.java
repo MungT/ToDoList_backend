@@ -2,6 +2,7 @@ package sparta.seed.todo.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import sparta.seed.login.domain.Member;
+import sparta.seed.todo.domain.Todo;
 import sparta.seed.todo.dto.QTodoResponseDto;
 import sparta.seed.todo.dto.TodoResponseDto;
 
@@ -38,13 +39,21 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .fetch();
     }
 
-//    public List<TodoResponseDto> getWeeklyAchievementRate(String stardDate, String endDate, Member member){
-//        return queryFactory
-//                .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
-//                .from(todo)
-//                .where(todo.member.eq(member),
-//                        todo.addDate.between("2022-09-07", "2022-09-11"))
-//                .groupBy(todo.isComplete)
-//                .fetch();
-//    }
+    public List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member){
+        return queryFactory
+                .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
+                .from(todo)
+                .where(todo.member.eq(member),
+                        todo.addDate.between(stardDate, endDate))
+                .groupBy(todo.isComplete)
+                .fetch();
+    }
+    public LocalDate getFirstTodoAddDate(Member member){
+        return queryFactory
+                .select(todo.addDate.min())
+                .from(todo)
+                .where(todo.member.eq(member))
+                .fetchOne();
+
+    }
 }

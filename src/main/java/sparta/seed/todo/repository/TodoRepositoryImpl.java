@@ -1,9 +1,9 @@
 package sparta.seed.todo.repository;
 
-import com.querydsl.core.Tuple;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import sparta.seed.login.domain.Member;
-import sparta.seed.todo.domain.Todo;
+
 import sparta.seed.todo.dto.QTodoDateResponseDto;
 import sparta.seed.todo.dto.QTodoResponseDto;
 import sparta.seed.todo.dto.TodoDateResponseDto;
@@ -41,6 +41,11 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .groupBy(todo.isComplete)
                 .fetch();
     }
+
+//    public List<TodoResponseDto> getDaylyAchievementRate(Member memeber){
+//        return queryFactory
+//                .select(new QTodoResponseDto())
+//    }
 
     public List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member) {
         return queryFactory

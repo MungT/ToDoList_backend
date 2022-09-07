@@ -1,14 +1,11 @@
 package sparta.seed.util;
 
-import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Component;
-import sparta.seed.todo.domain.Todo;
 import sparta.seed.todo.dto.FirstWeekResponseDto;
 
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Component
@@ -33,17 +30,16 @@ public class TimeCustom {
     }
 
     public LocalDate currentDate(){
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//        String formatedNow = formatter.format(now);
-//        String time = formatedNow.split("\\s+")[1];
-//        System.out.println(time);
-        Calendar calendar = Calendar.getInstance(); //Thu May 03 14:43:32 KST 2022
-        if(calendar.getTime().getHours()>4){
-            return LocalDate.parse(formatter.format(calendar.getTime()).split("\\s+")[0]);
 
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime currentdatetime = LocalDateTime.of(now.getYear(), now.getMonth(),now.getDayOfMonth(),now.getHour(), now.getMinute());
+        System.out.println(now);
+        System.out.println(currentdatetime);
+        if(now.getHour()>4){
+            return LocalDate.from(now);
         } else{
-            calendar.add(Calendar.HOUR, -24);
-            return LocalDate.parse(formatter.format(calendar.getTime()).split("\\s+")[0]);
+            now = now.minusDays(1);
+            return LocalDate.from(now);
         }
     }
 

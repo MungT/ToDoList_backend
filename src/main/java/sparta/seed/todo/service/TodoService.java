@@ -12,11 +12,8 @@ import sparta.seed.todo.dto.*;
 import sparta.seed.todo.repository.TodoRepository;
 import sparta.seed.util.TimeCustom;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -26,18 +23,7 @@ public class TodoService {
     private final TodoRepository todoRepository;
     private final TimeCustom timeCustom;
 
-    public void isWriter(Todo todo, Member member) {
 
-        if (!todo.getMember().getId().equals(member.getId()))
-            throw new CustomException(ErrorCode.NOT_WRITER);
-    }
-
-    public void isPassedAvailableTime(Todo todo) {
-        LocalDate currentDate = timeCustom.currentDate();
-        if (!currentDate.equals(todo.getAddDate())) {
-            throw new CustomException(ErrorCode.PASSED_AVAILABLE_TIME);
-        }
-    }
 
     public List<TodoResponseDto> getTodo(UserDetailsImpl userDetails) {
         LocalDate currentDate = timeCustom.currentDate();
@@ -98,10 +84,9 @@ public class TodoService {
                 .build();
     }
 
-//    public TodoDateResponseDto getTodoDateResponseDto(UserDetailsImpl userDetailsImpl) {
-//        return todoRepository.getFirstandLastTodoAddDate(userDetailsImpl.getMember());
+//    public TodoDateResponseDto getDaylyAchievementRate(UserDetailsImpl userDetailsImpl) {
+//        return todoRepository.getDaylyAchievementRate(userDetailsImpl.getMember());
 //    }
-
     public List<AchievementResponseDto> getWeeklyAchievementRate(UserDetailsImpl userDetailsImpl) {
         TodoDateResponseDto todoDateResponseDto = todoRepository.getFirstandLastTodoAddDate(userDetailsImpl.getMember());
         LocalDate firstTodoAddDate = todoDateResponseDto.getFirstTodoAddDate();
@@ -135,5 +120,18 @@ public class TodoService {
         } while (lastTodoAddDate.isAfter(startDate));
 
         return achievementResponseDtoList;
+    }
+
+    public void isWriter(Todo todo, Member member) {
+
+        if (!todo.getMember().getId().equals(member.getId()))
+            throw new CustomException(ErrorCode.NOT_WRITER);
+    }
+
+    public void isPassedAvailableTime(Todo todo) {
+        LocalDate currentDate = timeCustom.currentDate();
+        if (!currentDate.equals(todo.getAddDate())) {
+            throw new CustomException(ErrorCode.PASSED_AVAILABLE_TIME);
+        }
     }
 }

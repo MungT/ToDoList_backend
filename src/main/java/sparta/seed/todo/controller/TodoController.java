@@ -57,9 +57,9 @@ public class TodoController {
     }
 
 //    @GetMapping("/api/test")
-//    public ResponseEntity<TodoDateResponseDto> getTodoDateResponseDto(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+//    public ResponseEntity<TodoDateResponseDto> getDaylyAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
 //        return ResponseEntity.ok()
-//                .body(todoService.getTodoDateResponseDto(userDetailsImpl));
+//                .body(todoService.getDaylyAchievementRate(userDetailsImpl));
 //    }
     @GetMapping("/api/todo/achievement/weekly")
     public ResponseEntity<List<AchievementResponseDto>> getWeeklyAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {

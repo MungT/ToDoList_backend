@@ -48,7 +48,6 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .from(todo)
                 .where(todo.member.eq(member),
                         todo.addDate.between(stardDate,endDate))
-
                 .groupBy(todo.addDate, todo.isComplete)
                 .fetch();
     }

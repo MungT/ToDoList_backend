@@ -162,7 +162,7 @@ public class TodoService {
                             .achievementRate(100 + "%")
                             .addDate(todoResponseDtoList.get(i).getAddDate())
                             .build());
-                }else{
+                } else {
                     achievementResponseDtoList.add(AchievementResponseDto.builder()
                             .totalCnt(totalCnt)
                             .completeCnt(0)
@@ -192,9 +192,9 @@ public class TodoService {
         List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
         do {
             List<TodoResponseDto> todoResponseDtoList = todoRepository.getWeeklyAchievementRate(startDate, endDate, member);
-            long totalCnt = 0;
-            float percent = 0;
-            if (todoResponseDtoList.size() != 0) {
+            long totalCnt;
+            float percent;
+            if (todoResponseDtoList.size() == 2) {
                 totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
                 percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
 
@@ -203,13 +203,30 @@ public class TodoService {
                         .completeCnt(todoResponseDtoList.get(1).getCount())
                         .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
                         .build());
+            } else if(todoResponseDtoList.size()==1) {
+                totalCnt = todoResponseDtoList.get(0).getCount();
+                if (todoResponseDtoList.get(0).isComplete()) {
+                    achievementResponseDtoList.add(AchievementResponseDto.builder()
+                            .totalCnt(totalCnt)
+                            .completeCnt(totalCnt)
+                            .achievementRate(100 + "%")
+                            .build());
+                } else {
+                    achievementResponseDtoList.add(AchievementResponseDto.builder()
+                            .totalCnt(totalCnt)
+                            .completeCnt(0)
+                            .achievementRate(0 + "%")
+                            .build());
+                }
             } else {
-                achievementResponseDtoList.add(AchievementResponseDto.builder()
-                        .totalCnt(totalCnt)
-                        .completeCnt(0)
-                        .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
-                        .build());
+                achievementResponseDtoList.add(null);
             }
+
+//                achievementResponseDtoList.add(AchievementResponseDto.builder()
+//                        .totalCnt(totalCnt)
+//                        .completeCnt(0)
+//                        .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
+//                        .build());
 
 
             if (endDate.equals(lastTodoAddDate))
@@ -217,17 +234,12 @@ public class TodoService {
 
             startDate = endDate.plusDays(1);
             endDate = endDate.plusDays(7);
-        }while (lastTodoAddDate.isAfter(startDate));
-           /* endDate가 마지막 추가날짜보다 크더라도 에러는 안난다.(조건에 안맞는것은 그냥 포함을 안시키기 때문)
-
-           if (endDate.isAfter(lastTodoAddDate)) {
-               endDate = lastTodoAddDate;
-           }
-
-            */
-
+        } while (lastTodoAddDate.isAfter(startDate));
         return achievementResponseDtoList;
     }
+
+
+
 
     public void isWriter(Todo todo, Member member) {
 

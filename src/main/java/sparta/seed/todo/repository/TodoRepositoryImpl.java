@@ -46,8 +46,9 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
         return queryFactory
                 .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
                 .from(todo)
-//                .where(todo.member.eq(member), //가짜데이터라 주석처리
-                .where(todo.addDate.between(stardDate, endDate))
+                .where(todo.member.eq(member),
+                        todo.addDate.between(stardDate,endDate))
+
                 .groupBy(todo.addDate, todo.isComplete)
                 .fetch();
     }
@@ -58,8 +59,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .select(new QTodoResponseDto(todo.isComplete, todo.count()))
                 .from(todo)
 //                .where(todo.member.eq(member), //가짜데이터라 주석처리
-                .where(todo.member.eq(member),
-                        todo.addDate.between(stardDate, endDate))
+                .where(todo.addDate.between(stardDate, endDate))
                 .groupBy(todo.isComplete)
                 .fetch();
     }

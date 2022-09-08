@@ -56,7 +56,7 @@ public class TodoController {
                 .body(todoService.getAchievementRate(userDetailsImpl));
     }
 
-    @GetMapping("/api/test")
+    @GetMapping("/api/todo/achievement/dayly")
     public ResponseEntity<List<AchievementResponseDto>> getDaylyAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
         return ResponseEntity.ok()
                 .body(todoService.getDaylyAchievementRate(userDetailsImpl));

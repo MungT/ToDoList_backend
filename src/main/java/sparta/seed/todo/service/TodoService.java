@@ -105,6 +105,7 @@ public class TodoService {
                 .build();
     }
 
+    //최근 30일 각 날짜에 해당하는 투두리스트 달성률 리스트 반환
     public List<AchievementResponseDto> getDaylyAchievementRate(UserDetailsImpl userDetailsImpl) {
 
 
@@ -114,6 +115,7 @@ public class TodoService {
         List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
 
         List<TodoResponseDto> todoResponseDtoList = todoRepository.getDaylyAchievementRate(startDate, endDate, userDetailsImpl.getMember());
+        //데이터가 없거나 true or false로 하나만 있을 경우
         switch (todoResponseDtoList.size()) {
             case 0:
                 throw new CustomException(ErrorCode.TODO_NOT_FOUND);
@@ -140,23 +142,46 @@ public class TodoService {
         long totalCnt = 0;
         float percent = 0;
         for (int i = 0; i < todoResponseDtoList.size(); i++) {
-            totalCnt = todoResponseDtoList.get(i).getCount() + todoResponseDtoList.get(i + 1).getCount();
-            percent = (float) todoResponseDtoList.get(i + 1).getCount() / totalCnt;
-            achievementResponseDtoList.add(AchievementResponseDto.builder()
-                    .totalCnt(totalCnt)
-                    .completeCnt(todoResponseDtoList.get(i + 1).getCount())
-                    .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
-                    .addDate(todoResponseDtoList.get(i + 1).getAddDate())
-                    .build());
+            if (todoResponseDtoList.get(i).getAddDate().isEqual(todoResponseDtoList.get(i + 1).getAddDate())) {
+                totalCnt = todoResponseDtoList.get(i).getCount() + todoResponseDtoList.get(i + 1).getCount();
+                percent = (float) todoResponseDtoList.get(i + 1).getCount() / totalCnt;
+                achievementResponseDtoList.add(AchievementResponseDto.builder()
+                        .totalCnt(totalCnt)
+                        .completeCnt(todoResponseDtoList.get(i + 1).getCount())
+                        .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
+                        .addDate(todoResponseDtoList.get(i).getAddDate())
+                        .build());
+                //그 날짜에 true, false가 모두 존재할 경우 row 2줄을 처리하고 다음으로 넘어가야하기 때문에 i++
+                i++;
+            } else {
+                totalCnt = todoResponseDtoList.get(i).getCount();
+                if (todoResponseDtoList.get(i).isComplete()) {
+                    achievementResponseDtoList.add(AchievementResponseDto.builder()
+                            .totalCnt(totalCnt)
+                            .completeCnt(totalCnt)
+                            .achievementRate(100 + "%")
+                            .addDate(todoResponseDtoList.get(i).getAddDate())
+                            .build());
+                }else{
+                    achievementResponseDtoList.add(AchievementResponseDto.builder()
+                            .totalCnt(totalCnt)
+                            .completeCnt(0)
+                            .achievementRate(0 + "%")
+                            .addDate(todoResponseDtoList.get(i).getAddDate())
+                            .build());
+                }
+            }
         }
 
         return achievementResponseDtoList;
     }
 
+    //한 주차에 TRUE or FALSE만 존재할 경우 indexOutOfBound 에러 발생
+    //중간에 주차가 모두 비어있을 경우는 0%로 반환
     public List<AchievementResponseDto> getWeeklyAchievementRate(UserDetailsImpl userDetailsImpl) {
         Member member = userDetailsImpl.getMember();
-        if (!todoRepository.existsByMember(member))
-            throw new CustomException(ErrorCode.TODO_NOT_FOUND);
+//        if (!todoRepository.existsByMember(member))
+//            throw new CustomException(ErrorCode.TODO_NOT_FOUND);   //가짜데이터라 주석처리
         TodoDateResponseDto todoDateResponseDto = todoRepository.getFirstandLastTodoAddDate(member);
         LocalDate firstTodoAddDate = todoDateResponseDto.getFirstTodoAddDate();
         LocalDate lastTodoAddDate = todoDateResponseDto.getLastTodoAddDate();
@@ -165,7 +190,6 @@ public class TodoService {
         LocalDate endDate = firstWeekResponseDto.getEndDate();
 
         List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
-
         do {
             List<TodoResponseDto> todoResponseDtoList = todoRepository.getWeeklyAchievementRate(startDate, endDate, member);
             long totalCnt = 0;
@@ -193,7 +217,7 @@ public class TodoService {
 
             startDate = endDate.plusDays(1);
             endDate = endDate.plusDays(7);
-
+        }while (lastTodoAddDate.isAfter(startDate));
            /* endDate가 마지막 추가날짜보다 크더라도 에러는 안난다.(조건에 안맞는것은 그냥 포함을 안시키기 때문)
 
            if (endDate.isAfter(lastTodoAddDate)) {
@@ -201,9 +225,6 @@ public class TodoService {
            }
 
             */
-
-        } while (lastTodoAddDate.isAfter(startDate));
-
 
         return achievementResponseDtoList;
     }

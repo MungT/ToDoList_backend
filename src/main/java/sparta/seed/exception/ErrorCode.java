@@ -16,7 +16,8 @@ public enum ErrorCode { //이렇게 해주는 방법도 있다. 현재 코드에
     //투두 관련
     PASSED_AVAILABLE_TIME(HttpStatus.BAD_REQUEST,"400" ,"수정 가능한 기한이 지났습니다."),
     NOT_WRITER(HttpStatus.FORBIDDEN, "403", "투두 작성자가 아닙니다"),
-    TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 투두가 존재하지 않습니다");
+    TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "투두가 존재하지 않습니다"),
+    RECENT_TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "최근 투두가 존재하지 않습니다");
 
 
 

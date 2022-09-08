@@ -13,8 +13,8 @@ import java.util.List;
 public interface TodoRepositoryCustom {
 //    List<MemberTeamDto> search(MemberSearchCondition condition);
     List<TodoResponseDto> findAllbyAddDateAndMember(LocalDate addDate, Member member);
-    List<TodoResponseDto> getAchievementRateByDate(LocalDate addDate, Member member);
-//    List<TodoResponseDto> getDaylyAchievementRate(Member member);
+    List<TodoResponseDto> getAchievementRateByDate(LocalDate selectedDate, Member member);
+    List<TodoResponseDto> getDaylyAchievementRate(LocalDate stardDate, LocalDate endDate, Member memeber);
     List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member memeber);
     TodoDateResponseDto getFirstandLastTodoAddDate(Member member);
 }

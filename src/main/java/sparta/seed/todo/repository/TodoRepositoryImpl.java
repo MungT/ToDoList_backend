@@ -32,27 +32,34 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .fetch();
     }
 
-    public List<TodoResponseDto> getAchievementRateByDate(LocalDate addDate, Member member){
+    public List<TodoResponseDto> getAchievementRateByDate(LocalDate selectedDate, Member member){
         return queryFactory
-                .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
+                .select(new QTodoResponseDto(todo.isComplete, todo.count()))
                 .from(todo)
                 .where(todo.member.eq(member),
-                        todo.addDate.eq(addDate))
+                        todo.addDate.eq(selectedDate))
                 .groupBy(todo.isComplete)
                 .fetch();
     }
 
-//    public List<TodoResponseDto> getDaylyAchievementRate(Member memeber){
-//        return queryFactory
-//                .select(new QTodoResponseDto())
-//    }
+    public List<TodoResponseDto> getDaylyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member) {
+        return queryFactory
+                .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
+                .from(todo)
+//                .where(todo.member.eq(member), //가짜데이터라 주석처리
+                .where(todo.addDate.between(stardDate, endDate))
+                .groupBy(todo.addDate, todo.isComplete)
+                .fetch();
+    }
+
 
     public List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member) {
         return queryFactory
                 .select(new QTodoResponseDto(todo.isComplete, todo.count()))
                 .from(todo)
 //                .where(todo.member.eq(member), //가짜데이터라 주석처리
-                .where(todo.addDate.between(stardDate, endDate))
+                .where(todo.member.eq(member),
+                        todo.addDate.between(stardDate, endDate))
                 .groupBy(todo.isComplete)
                 .fetch();
     }

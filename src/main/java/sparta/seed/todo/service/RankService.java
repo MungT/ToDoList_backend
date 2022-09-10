@@ -1,6 +1,7 @@
 package sparta.seed.todo.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.seed.exception.CustomException;
@@ -25,17 +26,26 @@ public class RankService {
     private final RankRepository rankRepository;
     private final TimeCustom timeCustom;
 
-    public List<AchievementResponseDto> getRankTable() {
+    public List<AchievementResponseDto> getRankTable(Long range) {
+        //주간 랭킹 점수
         LocalDate endDate = timeCustom.currentDate();
-        LocalDate startDate = endDate.minusDays(30);
+        LocalDate startDate;
+        if(range == 7) {
+            startDate = endDate.minusDays(endDate.getDayOfWeek().getValue());
+        }else {
+            //월간 랭킹 점수
+            startDate = endDate.minusDays(endDate.getDayOfMonth() - 1);
+        }
 
         return rankRepository.getRankTable(startDate, endDate);
+
+
     }
     //없을 시 빈 리스트 반환
     public void saveRankTable() {
 
 
-        LocalDate yesterDay = timeCustom.currentDate();
+        LocalDate yesterDay = timeCustom.currentDate().minusDays(1);
 
         List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
         List<Rank> rankList = new ArrayList<>();

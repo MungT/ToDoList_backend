@@ -17,12 +17,12 @@ public class RankController {
 
     private final RankService rankService;
 
-    @GetMapping("/api/rank")
-    public ResponseEntity<List<AchievementResponseDto>> getRank() {
+    @GetMapping("/api/rank/{range}")
+    public ResponseEntity<List<AchievementResponseDto>> getRank(@PathVariable Long range) {
         return ResponseEntity.ok()
-                .body(rankService.getRankTable());
+                .body(rankService.getRankTable(range));
     }
-    @PostMapping("/api/rank")
+    @GetMapping("/api/rank")
     public void saveRank() {
         rankService.saveRankTable();
     }

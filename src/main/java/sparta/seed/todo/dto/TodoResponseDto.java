@@ -13,6 +13,7 @@ public class TodoResponseDto {
     private boolean isComplete;
     private LocalDate addDate;
     private long count;
+    private String nickname;
 
     @Builder
     @QueryProjection
@@ -23,6 +24,13 @@ public class TodoResponseDto {
         this.addDate = addDate;
     }
 
+    @QueryProjection
+    public TodoResponseDto(String nickname, boolean isComplete, LocalDate addDate, long count){
+        this.nickname = nickname;
+        this.isComplete = isComplete;
+        this.addDate = addDate;
+        this.count = count;
+    }
     @QueryProjection
     public TodoResponseDto(boolean isComplete, LocalDate addDate, long count){
         this.isComplete = isComplete;

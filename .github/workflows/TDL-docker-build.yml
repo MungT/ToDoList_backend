@@ -2,9 +2,9 @@ name: TDL-docker-build
 
 on:
 #  pull_request:
-#    branches: [ taehoon-github_action ]
+#    branches: [ main ]
   push:
-    branches: [ taehoon-github_action ]
+    branches: [ dev ]
 
 jobs:
   test-and-deploy:
@@ -18,7 +18,7 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
 
-        ## gradle caching ##
+        ## gradle caching (캐시를 미리 생성해 빌드시 작업시간을 단축시켜 준다.)##
       - uses: actions/cache@v3
         with:
           path: |
@@ -30,21 +30,21 @@ jobs:
 
       ## create application.properties
       - name: make application.properties
-        if: contains(github.ref, 'taehoon-github_action') # branch 다중으로 설정 불가한 듯?
+        if: contains(github.ref, 'dev') # branch dev일 때 application.properties파일 생성
         run: |
-          # spring의 resources 경로로 이동
+          # spring의 resources 경로로 이동(깃허브에 해당 경로에 파일이 있는지 확인)
            cd ./src/main/resources
           
            # application.properties 파일 생성
            touch ./application.properties
           
-           # GitHub-Actions에서 설정한 값을 application.properties 파일에 쓰기
+           # GitHub-Actions에서 설정한 값을 application.properties 파일에 덮어씌우기
            echo "${{ secrets.PROPERTIES }}" > ./application.properties
         shell: bash
 
       ## create application-aws.properties
       - name: make application-aws.properties
-        if: contains(github.ref, 'taehoon-github_action') # branch 다중으로 설정 불가한 듯?
+        if: contains(github.ref, 'dev') # 여러 branch설정은 불가능 한 듯?
         run: |
           # spring의 resources 경로로 이동
            cd ./src/main/resources
@@ -58,7 +58,7 @@ jobs:
 
       ## create application-oauth.properties
       - name: make application-oauth.properties
-        if: contains(github.ref, 'taehoon-github_action') # branch가 main 일 때, 나머지는 위와 동일
+        if: contains(github.ref, 'dev') # branch가 main 일 때, 나머지는 위와 동일
         run: |
           cd ./src/main/resources
           touch ./application-oauth.properties

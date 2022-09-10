@@ -4,7 +4,7 @@ on:
 #  pull_request:
 #    branches: [ main ]
   push:
-    branches: [ dev ]
+    branches: [ dev, CD_Test ]
 
 jobs:
   test-and-deploy:
@@ -30,7 +30,7 @@ jobs:
 
       ## create application.properties
       - name: make application.properties
-        if: contains(github.ref, 'dev') # branch dev일 때 application.properties파일 생성
+        if: contains(github.ref, 'CD_Test') # branch dev일 때 application.properties파일 생성
         run: |
           # spring의 resources 경로로 이동(깃허브에 해당 경로에 파일이 있는지 확인)
            cd ./src/main/resources
@@ -44,7 +44,7 @@ jobs:
 
       ## create application-aws.properties
       - name: make application-aws.properties
-        if: contains(github.ref, 'dev') # 여러 branch설정은 불가능 한 듯?
+        if: contains(github.ref, 'CD_Test') # 여러 branch설정은 불가능 한 듯?
         run: |
           # spring의 resources 경로로 이동
            cd ./src/main/resources
@@ -58,7 +58,7 @@ jobs:
 
       ## create application-oauth.properties
       - name: make application-oauth.properties
-        if: contains(github.ref, 'dev') # branch가 main 일 때, 나머지는 위와 동일
+        if: contains(github.ref, 'CD_Test') # branch가 main 일 때, 나머지는 위와 동일
         run: |
           cd ./src/main/resources
           touch ./application-oauth.properties
@@ -72,13 +72,9 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
 
-      # docker username과 Token을 깃 허브에 저장해서 가져온다
-      - name: Docker build
-        run: |
-          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker build -t tdl-docker-build .
-          docker tag tdl-docker-build ${{ secrets.DOCKER_REPO }}/tdl-docker-build:latest
-          docker push ${{ secrets.DOCKER_REPO }}/tdl-docker-build:latest
+
+
+
 
 #      # Beanstalk 플러그인을 사용
 #      # 미리 생성해둔 IAM 인증키를 사용

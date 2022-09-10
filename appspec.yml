@@ -4,7 +4,7 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ec2-user/playground-logging/
+    destination: /home/ec2-user/ToDoToDo/
     overwrite: yes
 
 permissions:

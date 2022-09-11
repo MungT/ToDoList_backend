@@ -72,10 +72,10 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
     }
     public List<TodoResponseDto> getTotalAchievementRate(Member member) {
         return queryFactory
-                .select(new QTodoResponseDto(todo.isComplete,todo.addDate, todo.count()))
+                .select(new QTodoResponseDto(todo.isComplete, todo.count()))
                 .from(todo)
                 .where(todo.nickname.eq(member.getNickname())) //가짜데이터라 주석처리
-                .groupBy(todo.addDate, todo.isComplete)
+                .groupBy(todo.isComplete)
                 .fetch();
     }
 }

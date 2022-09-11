@@ -9,28 +9,27 @@ import java.time.LocalDate;
 @Getter
 public class AchievementResponseDto {
     private double achievementRate;
-    private double score;
     private long totalCnt;
     private long completeCnt;
     private String nickname;
     private LocalDate addDate;
-
     private int rank;
+    private long plannerCnt;
 
     @Builder
-    public AchievementResponseDto(double achievementRate,double score, long totalCnt, long completeCnt, String nickname, LocalDate addDate) {
+    public AchievementResponseDto(double achievementRate, long totalCnt, long completeCnt, String nickname, LocalDate addDate, long plannerCnt) {
         this.achievementRate = achievementRate;
-        this.score = score;
         this.totalCnt = totalCnt;
         this.completeCnt = completeCnt;
         this.nickname = nickname;
         this.addDate = addDate;
+        this.plannerCnt = plannerCnt;
     }
 
     @QueryProjection
-    public AchievementResponseDto(String nickname, double score) {
-        this.score = score;
+    public AchievementResponseDto(String nickname, double achievementRate) {
         this.nickname = nickname;
+        this.achievementRate = achievementRate;
     }
 
     public void setRank(int rank) {

@@ -3,17 +3,16 @@ package sparta.seed.todo.repository;
 
 import com.querydsl.core.types.dsl.MathExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import sparta.seed.login.domain.Member;
-import sparta.seed.login.domain.QMember;
-import sparta.seed.todo.domain.QRank;
-import sparta.seed.todo.dto.*;
+import sparta.seed.todo.dto.AchievementResponseDto;
+import sparta.seed.todo.dto.QAchievementResponseDto;
+import sparta.seed.todo.dto.QTodoResponseDto;
+import sparta.seed.todo.dto.TodoResponseDto;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 
-import static sparta.seed.login.domain.QMember.*;
-import static sparta.seed.todo.domain.QRank.*;
+import static sparta.seed.todo.domain.QRank.rank;
 import static sparta.seed.todo.domain.QTodo.todo;
 
 
@@ -40,7 +39,7 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
                 .from(todo)
 //                .where(todo.addDate.eq(yesterDay)) //실 서비스에서는 하루 단위로 스케쥴러
                 .where(todo.addDate.between(yesterDay.minusDays(30), yesterDay))
-                .groupBy(todo.addDate, todo.nickname, todo.isComplete)
+                .groupBy( todo.nickname,todo.addDate, todo.isComplete)
                 .fetch();
     }
 

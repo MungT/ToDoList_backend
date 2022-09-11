@@ -261,6 +261,7 @@ public class TodoService {
                 .completeCnt(todoResponseDtoList.get(1).getCount())
                 .achievementRate(Math.round(percent * 10000) / 100.0)
                 .build();
+
     }
 
     public void isWriter(Todo todo, Member member) {

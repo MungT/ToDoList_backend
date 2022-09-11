@@ -38,10 +38,12 @@ public class RankService {
         }
         List<AchievementResponseDto> achievementResponseDtoList = rankRepository.getRankTable(startDate, endDate);
         achievementResponseDtoList.get(0).setRank(1);
-        int a = 1;
+        int rank = 1;
         for (int i = 1; i < achievementResponseDtoList.size(); i++) {
-            if (achievementResponseDtoList.get(i).getScore() != achievementResponseDtoList.get(i - 1).getScore()) {
-                achievementResponseDtoList.get(i).setRank(++a);
+            if (achievementResponseDtoList.get(i).getAchievementRate() != achievementResponseDtoList.get(i - 1).getAchievementRate()) {
+                achievementResponseDtoList.get(i).setRank(++rank);
+            } else{
+                achievementResponseDtoList.get(i).setRank(rank);
             }
         }
         return achievementResponseDtoList;
@@ -65,28 +67,30 @@ public class RankService {
                     achievementResponseDtoList.add(AchievementResponseDto.builder()
                             .totalCnt(todoResponseDtoList.get(0).getCount())
                             .completeCnt(todoResponseDtoList.get(0).getCount())
-                            .score(100)
+                            .achievementRate(100)
                             .nickname(todoResponseDtoList.get(0).getNickname())
                             .addDate(todoResponseDtoList.get(0).getAddDate())
                             .build());
                     Rank rank = Rank.builder()
                             .nickname(achievementResponseDtoList.get(0).getNickname())
                             .addDate(achievementResponseDtoList.get(0).getAddDate())
-                            .score(achievementResponseDtoList.get(0).getScore()).build();
+                            .score(achievementResponseDtoList.get(0).getAchievementRate())
+                            .build();
 
                     rankRepository.save(rank);
                 } else {
                     achievementResponseDtoList.add(AchievementResponseDto.builder()
                             .totalCnt(todoResponseDtoList.get(0).getCount())
                             .completeCnt(0)
-                            .score(0)
+                            .achievementRate(0)
                             .nickname(todoResponseDtoList.get(0).getNickname())
                             .addDate(todoResponseDtoList.get(0).getAddDate())
                             .build());
                     Rank rank = Rank.builder()
                             .nickname(achievementResponseDtoList.get(0).getNickname())
                             .addDate(achievementResponseDtoList.get(0).getAddDate())
-                            .score(achievementResponseDtoList.get(0).getScore()).build();
+                            .score(achievementResponseDtoList.get(0).getAchievementRate())
+                            .build();
 
                     rankRepository.save(rank);
                 }
@@ -101,7 +105,7 @@ public class RankService {
                     achievementResponseDtoList.add(AchievementResponseDto.builder()
                             .totalCnt(totalCnt)
                             .completeCnt(todoResponseDtoList.get(i + 1).getCount())
-                            .score(Math.round(percent * 10000) / 100.0)
+                            .achievementRate(Math.round(percent * 10000) / 100.0)
                             .nickname(todoResponseDtoList.get(i).getNickname())
                             .addDate(todoResponseDtoList.get(i).getAddDate())
                             .build());
@@ -133,10 +137,10 @@ public class RankService {
             rankList.add(Rank.builder()
                     .nickname(achievementResponseDto.getNickname())
                     .addDate(achievementResponseDto.getAddDate())
-                    .score(achievementResponseDto.getScore())
+                    .score(achievementResponseDto.getAchievementRate())
                     .build());
-            rankRepository.saveAll(rankList);
         }
+            rankRepository.saveAll(rankList);
     }
 
 

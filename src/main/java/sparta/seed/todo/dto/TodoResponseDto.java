@@ -12,6 +12,7 @@ public class TodoResponseDto {
     private String content;
     private boolean isComplete;
     private LocalDate addDate;
+
     private long count;
     private String nickname;
 

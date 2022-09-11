@@ -66,4 +66,9 @@ public class TodoController {
         return ResponseEntity.ok()
                 .body(todoService.getWeeklyAchievementRate(userDetailsImpl));
     }
+
+    @GetMapping("/api/test")
+    public void test(){
+        todoService.test();
+    }
 }

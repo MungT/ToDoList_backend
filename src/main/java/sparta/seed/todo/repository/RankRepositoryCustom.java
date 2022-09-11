@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface RankRepositoryCustom {
-    List<TodoResponseDto> getDaylyAchievementRate(LocalDate yesterDay);
+    List<TodoResponseDto> saveRankTable(LocalDate yesterDay);
     List<AchievementResponseDto> getRankTable(LocalDate stardDate, LocalDate endDate);
 }
 

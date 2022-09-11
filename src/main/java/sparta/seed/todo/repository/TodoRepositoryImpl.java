@@ -27,7 +27,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
         return queryFactory
                 .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate))
                 .from(todo)
-                .where(todo.member.eq(member),
+                .where(todo.nickname.eq(member.getNickname()),
                         todo.addDate.eq(addDate))
                 .fetch();
     }
@@ -36,7 +36,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
         return queryFactory
                 .select(new QTodoResponseDto(todo.isComplete, todo.count()))
                 .from(todo)
-                .where(todo.member.eq(member),
+                .where(todo.nickname.eq(member.getNickname()),
                         todo.addDate.eq(selectedDate))
                 .groupBy(todo.isComplete)
                 .fetch();
@@ -46,7 +46,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
         return queryFactory
                 .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
                 .from(todo)
-                .where(todo.member.eq(member),
+                .where(todo.nickname.eq(member.getNickname()),
                         todo.addDate.between(stardDate,endDate))
                 .groupBy(todo.addDate, todo.isComplete)
                 .fetch();

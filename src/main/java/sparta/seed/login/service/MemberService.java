@@ -39,6 +39,7 @@ public class MemberService {
     }
 
 
+    @Transactional
     public Member signup(SocialMemberRequestDto socialMemberRequestDto, UserDetailsImpl userDetailsImpl) {
         Member member = userDetailsImpl.getMember();
         member.setNickname(socialMemberRequestDto.getNickname());
@@ -77,4 +78,5 @@ public class MemberService {
         // 토큰 발급
         return tokenDto;
     }
+
 }

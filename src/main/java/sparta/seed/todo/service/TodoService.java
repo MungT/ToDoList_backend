@@ -1,13 +1,13 @@
 package sparta.seed.todo.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.login.domain.Member;
 import sparta.seed.sercurity.UserDetailsImpl;
-import sparta.seed.todo.domain.Rank;
 import sparta.seed.todo.domain.Todo;
 import sparta.seed.todo.dto.*;
 import sparta.seed.todo.repository.TodoRepository;
@@ -38,7 +38,7 @@ public class TodoService {
                 .content(todoRequestDto.getContent())
                 .isComplete(todoRequestDto.getIsComplete())
                 .addDate(timeCustom.currentDate())
-                .member(userDetailsImpl.getMember())
+                .nickname(userDetailsImpl.getMember().getNickname())
                 .build();
         todoRepository.save(todo);
 
@@ -86,13 +86,13 @@ public class TodoService {
                     return AchievementResponseDto.builder()
                             .totalCnt(todoResponseDtoList.get(0).getCount())
                             .completeCnt(todoResponseDtoList.get(0).getCount())
-                            .achievementRate(100 + "%")
+                            .achievementRate(100)
                             .build();
                 } else {
                     return AchievementResponseDto.builder()
                             .totalCnt(todoResponseDtoList.get(0).getCount())
                             .completeCnt(0)
-                            .achievementRate(0 + "%")
+                            .achievementRate(0)
                             .build();
                 }
         }
@@ -101,7 +101,7 @@ public class TodoService {
         return AchievementResponseDto.builder()
                 .totalCnt(totalCnt)
                 .completeCnt(todoResponseDtoList.get(1).getCount())
-                .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
+                .achievementRate(Math.round(percent * 10000) / 100.0)
                 .build();
     }
 
@@ -124,7 +124,7 @@ public class TodoService {
                     achievementResponseDtoList.add(AchievementResponseDto.builder()
                             .totalCnt(todoResponseDtoList.get(0).getCount())
                             .completeCnt(todoResponseDtoList.get(0).getCount())
-                            .achievementRate(100 + "%")
+                            .achievementRate(100)
                             .addDate(todoResponseDtoList.get(0).getAddDate())
                             .build());
                     return achievementResponseDtoList;
@@ -133,7 +133,7 @@ public class TodoService {
                     achievementResponseDtoList.add(AchievementResponseDto.builder()
                             .totalCnt(todoResponseDtoList.get(0).getCount())
                             .completeCnt(0)
-                            .achievementRate(0 + "%")
+                            .achievementRate(0)
                             .addDate(todoResponseDtoList.get(0).getAddDate())
                             .build());
                     return achievementResponseDtoList;
@@ -148,7 +148,7 @@ public class TodoService {
                 achievementResponseDtoList.add(AchievementResponseDto.builder()
                         .totalCnt(totalCnt)
                         .completeCnt(todoResponseDtoList.get(i + 1).getCount())
-                        .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
+                        .achievementRate(Math.round(percent * 10000) / 100.0)
                         .addDate(todoResponseDtoList.get(i).getAddDate())
                         .build());
                 //그 날짜에 true, false가 모두 존재할 경우 row 2줄을 처리하고 다음으로 넘어가야하기 때문에 i++
@@ -159,14 +159,14 @@ public class TodoService {
                     achievementResponseDtoList.add(AchievementResponseDto.builder()
                             .totalCnt(totalCnt)
                             .completeCnt(totalCnt)
-                            .achievementRate(100 + "%")
+                            .achievementRate(100)
                             .addDate(todoResponseDtoList.get(i).getAddDate())
                             .build());
                 } else {
                     achievementResponseDtoList.add(AchievementResponseDto.builder()
                             .totalCnt(totalCnt)
                             .completeCnt(0)
-                            .achievementRate(0 + "%")
+                            .achievementRate(0)
                             .addDate(todoResponseDtoList.get(i).getAddDate())
                             .build());
                 }
@@ -202,21 +202,21 @@ public class TodoService {
                 achievementResponseDtoList.add(AchievementResponseDto.builder()
                         .totalCnt(totalCnt)
                         .completeCnt(todoResponseDtoList.get(1).getCount())
-                        .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
+                        .achievementRate(Math.round(percent * 10000) / 100.0)
                         .build());
-            } else if(todoResponseDtoList.size()==1) {
+            } else if (todoResponseDtoList.size() == 1) {
                 totalCnt = todoResponseDtoList.get(0).getCount();
                 if (todoResponseDtoList.get(0).isComplete()) {
                     achievementResponseDtoList.add(AchievementResponseDto.builder()
                             .totalCnt(totalCnt)
                             .completeCnt(totalCnt)
-                            .achievementRate(100 + "%")
+                            .achievementRate(100)
                             .build());
                 } else {
                     achievementResponseDtoList.add(AchievementResponseDto.builder()
                             .totalCnt(totalCnt)
                             .completeCnt(0)
-                            .achievementRate(0 + "%")
+                            .achievementRate(0)
                             .build());
                 }
             } else {
@@ -240,11 +240,9 @@ public class TodoService {
     }
 
 
-
-
     public void isWriter(Todo todo, Member member) {
 
-        if (!todo.getMember().getId().equals(member.getId()))
+        if (!todo.getNickname().equals(member.getNickname()))
             throw new CustomException(ErrorCode.NOT_WRITER);
     }
 
@@ -255,74 +253,9 @@ public class TodoService {
         }
     }
 
-    public List<AchievementResponseDto> getDaylyAchievementRate1(UserDetailsImpl userDetailsImpl) {
+    public void test() {
+        SecurityContextHolder.getContext().getAuthentication();
 
 
-        LocalDate endDate = timeCustom.currentDate();
-        LocalDate startDate = endDate.minusDays(30);
-
-        List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
-
-        List<TodoResponseDto> todoResponseDtoList = todoRepository.getDaylyAchievementRate(startDate, endDate, userDetailsImpl.getMember());
-        //데이터가 없거나 true or false로 하나만 있을 경우
-        switch (todoResponseDtoList.size()) {
-            case 0:
-                throw new CustomException(ErrorCode.TODO_NOT_FOUND);
-            case 1:
-                if (todoResponseDtoList.get(0).isComplete()) {
-                    achievementResponseDtoList.add(AchievementResponseDto.builder()
-                            .totalCnt(todoResponseDtoList.get(0).getCount())
-                            .completeCnt(todoResponseDtoList.get(0).getCount())
-                            .achievementRate(100 + "%")
-                            .addDate(todoResponseDtoList.get(0).getAddDate())
-                            .build());
-                    return achievementResponseDtoList;
-
-                } else {
-                    achievementResponseDtoList.add(AchievementResponseDto.builder()
-                            .totalCnt(todoResponseDtoList.get(0).getCount())
-                            .completeCnt(0)
-                            .achievementRate(0 + "%")
-                            .addDate(todoResponseDtoList.get(0).getAddDate())
-                            .build());
-                    return achievementResponseDtoList;
-                }
-        }
-        long totalCnt = 0;
-        float percent = 0;
-        for (int i = 0; i < todoResponseDtoList.size(); i++) {
-            if (todoResponseDtoList.get(i).getAddDate().isEqual(todoResponseDtoList.get(i + 1).getAddDate())) {
-                totalCnt = todoResponseDtoList.get(i).getCount() + todoResponseDtoList.get(i + 1).getCount();
-                percent = (float) todoResponseDtoList.get(i + 1).getCount() / totalCnt;
-                achievementResponseDtoList.add(AchievementResponseDto.builder()
-                        .totalCnt(totalCnt)
-                        .completeCnt(todoResponseDtoList.get(i + 1).getCount())
-                        .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
-                        .addDate(todoResponseDtoList.get(i).getAddDate())
-                        .build());
-                //그 날짜에 true, false가 모두 존재할 경우 row 2줄을 처리하고 다음으로 넘어가야하기 때문에 i++
-                i++;
-            } else {
-                totalCnt = todoResponseDtoList.get(i).getCount();
-                if (todoResponseDtoList.get(i).isComplete()) {
-                    achievementResponseDtoList.add(AchievementResponseDto.builder()
-                            .totalCnt(totalCnt)
-                            .completeCnt(totalCnt)
-                            .achievementRate(100 + "%")
-                            .addDate(todoResponseDtoList.get(i).getAddDate())
-                            .build());
-                } else {
-                    achievementResponseDtoList.add(AchievementResponseDto.builder()
-                            .totalCnt(totalCnt)
-                            .completeCnt(0)
-                            .achievementRate(0 + "%")
-                            .addDate(todoResponseDtoList.get(i).getAddDate())
-                            .build());
-                }
-            }
-
-        }
-
-        return achievementResponseDtoList;
     }
 }

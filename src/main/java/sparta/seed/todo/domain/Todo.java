@@ -26,18 +26,16 @@ public class Todo extends Timestamped {
 
     @Column(nullable = false)
     private LocalDate addDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = true) //가짜데이터 쓰는동안만 true
-    private Member member;
+    @Column(nullable = false)
+    private String nickname;
 
     @Builder
-    public Todo(Long id, String content, Boolean isComplete, LocalDate addDate, Member member) {
+    public Todo(Long id, String content, Boolean isComplete, LocalDate addDate, String nickname) {
         this.id = id;
         this.content = content;
         this.isComplete = isComplete;
         this.addDate = addDate;
-        this.member = member;
+        this.nickname = nickname;
     }
 
     public void update(TodoRequestDto todoRequestDto) {

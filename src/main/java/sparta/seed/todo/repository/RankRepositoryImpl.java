@@ -1,6 +1,7 @@
 package sparta.seed.todo.repository;
 
 
+import com.querydsl.core.types.dsl.MathExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.QMember;
@@ -33,19 +34,19 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
 //                .fetch();
 //    }
 
-    public List<TodoResponseDto> getDaylyAchievementRate(LocalDate yesterDay) {
+    public List<TodoResponseDto> saveRankTable(LocalDate yesterDay) {
         return queryFactory
-                .select(new QTodoResponseDto(member.nickname, todo.isComplete, todo.addDate, todo.count()))
+                .select(new QTodoResponseDto(todo.nickname, todo.isComplete, todo.addDate, todo.count()))
                 .from(todo)
-                .join(todo.member, member)
-                .where(todo.addDate.eq(yesterDay))
-                .groupBy(todo.addDate, member.nickname, todo.isComplete)
+//                .where(todo.addDate.eq(yesterDay)) //실 서비스에서는 하루 단위로 스케쥴러
+                .where(todo.addDate.between(yesterDay.minusDays(30), yesterDay))
+                .groupBy(todo.addDate, todo.nickname, todo.isComplete)
                 .fetch();
     }
 
     public List<AchievementResponseDto> getRankTable(LocalDate stardDate, LocalDate endDate) {
         return queryFactory
-                .select(new QAchievementResponseDto(rank.nickname, rank.addDate, rank.score.sum()))
+                .select(new QAchievementResponseDto(rank.nickname, MathExpressions.round(rank.score.sum(),2)))
                 .from(rank)
                 .where(rank.addDate.between(stardDate,endDate))
                 .groupBy(rank.nickname)

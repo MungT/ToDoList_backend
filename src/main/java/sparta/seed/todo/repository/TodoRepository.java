@@ -6,5 +6,5 @@ import sparta.seed.todo.domain.Todo;
 
 public interface TodoRepository extends JpaRepository<Todo,Long>, TodoRepositoryCustom {
 
-    boolean existsByMember(Member member);
+    boolean existsByNickname(String nickname);
 }

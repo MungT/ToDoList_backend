@@ -51,7 +51,6 @@ public class TokenProvider {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-
         UserDetailsImpl userDetails = (UserDetailsImpl)authentication.getPrincipal();
         Member member = userDetails.getMember();
 

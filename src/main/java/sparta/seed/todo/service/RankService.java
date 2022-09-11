@@ -39,7 +39,6 @@ public class RankService {
 
         return rankRepository.getRankTable(startDate, endDate);
 
-
     }
     //없을 시 빈 리스트 반환
     public void saveRankTable() {
@@ -50,7 +49,7 @@ public class RankService {
         List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
         List<Rank> rankList = new ArrayList<>();
 
-        List<TodoResponseDto> todoResponseDtoList = rankRepository.getDaylyAchievementRate(yesterDay);
+        List<TodoResponseDto> todoResponseDtoList = rankRepository.saveRankTable(yesterDay);
         //데이터가 없거나 true or false로 하나만 있을 경우
         switch (todoResponseDtoList.size()) {
             case 0:
@@ -108,15 +107,17 @@ public class RankService {
                         achievementResponseDtoList.add(AchievementResponseDto.builder()
                                 .totalCnt(totalCnt)
                                 .completeCnt(totalCnt)
-                                .achievementRate(100 + "%")
+                                .achievementRate(100)
                                 .addDate(todoResponseDtoList.get(i).getAddDate())
+                                .nickname(todoResponseDtoList.get(i).getNickname())
                                 .build());
                     } else {
                         achievementResponseDtoList.add(AchievementResponseDto.builder()
                                 .totalCnt(totalCnt)
                                 .completeCnt(0)
-                                .achievementRate(0 + "%")
+                                .achievementRate(0)
                                 .addDate(todoResponseDtoList.get(i).getAddDate())
+                                .nickname(todoResponseDtoList.get(i).getNickname())
                                 .build());
                     }
                 }

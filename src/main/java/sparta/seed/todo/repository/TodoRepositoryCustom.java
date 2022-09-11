@@ -17,5 +17,6 @@ public interface TodoRepositoryCustom {
     List<TodoResponseDto> getDaylyAchievementRate(LocalDate stardDate, LocalDate endDate, Member memeber);
     List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member memeber);
     TodoDateResponseDto getFirstandLastTodoAddDate(Member member);
+    List<TodoResponseDto> getTotalAchievementRate(Member member);
 }
 

@@ -66,7 +66,11 @@ public class TodoController {
         return ResponseEntity.ok()
                 .body(todoService.getWeeklyAchievementRate(userDetailsImpl));
     }
-
+    @GetMapping("/api/todo/achievement/total")
+    public ResponseEntity<AchievementResponseDto> getTotalAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+        return ResponseEntity.ok()
+                .body(todoService.getTotalAchievementRate(userDetailsImpl));
+    }
     @GetMapping("/api/test")
     public void test(){
         todoService.test();

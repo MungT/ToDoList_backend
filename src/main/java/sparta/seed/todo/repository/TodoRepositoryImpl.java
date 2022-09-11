@@ -57,7 +57,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
         return queryFactory
                 .select(new QTodoResponseDto(todo.isComplete, todo.count()))
                 .from(todo)
-//                .where(todo.member.eq(member), //가짜데이터라 주석처리
+                .where(todo.nickname.eq(member.getNickname()))
                 .where(todo.addDate.between(stardDate, endDate))
                 .groupBy(todo.isComplete)
                 .fetch();
@@ -67,7 +67,15 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
         return queryFactory
                 .select(new QTodoDateResponseDto(todo.addDate.min(), todo.addDate.max()))
                 .from(todo)
-//                .where(todo.member.eq(member))   //가짜데이터를 사용했기때문에 주석처리
+                .where(todo.nickname.eq(member.getNickname()))
                 .fetchOne();
+    }
+    public List<TodoResponseDto> getTotalAchievementRate(Member member) {
+        return queryFactory
+                .select(new QTodoResponseDto(todo.isComplete,todo.addDate, todo.count()))
+                .from(todo)
+                .where(todo.nickname.eq(member.getNickname())) //가짜데이터라 주석처리
+                .groupBy(todo.addDate, todo.isComplete)
+                .fetch();
     }
 }

@@ -223,13 +223,6 @@ public class TodoService {
                 achievementResponseDtoList.add(null);
             }
 
-//                achievementResponseDtoList.add(AchievementResponseDto.builder()
-//                        .totalCnt(totalCnt)
-//                        .completeCnt(0)
-//                        .achievementRate(Math.round(percent * 10000) / 100.0 + "%")
-//                        .build());
-
-
             if (endDate.equals(lastTodoAddDate))
                 break;
 
@@ -239,6 +232,36 @@ public class TodoService {
         return achievementResponseDtoList;
     }
 
+    public AchievementResponseDto getTotalAchievementRate(UserDetailsImpl userDetailsImpl) {
+        Member member = userDetailsImpl.getMember();
+
+        List<TodoResponseDto> todoResponseDtoList = todoRepository.getTotalAchievementRate(member);
+        switch (todoResponseDtoList.size()) {
+            case 0:
+                throw new CustomException(ErrorCode.TODO_NOT_FOUND);
+            case 1:
+                if (todoResponseDtoList.get(0).isComplete()) {
+                    return AchievementResponseDto.builder()
+                            .totalCnt(todoResponseDtoList.get(0).getCount())
+                            .completeCnt(todoResponseDtoList.get(0).getCount())
+                            .achievementRate(100)
+                            .build();
+                } else {
+                    return AchievementResponseDto.builder()
+                            .totalCnt(todoResponseDtoList.get(0).getCount())
+                            .completeCnt(0)
+                            .achievementRate(0)
+                            .build();
+                }
+        }
+        long totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
+        float percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
+        return AchievementResponseDto.builder()
+                .totalCnt(totalCnt)
+                .completeCnt(todoResponseDtoList.get(1).getCount())
+                .achievementRate(Math.round(percent * 10000) / 100.0)
+                .build();
+    }
 
     public void isWriter(Todo todo, Member member) {
 

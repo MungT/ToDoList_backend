@@ -30,15 +30,21 @@ public class RankService {
         //주간 랭킹 점수
         LocalDate endDate = timeCustom.currentDate();
         LocalDate startDate;
-        if(range == 7) {
+        if (range == 7) {
             startDate = endDate.minusDays(endDate.getDayOfWeek().getValue());
-        }else {
+        } else {
             //월간 랭킹 점수
             startDate = endDate.minusDays(endDate.getDayOfMonth() - 1);
         }
-
-        return rankRepository.getRankTable(startDate, endDate);
-
+        List<AchievementResponseDto> achievementResponseDtoList = rankRepository.getRankTable(startDate, endDate);
+        achievementResponseDtoList.get(0).setRank(1);
+        int a = 1;
+        for (int i = 1; i < achievementResponseDtoList.size(); i++) {
+            if (achievementResponseDtoList.get(i).getScore() != achievementResponseDtoList.get(i - 1).getScore()) {
+                achievementResponseDtoList.get(i).setRank(++a);
+            }
+        }
+        return achievementResponseDtoList;
     }
     //없을 시 빈 리스트 반환
     public void saveRankTable() {

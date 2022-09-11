@@ -15,6 +15,8 @@ public class AchievementResponseDto {
     private String nickname;
     private LocalDate addDate;
 
+    private int rank;
+
     @Builder
     public AchievementResponseDto(double achievementRate,double score, long totalCnt, long completeCnt, String nickname, LocalDate addDate) {
         this.achievementRate = achievementRate;
@@ -29,6 +31,10 @@ public class AchievementResponseDto {
     public AchievementResponseDto(String nickname, double score) {
         this.score = score;
         this.nickname = nickname;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 }
 

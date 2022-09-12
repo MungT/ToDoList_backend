@@ -1,19 +1,25 @@
 package sparta.seed.todo.repository;
 
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.MathExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import sparta.seed.todo.domain.QAchievement;
+import sparta.seed.todo.domain.QRank;
+import sparta.seed.todo.domain.Rank;
 import sparta.seed.todo.dto.AchievementResponseDto;
 import sparta.seed.todo.dto.QAchievementResponseDto;
-import sparta.seed.todo.dto.QTodoResponseDto;
-import sparta.seed.todo.dto.TodoResponseDto;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-import static sparta.seed.todo.domain.QRank.rank;
-import static sparta.seed.todo.domain.QTodo.todo;
+import static sparta.seed.todo.domain.QAchievement.*;
+import static sparta.seed.todo.domain.QRank.*;
 
 
 public class RankRepositoryImpl implements RankRepositoryCustom {
@@ -23,52 +29,38 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-//    public List<TodoResponseDto> getAchievementRateByDate(LocalDate selectedDate, Member member){
-//        return queryFactory
-//                .select(new QTodoResponseDto(todo.isComplete, todo.count()))
-//                .from(todo)
-//                .where(todo.member.eq(member),
-//                        todo.addDate.eq(selectedDate))
-//                .groupBy(todo.isComplete)
-//                .fetch();
-//    }
-
-    public List<TodoResponseDto> saveRankTable(LocalDate yesterDay) {
+    public List<AchievementResponseDto> saveRank(LocalDate stardDate, LocalDate endDate) {
         return queryFactory
-                .select(new QTodoResponseDto(todo.nickname, todo.isComplete, todo.addDate, todo.count()))
-                .from(todo)
-//                .where(todo.addDate.eq(yesterDay)) //실 서비스에서는 하루 단위로 스케쥴러
-                .where(todo.addDate.between(yesterDay.minusDays(30), yesterDay))
-                .groupBy( todo.nickname,todo.addDate, todo.isComplete)
+                .select(new QAchievementResponseDto(achievement.nickname, MathExpressions.round(achievement.score.sum(),2)))
+                .from(achievement)
+                .where(achievement.addDate.between(stardDate,endDate))
+                .groupBy(achievement.nickname)
+                .orderBy(achievement.score.sum().asc())
                 .fetch();
     }
+    public Slice<AchievementResponseDto> getWeeklyPage(Pageable pageable) {
+        QueryResults<Rank> result = queryFactory
+                .selectFrom(rank)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .where(rank.category.eq("주간"))
+                .orderBy(rank.ranking.asc())
+                .fetchResults();
 
-    public List<AchievementResponseDto> getRankTable(LocalDate stardDate, LocalDate endDate) {
-        return queryFactory
-                .select(new QAchievementResponseDto(rank.nickname, MathExpressions.round(rank.score.sum(),2)))
-                .from(rank)
-                .where(rank.addDate.between(stardDate,endDate))
-                .groupBy(rank.nickname)
-                .orderBy(rank.score.sum().desc())
-                .fetch();
+        List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
+        for (Rank eachRank : result.getResults()) {
+            achievementResponseDtoList.add(AchievementResponseDto.builder()
+                    .achievementRate(eachRank.getScore())
+                    .nickname(eachRank.getNickname())
+                    .rank(eachRank.getRanking())
+                    .build());
+        }
+
+        boolean hasNext = false;
+        if (achievementResponseDtoList.size() > pageable.getPageSize()) {
+            achievementResponseDtoList.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+        return new SliceImpl<>(achievementResponseDtoList, pageable, hasNext);
     }
-
-
-//    public List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member) {
-//        return queryFactory
-//                .select(new QTodoResponseDto(todo.isComplete, todo.count()))
-//                .from(todo)
-////                .where(todo.member.eq(member), //가짜데이터라 주석처리
-//                .where(todo.addDate.between(stardDate, endDate))
-//                .groupBy(todo.isComplete)
-//                .fetch();
-//    }
-//
-//    public TodoDateResponseDto getFirstandLastTodoAddDate(Member member) {
-//        return queryFactory
-//                .select(new QTodoDateResponseDto(todo.addDate.min(), todo.addDate.max()))
-//                .from(todo)
-////                .where(todo.member.eq(member))   //가짜데이터를 사용했기때문에 주석처리
-//                .fetchOne();
-//    }
 }

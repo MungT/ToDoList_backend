@@ -50,27 +50,6 @@ public class TodoController {
                 .body(Message.TODO_DELETE_SUCCESS.getMessage());
     }
 
-    @GetMapping("/api/todo/achievement")
-    public ResponseEntity<AchievementResponseDto> getAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        return ResponseEntity.ok()
-                .body(todoService.getAchievementRate(userDetailsImpl));
-    }
-
-    @GetMapping("/api/todo/achievement/dayly")
-    public ResponseEntity<List<AchievementResponseDto>> getDaylyAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
-        return ResponseEntity.ok()
-                .body(todoService.getDaylyAchievementRate(userDetailsImpl));
-    }
-    @GetMapping("/api/todo/achievement/weekly")
-    public ResponseEntity<List<AchievementResponseDto>> getWeeklyAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        return ResponseEntity.ok()
-                .body(todoService.getWeeklyAchievementRate(userDetailsImpl));
-    }
-    @GetMapping("/api/todo/achievement/total")
-    public ResponseEntity<AchievementResponseDto> getTotalAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        return ResponseEntity.ok()
-                .body(todoService.getTotalAchievementRate(userDetailsImpl));
-    }
     @GetMapping("/api/test")
     public void test(){
         todoService.test();

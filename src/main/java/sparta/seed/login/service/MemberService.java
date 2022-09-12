@@ -3,6 +3,7 @@ package sparta.seed.login.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,7 @@ public class MemberService {
 
 
     @Transactional
-    public Member signup(SocialMemberRequestDto socialMemberRequestDto, UserDetailsImpl userDetailsImpl) {
+    public Member signup(SocialMemberRequestDto socialMemberRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         Member member = userDetailsImpl.getMember();
         member.setNickname(socialMemberRequestDto.getNickname());
         member.setHighschool(socialMemberRequestDto.getHighschool());

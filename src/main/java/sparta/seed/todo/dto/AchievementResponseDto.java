@@ -17,13 +17,14 @@ public class AchievementResponseDto {
     private long plannerCnt;
 
     @Builder
-    public AchievementResponseDto(double achievementRate, long totalCnt, long completeCnt, String nickname, LocalDate addDate, long plannerCnt) {
+    public AchievementResponseDto(double achievementRate, long totalCnt, long completeCnt, String nickname, LocalDate addDate, long plannerCnt, int rank) {
         this.achievementRate = achievementRate;
         this.totalCnt = totalCnt;
         this.completeCnt = completeCnt;
         this.nickname = nickname;
         this.addDate = addDate;
         this.plannerCnt = plannerCnt;
+        this.rank = rank;
     }
 
     @QueryProjection

@@ -69,6 +69,15 @@ jobs:
           echo "${{ secrets.OAUTH_PROPERTIES }}" > ./application-oauth.properties
         shell: bash
 
+      ## 빌드 전 MYSQL 실행
+      - name: Setup MySQL
+        uses: samin/mysql-action@v1
+        with:
+          character set server: 'utf8'
+          mysql database: ${{ secrets.MYSQL_DBNAME }}
+          mysql user: ${{ secrets.MYSQL_USERNAME }}
+          mysql password: ${{ secrets.MYSQL_PASSWORD }} # github Secret 탭에서 설정하세요!
+
         ### Gradle ###
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew

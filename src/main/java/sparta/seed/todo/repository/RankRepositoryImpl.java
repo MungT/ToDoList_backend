@@ -45,7 +45,7 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .where(rank.category.eq("주간"))
-                .orderBy(rank.ranking.asc())
+                .orderBy(rank.ranking.asc(), rank.id.asc())
                 .fetchResults();
 
         List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();

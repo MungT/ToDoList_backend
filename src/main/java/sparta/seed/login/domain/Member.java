@@ -27,6 +27,8 @@ public class Member {
   @Enumerated(EnumType.STRING)
   private Authority authority;
 
+
+
   private String profileImage;
 
   private String highschool;
@@ -61,6 +63,10 @@ public class Member {
 
   public void setMyMotto(String myMotto) {
     this.myMotto = myMotto;
+  }
+
+  public void setProfileImage(String profileImage) {
+    this.profileImage = profileImage;
   }
 
 }

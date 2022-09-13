@@ -1,10 +1,13 @@
 package sparta.seed.login.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import sparta.seed.image.domain.Image;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,13 +30,15 @@ public class Member {
   @Enumerated(EnumType.STRING)
   private Authority authority;
 
-
-
   private String profileImage;
 
   private String highschool;
   private String grade;
   private String myMotto;
+
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @JsonManagedReference //DB연관관계 무한회귀 방지
+  private List<Image> imgList;
 
   @Builder
   public Member(Long id, String username, String password, String nickname, String socialId, Authority authority, String profileImage, String highschool, String grade, String myMotto) {
@@ -67,6 +72,9 @@ public class Member {
 
   public void setProfileImage(String profileImage) {
     this.profileImage = profileImage;
+  }
+  public void deleteImg(Image image) {
+    this.imgList.remove(image);
   }
 
 }

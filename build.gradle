@@ -55,7 +55,7 @@ dependencies {
 
     //	이미지업로드 aws관련 의존성
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.0.1.RELEASE'
-//    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {

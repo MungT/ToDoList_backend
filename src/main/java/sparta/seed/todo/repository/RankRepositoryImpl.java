@@ -31,13 +31,14 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
 
     public List<AchievementResponseDto> saveRank(LocalDate stardDate, LocalDate endDate) {
         return queryFactory
-                .select(new QAchievementResponseDto(achievement.nickname, MathExpressions.round(achievement.score.sum(),2)))
+                .select(new QAchievementResponseDto(achievement.nickname, MathExpressions.round(achievement.score.sum(), 2)))
                 .from(achievement)
-                .where(achievement.addDate.between(stardDate,endDate))
+                .where(achievement.addDate.between(stardDate, endDate))
                 .groupBy(achievement.nickname)
-                .orderBy(achievement.score.sum().asc())
+                .orderBy(achievement.score.sum().desc())
                 .fetch();
     }
+
     public Slice<AchievementResponseDto> getWeeklyPage(Pageable pageable) {
         QueryResults<Rank> result = queryFactory
                 .selectFrom(rank)
@@ -50,6 +51,7 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
         List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
         for (Rank eachRank : result.getResults()) {
             achievementResponseDtoList.add(AchievementResponseDto.builder()
+                    .id(eachRank.getId())
                     .achievementRate(eachRank.getScore())
                     .nickname(eachRank.getNickname())
                     .rank(eachRank.getRanking())

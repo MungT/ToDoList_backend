@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.dto.*;
 import sparta.seed.login.repository.MemberRepository;
@@ -33,8 +34,10 @@ public class RegisterController {
         return ResponseEntity.ok()
                 .body(memberService.signup(socialMemberRequestDto,userDetailsImpl));
     }
-    @PostMapping("/reissue")  //재발급을 위한 로직
+    @PostMapping("/api/reissue")  //재발급을 위한 로직
     public ResponseEntity<MemberResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
         return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
     }
+
+
 }

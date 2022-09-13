@@ -37,4 +37,9 @@ public class RankController {
     public Slice<AchievementResponseDto> getWeeklyPage(Pageable pageable) {
         return rankRepository.getWeeklyPage(pageable);
     }
+//    @GetMapping("/api/rank/monthly")
+//    public Slice<AchievementResponseDto> getMonthlyPage(Pageable pageable) {
+//        return rankRepository.getMonthlyPage(pageable);
+//    }
+
 }

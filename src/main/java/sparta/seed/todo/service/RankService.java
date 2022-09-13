@@ -45,6 +45,7 @@ public class RankService {
 
         for (AchievementResponseDto achievementResponseDto : achievementResponseDtoList) {
             rankList.add(Rank.builder()
+                    .id(achievementResponseDto.getId())
                     .nickname(achievementResponseDto.getNickname())
                     .ranking(achievementResponseDto.getRank())
                     .score(achievementResponseDto.getAchievementRate())

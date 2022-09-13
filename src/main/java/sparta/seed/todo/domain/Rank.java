@@ -29,7 +29,8 @@ public class Rank {
     private String category;
 
     @Builder
-    public Rank(int ranking, String nickname,double score, String category) {
+    public Rank(Long id, int ranking, String nickname,double score, String category) {
+        this.id = id;
         this.ranking = ranking;
         this.score = score;
         this.nickname = nickname;

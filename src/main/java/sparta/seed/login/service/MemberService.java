@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.jwt.TokenProvider;
@@ -38,7 +39,6 @@ public class MemberService {
 
         return Message.AVAILABLE_NICK.getMessage();
     }
-
 
     @Transactional
     public Member signup(SocialMemberRequestDto socialMemberRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
@@ -79,5 +79,4 @@ public class MemberService {
         // 토큰 발급
         return tokenDto;
     }
-
 }

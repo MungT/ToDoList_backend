@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @Getter
 public class AchievementResponseDto {
+    private long id;
     private double achievementRate;
     private long totalCnt;
     private long completeCnt;
@@ -17,7 +18,8 @@ public class AchievementResponseDto {
     private long plannerCnt;
 
     @Builder
-    public AchievementResponseDto(double achievementRate, long totalCnt, long completeCnt, String nickname, LocalDate addDate, long plannerCnt, int rank) {
+    public AchievementResponseDto(long id, double achievementRate, long totalCnt, long completeCnt, String nickname, LocalDate addDate, long plannerCnt, int rank) {
+        this.id = id;
         this.achievementRate = achievementRate;
         this.totalCnt = totalCnt;
         this.completeCnt = completeCnt;

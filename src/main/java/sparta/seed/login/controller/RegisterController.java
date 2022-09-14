@@ -34,6 +34,10 @@ public class RegisterController {
         return ResponseEntity.ok()
                 .body(memberService.signup(socialMemberRequestDto,userDetailsImpl));
     }
+    @PostMapping("/api/motto")
+    public ResponseEntity<String> updateMotto(String myMotto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+        return ResponseEntity.ok(memberService.updateMotto(myMotto, userDetailsImpl));
+    }
     @PostMapping("/api/reissue")  //재발급을 위한 로직
     public ResponseEntity<MemberResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
         return ResponseEntity.ok(memberService.reissue(tokenRequestDto));

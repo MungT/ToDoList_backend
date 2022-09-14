@@ -8,7 +8,8 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 
-import static sparta.seed.todo.domain.QTodo.todo;
+import static sparta.seed.todo.domain.QTodo.*;
+
 
 public class AchievementRepositoryImpl {
 

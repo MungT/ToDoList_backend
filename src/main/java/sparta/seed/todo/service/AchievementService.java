@@ -29,7 +29,7 @@ public class AchievementService {
     public AchievementResponseDto getAchievementRate(UserDetailsImpl userDetailsImpl) {
         LocalDate selectedDate = timeCustom.currentDate();
 
-        List<TodoResponseDto> todoResponseDtoList = todoRepository.getAchievementRateByDate(selectedDate, userDetailsImpl.getMember());
+        List<TodoResponseDto> todoResponseDtoList = achievementRepository.getAchievementRateByDate(selectedDate, userDetailsImpl.getMember());
         switch (todoResponseDtoList.size()) {
             case 0:
                 throw new CustomException(ErrorCode.TODO_NOT_FOUND);
@@ -65,7 +65,7 @@ public class AchievementService {
 
         List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
 
-        List<TodoResponseDto> todoResponseDtoList = todoRepository.getDaylyAchievementRate(startDate, endDate, userDetailsImpl.getMember());
+        List<TodoResponseDto> todoResponseDtoList = achievementRepository.getDaylyAchievementRate(startDate, endDate, userDetailsImpl.getMember());
         //데이터가 없거나 true or false로 하나만 있을 경우
         switch (todoResponseDtoList.size()) {
             case 0:
@@ -143,7 +143,7 @@ public class AchievementService {
 
         List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
         do {
-            List<TodoResponseDto> todoResponseDtoList = todoRepository.getWeeklyAchievementRate(startDate, endDate, member);
+            List<TodoResponseDto> todoResponseDtoList = achievementRepository.getWeeklyAchievementRate(startDate, endDate, member);
             long totalCnt;
             float percent;
             if (todoResponseDtoList.size() == 2) {
@@ -186,7 +186,7 @@ public class AchievementService {
     public AchievementResponseDto getTotalAchievementRate(UserDetailsImpl userDetailsImpl) {
         Member member = userDetailsImpl.getMember();
 
-        List<TodoResponseDto> todoResponseDtoList = todoRepository.getTotalAchievementRate(member);
+        List<TodoResponseDto> todoResponseDtoList = achievementRepository.getTotalAchievementRate(member);
         switch (todoResponseDtoList.size()) {
             case 0:
                 throw new CustomException(ErrorCode.TODO_NOT_FOUND);

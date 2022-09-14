@@ -20,19 +20,19 @@ import java.util.List;
 public class TodoController {
 
     private final TodoService todoService;
-
+    //투두 조회
     @GetMapping("/api/todo")
     public ResponseEntity<List<TodoResponseDto>> getTodo(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {//@RequestParam을 선언 안해줘도 VO를 넣어주면 일치하는 VO의 멤버변수에 값이 들어간다.
         return ResponseEntity.ok()
                 .body(todoService.getTodo(userDetailsImpl));
     }
-
+    //투두 추가
     @PostMapping("/api/todo")
     public ResponseEntity<TodoResponseDto> addTodo(@Valid @RequestBody TodoRequestDto todoRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         return ResponseEntity.ok()
                 .body(todoService.addTodo(todoRequestDto, userDetailsImpl));
     }
-
+    //투두 완료 및 수정
     @PutMapping("/api/todo/{todoId}")
     public ResponseEntity<String> updateTodo(
             @PathVariable Long todoId,
@@ -42,7 +42,7 @@ public class TodoController {
         return ResponseEntity.ok()
                 .body(Message.TODO_UPDATE_SUCCESS.getMessage());
     }
-
+    //투두 삭제
     @DeleteMapping("/api/todo/{todoId}")
     public ResponseEntity<String> deleteTodo(@PathVariable Long todoId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         todoService.deleteTodo(todoId, userDetails);

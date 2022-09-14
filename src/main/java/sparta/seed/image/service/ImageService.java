@@ -29,6 +29,7 @@ public class ImageService {
     private final DeletedUrlPathRepository deletedUrlPathRepository;
     private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
+
     @Transactional
     public String saveProfileImage(MultipartFile multipartFile, UserDetailsImpl userDetailsImpl) throws IOException {
         if (multipartFile.isEmpty())
@@ -38,47 +39,61 @@ public class ImageService {
         Member member = getMember(userDetailsImpl);
         saveDeletedUrlPath(member);
 
-        member.setProfileImage(s3Dto.getFileName());
+        member.setProfileImage(s3Dto.getUploadImageUrl());
         memberRepository.save(member);
 
         return s3Dto.getUploadImageUrl();
     }
+
     @Transactional
     public String deleteProfileImage(UserDetailsImpl userDetailsImpl) {
         Member member = getMember(userDetailsImpl);
+//        Member member = userDetailsImpl.getMember();
         saveDeletedUrlPath(member);
         member.setProfileImage(null); //기본 이미지 만들어지면 해당 주소 넣기
-        return Message.PROFILE_IMAGE_DELETE_SUCCESS.getMessage();
+        return Message.IMAGE_DELETE_SUCCESS.getMessage();
     }
 
-    public String saveBoastImage(List<MultipartFile> multipartFileList, UserDetailsImpl userDetailsImpl) throws IOException {
-        if (multipartFileList.isEmpty())
+    public List<String> getBoastImage(UserDetailsImpl userDetailsImpl) {
+        if (!imageRepository.existsByMember(userDetailsImpl.getMember()))
+            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+
+        return imageRepository.getBoastImage(userDetailsImpl.getId());
+    }
+
+    public String saveBoastImage(MultipartFile multipartFile, UserDetailsImpl userDetailsImpl) throws IOException {
+        if (multipartFile.isEmpty())
             throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
         Member member = getMember(userDetailsImpl);
 
-        List<Image> imgList = new ArrayList<>();
-        for (MultipartFile file : multipartFileList) {
-            S3Dto s3Dto = s3Uploader.upload(file);
-            Image image = Image.builder()
-                    .imgUrl(s3Dto.getUploadImageUrl())
-                    .urlPath(s3Dto.getFileName())
-                    .member(member)
-                    .build();
-            imgList.add(image);
-        }
-        imageRepository.saveAll(imgList);
+        S3Dto s3Dto = s3Uploader.upload(multipartFile);
+        Image image = Image.builder()
+                .imgUrl(s3Dto.getUploadImageUrl())
+                .urlPath(s3Dto.getFileName())
+                .member(member)
+                .build();
+
+        imageRepository.save(image);
         return Message.IMAGE_UPLOAD_SUCCESS.getMessage();
     }
-
-    public Member getMember(UserDetailsImpl userDetailsImpl){
+    @Transactional
+    public String deleteBoastImage(Long boastId) {
+        if(!imageRepository.existsById(boastId))
+            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+        imageRepository.deleteById(boastId);
+        return Message.IMAGE_DELETE_SUCCESS.getMessage();
+    }
+    public Member getMember(UserDetailsImpl userDetailsImpl) {
         return memberRepository.findByNickname(userDetailsImpl.getNickname())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
-    public void saveDeletedUrlPath(Member member){
+
+    public void saveDeletedUrlPath(Member member) {
         DeletedUrlPath deletedUrlPath = new DeletedUrlPath();
         deletedUrlPath.setDeletedUrlPath(member.getProfileImage());
         deletedUrlPathRepository.save(deletedUrlPath);
     }
+
     public void removeS3Image() {
         List<DeletedUrlPath> deletedUrlPathList = deletedUrlPathRepository.findAll();
         for (DeletedUrlPath deletedUrlPath : deletedUrlPathList) {
@@ -86,5 +101,7 @@ public class ImageService {
         }
         deletedUrlPathRepository.deleteAll();
     }
+
+
 
 }

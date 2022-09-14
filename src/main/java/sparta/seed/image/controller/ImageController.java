@@ -22,27 +22,31 @@ import java.util.List;
 public class ImageController {
 
     private final ImageService imageService;
-    private final ImageRepository imageRepository;
 
+    //프로필 이미지 등록
     @PostMapping("/profile")
     public ResponseEntity<String> saveProfileImage(@RequestPart MultipartFile multipartFile, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) throws IOException {
         return ResponseEntity.ok(imageService.saveProfileImage(multipartFile, userDetailsImpl));
     }
+    //프로필 이미지 삭제
     @DeleteMapping("/profile")
     public ResponseEntity<String> deleteProfileImage(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
         return ResponseEntity.ok(imageService.deleteProfileImage(userDetailsImpl));
     }
-
+    //자랑 이미지
     @GetMapping("/boast")
-    public List<String> getBoastImage(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
-        return imageRepository.getBoastImage(userDetailsImpl.getId());
+    public ResponseEntity<List<String>> getBoastImage(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+        return ResponseEntity.ok(imageService.getBoastImage(userDetailsImpl));
     }
-    @PostMapping(value = "/boast")
-    public ResponseEntity<String> saveBoastImage(@RequestPart List<MultipartFile> multipartFileList, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) throws IOException {
+    @PostMapping("/boast")
+    public ResponseEntity<String> saveBoastImage(@RequestPart MultipartFile multipartFile, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) throws IOException {
 
-        return ResponseEntity.ok(imageService.saveBoastImage(multipartFileList, userDetailsImpl));
+        return ResponseEntity.ok(imageService.saveBoastImage(multipartFile, userDetailsImpl));
     }
-
+    @DeleteMapping("/boast/{boastId}")
+    public ResponseEntity<String> deleteBoastImage(@PathVariable Long boastId){
+        return ResponseEntity.ok(imageService.deleteBoastImage(boastId));
+    }
     @DeleteMapping(value = "/delete")
     public void removeS3Image() {
         imageService.removeS3Image();

@@ -49,7 +49,12 @@ public class MemberService {
         System.out.println(member);
         return memberRepository.save(member);
     }
-
+    @Transactional
+    public String updateMotto(String myMotto, UserDetailsImpl userDetailsImpl) {
+        Member member = userDetailsImpl.getMember();
+        member.setMyMotto(myMotto);
+        return Message.MYMOTTO_UPDATE_SUCCESS.getMessage();
+    }
     @Transactional
     public MemberResponseDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
@@ -79,4 +84,6 @@ public class MemberService {
         // 토큰 발급
         return tokenDto;
     }
+
+
 }

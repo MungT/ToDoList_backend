@@ -9,7 +9,8 @@ public enum Message {
     TODO_DELETE_SUCCESS("투두 삭제 완료"),
     //이미지 관련
     PROFILE_IMAGE_DELETE_SUCCESS("프로필 이미지 삭제 완료"),
-    IMAGE_UPLOAD_SUCCESS("이미지 업로드 완료");
+    IMAGE_UPLOAD_SUCCESS("이미지 업로드 완료"),
+    MYMOTTO_UPDATE_SUCCESS("좌우명 등록 완료");
     private final String message;
 
     public String getMessage() {

@@ -66,6 +66,32 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
         }
         return new SliceImpl<>(achievementResponseDtoList, pageable, hasNext);
     }
+    public Slice<AchievementResponseDto> getMonthlyPage(Pageable pageable) {
+        QueryResults<Rank> result = queryFactory
+                .selectFrom(rank)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .where(rank.category.eq("월간"))
+                .orderBy(rank.ranking.asc(), rank.id.asc())
+                .fetchResults();
+
+        List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
+        for (Rank eachRank : result.getResults()) {
+            achievementResponseDtoList.add(AchievementResponseDto.builder()
+                    .id(eachRank.getId())
+                    .achievementRate(eachRank.getScore())
+                    .nickname(eachRank.getNickname())
+                    .rank(eachRank.getRanking())
+                    .build());
+        }
+
+        boolean hasNext = false;
+        if (achievementResponseDtoList.size() > pageable.getPageSize()) {
+            achievementResponseDtoList.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+        return new SliceImpl<>(achievementResponseDtoList, pageable, hasNext);
+    }
 
     public Rank getLastweekRank(String nickname){
         return queryFactory

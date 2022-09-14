@@ -15,11 +15,13 @@ import java.util.List;
 public interface RankRepositoryCustom {
     List<AchievementResponseDto> saveRank(LocalDate stardDate, LocalDate endDate);
     Slice<AchievementResponseDto> getWeeklyPage(Pageable pageable);
+    Slice<AchievementResponseDto> getMonthlyPage(Pageable pageable);
     Rank getLastweekRank(String nickname);
     Rank getWeeklyRank(String nickname);
     Rank getMonthlyRank(String nickname);
     void deleteLastWeek(String lastWeek);
     void setThisWeekToLastWeek();
+
 
 
 }

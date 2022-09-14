@@ -46,10 +46,10 @@ public class RankController {
     public ResponseEntity<Slice<AchievementResponseDto>> getWeeklyPage(Pageable pageable) {
         return ResponseEntity.ok(rankRepository.getWeeklyPage(pageable));
     }
-//    @GetMapping("/api/rank/monthly")
-//    public Slice<AchievementResponseDto> getMonthlyPage(Pageable pageable) {
-//        return rankRepository.getMonthlyPage(pageable);
-//    }
+    @GetMapping("/api/rank/monthly")
+    public ResponseEntity<Slice<AchievementResponseDto>> getMonthlyPage(Pageable pageable) {
+        return ResponseEntity.ok(rankRepository.getMonthlyPage(pageable));
+    }
     @GetMapping("/api/rank/weekly/member")
     public ResponseEntity<Rank> getMonthlyRank(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         String nickname = userDetailsImpl.getNickname();

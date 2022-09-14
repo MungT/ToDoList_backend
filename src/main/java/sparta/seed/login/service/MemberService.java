@@ -8,15 +8,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.RefreshToken;
-import sparta.seed.login.dto.MemberResponseDto;
-import sparta.seed.login.dto.SocialMemberRequestDto;
-import sparta.seed.login.dto.TokenDto;
-import sparta.seed.login.dto.TokenRequestDto;
+import sparta.seed.login.dto.*;
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.login.repository.RefreshTokenRepository;
 import sparta.seed.message.Message;
@@ -42,17 +40,23 @@ public class MemberService {
 
     @Transactional
     public Member signup(SocialMemberRequestDto socialMemberRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        Member member = userDetailsImpl.getMember();
+        Member member = memberRepository.findById(userDetailsImpl.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         member.setNickname(socialMemberRequestDto.getNickname());
         member.setHighschool(socialMemberRequestDto.getHighschool());
         member.setGrade(socialMemberRequestDto.getGrade());
         System.out.println(member);
         return memberRepository.save(member);
     }
-    @Transactional
-    public String updateMotto(String myMotto, UserDetailsImpl userDetailsImpl) {
-        Member member = userDetailsImpl.getMember();
-        member.setMyMotto(myMotto);
+    public Member getMember(UserDetailsImpl userDetailsImpl) {
+        return memberRepository.findById(userDetailsImpl.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+    }
+    public String updateMotto(MottoRequestDto mottoRequestDto, UserDetailsImpl userDetailsImpl) {
+        Member member = memberRepository.findById(userDetailsImpl.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        member.setMyMotto(mottoRequestDto.getMyMotto());
+        memberRepository.save(member);
         return Message.MYMOTTO_UPDATE_SUCCESS.getMessage();
     }
     @Transactional
@@ -84,6 +88,7 @@ public class MemberService {
         // 토큰 발급
         return tokenDto;
     }
+
 
 
 }

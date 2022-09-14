@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class TestRunner {
-
+    //잔디 너무 아깝다
     @Component
     public class TestDataRunner implements ApplicationRunner {
 

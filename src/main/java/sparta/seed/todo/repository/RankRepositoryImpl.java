@@ -67,17 +67,24 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
         return new SliceImpl<>(achievementResponseDtoList, pageable, hasNext);
     }
 
-    public Rank getWeeklyRank(UserDetailsImpl userDetailsImpl) {
+    public Rank getLastweekRank(String nickname){
         return queryFactory
                 .selectFrom(rank)
-                .where(rank.nickname.eq(userDetailsImpl.getNickname()),
+                .where(rank.nickname.eq(nickname),
+                        rank.category.eq("지난 주"))
+                .fetchOne();
+    }
+    public Rank getWeeklyRank(String nickname) {
+        return queryFactory
+                .selectFrom(rank)
+                .where(rank.nickname.eq(nickname),
                         rank.category.eq("주간"))
                 .fetchOne();
     }
-    public Rank getMonthlyRank(UserDetailsImpl userDetailsImpl) {
+    public Rank getMonthlyRank(String nickname) {
         return queryFactory
                 .selectFrom(rank)
-                .where(rank.nickname.eq(userDetailsImpl.getNickname()),
+                .where(rank.nickname.eq(nickname),
                         rank.category.eq("월간"))
                 .fetchOne();
     }

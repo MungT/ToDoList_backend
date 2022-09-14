@@ -37,6 +37,11 @@ public class RankController {
         return ResponseEntity.ok()
                 .body(rankService.saveMonthlyRank());
     }
+    @GetMapping("/api/rank/lastweek")
+    public ResponseEntity<Rank> getLastweekRank(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+        String nickname = userDetailsImpl.getNickname();
+        return ResponseEntity.ok(rankRepository.getLastweekRank(nickname));
+    }
     @GetMapping("/api/rank/weekly")
     public ResponseEntity<Slice<AchievementResponseDto>> getWeeklyPage(Pageable pageable) {
         return ResponseEntity.ok(rankRepository.getWeeklyPage(pageable));
@@ -47,10 +52,12 @@ public class RankController {
 //    }
     @GetMapping("/api/rank/weekly/member")
     public ResponseEntity<Rank> getMonthlyRank(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        return ResponseEntity.ok(rankRepository.getWeeklyRank(userDetailsImpl));
+        String nickname = userDetailsImpl.getNickname();
+        return ResponseEntity.ok(rankRepository.getWeeklyRank(nickname));
     }
     @GetMapping("/api/rank/monthly/member")
     public ResponseEntity<Rank> getWeeklyRank(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        return ResponseEntity.ok(rankRepository.getMonthlyRank(userDetailsImpl));
+        String nickname = userDetailsImpl.getNickname();
+        return ResponseEntity.ok(rankRepository.getMonthlyRank(nickname));
     }
 }

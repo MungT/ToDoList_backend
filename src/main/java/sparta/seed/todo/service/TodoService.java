@@ -29,7 +29,7 @@ public class TodoService {
     public List<TodoResponseDto> getTodo(UserDetailsImpl userDetails) {
         LocalDate currentDate = timeCustom.currentDate();
 
-        return todoRepository.findAllbyAddDateAndMember(currentDate, userDetails.getMember());
+        return todoRepository.getTodo(currentDate, userDetails.getMember());
     }
 
     public TodoResponseDto addTodo(TodoRequestDto todoRequestDto, UserDetailsImpl userDetailsImpl) {

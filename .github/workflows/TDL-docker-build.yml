@@ -73,8 +73,10 @@ jobs:
       - name: Setup MySQL
         uses: samin/mysql-action@v1
         with:
+
           character set server: 'utf8'
           sql version: '8.0.23'
+          mysql database: ${{ secrets.MYSQL_DBNAME }}
           mysql user: ${{ secrets.MYSQL_USERNAME }}
           mysql password: ${{ secrets.MYSQL_PASSWORD }} # github Secret 탭에서 설정하세요!
 

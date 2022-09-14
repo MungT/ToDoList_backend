@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class TestRunner {
-    //포크 후 클론하여 내 깃헙에 커밋 테스트
+    //잔디 너무 아깝다
     @Component
     public class TestDataRunner implements ApplicationRunner {
 

@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.QAchievement;
 import sparta.seed.todo.domain.QRank;
 import sparta.seed.todo.domain.Rank;
@@ -64,5 +65,34 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
             hasNext = true;
         }
         return new SliceImpl<>(achievementResponseDtoList, pageable, hasNext);
+    }
+
+    public Rank getWeeklyRank(UserDetailsImpl userDetailsImpl) {
+        return queryFactory
+                .selectFrom(rank)
+                .where(rank.nickname.eq(userDetailsImpl.getNickname()),
+                        rank.category.eq("주간"))
+                .fetchOne();
+    }
+    public Rank getMonthlyRank(UserDetailsImpl userDetailsImpl) {
+        return queryFactory
+                .selectFrom(rank)
+                .where(rank.nickname.eq(userDetailsImpl.getNickname()),
+                        rank.category.eq("월간"))
+                .fetchOne();
+    }
+    public void deleteLastWeek(String lastWeek){
+        queryFactory
+                .delete(rank)
+                .where(rank.category.eq(lastWeek))
+                .execute();
+
+    }
+    public void setThisWeekToLastWeek(){
+        queryFactory
+                .update(rank)
+                .set(rank.category, "지난 주") //replace 함수로도 가능
+                .where(rank.category.eq("주간"))
+                .execute();
     }
 }

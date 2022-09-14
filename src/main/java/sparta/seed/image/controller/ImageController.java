@@ -38,12 +38,12 @@ public class ImageController {
         return imageRepository.getBoastImage(userDetailsImpl.getId());
     }
     @PostMapping(value = "/boast")
-    public void saveBoastImage(@RequestPart List<MultipartFile> multipartFileList, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) throws IOException {
+    public ResponseEntity<String> saveBoastImage(@RequestPart List<MultipartFile> multipartFileList, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) throws IOException {
 
-        imageService.saveBoastImage(multipartFileList, userDetailsImpl);
+        return ResponseEntity.ok(imageService.saveBoastImage(multipartFileList, userDetailsImpl));
     }
 
-    @DeleteMapping(value = "delete")
+    @DeleteMapping(value = "/delete")
     public void removeS3Image() {
         imageService.removeS3Image();
     }

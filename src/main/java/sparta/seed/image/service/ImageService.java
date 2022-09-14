@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
-import sparta.seed.exception.ErrorResponse;
 import sparta.seed.image.domain.DeletedUrlPath;
 import sparta.seed.image.domain.Image;
 import sparta.seed.image.repository.DeletedUrlPathRepository;
@@ -44,6 +43,7 @@ public class ImageService {
 
         return s3Dto.getUploadImageUrl();
     }
+    @Transactional
     public String deleteProfileImage(UserDetailsImpl userDetailsImpl) {
         Member member = getMember(userDetailsImpl);
         saveDeletedUrlPath(member);
@@ -51,7 +51,7 @@ public class ImageService {
         return Message.PROFILE_IMAGE_DELETE_SUCCESS.getMessage();
     }
 
-    public void saveBoastImage(List<MultipartFile> multipartFileList, UserDetailsImpl userDetailsImpl) throws IOException {
+    public String saveBoastImage(List<MultipartFile> multipartFileList, UserDetailsImpl userDetailsImpl) throws IOException {
         if (multipartFileList.isEmpty())
             throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
         Member member = getMember(userDetailsImpl);
@@ -67,6 +67,7 @@ public class ImageService {
             imgList.add(image);
         }
         imageRepository.saveAll(imgList);
+        return Message.IMAGE_UPLOAD_SUCCESS.getMessage();
     }
 
     public Member getMember(UserDetailsImpl userDetailsImpl){

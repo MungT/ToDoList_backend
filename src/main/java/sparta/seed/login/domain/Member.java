@@ -36,7 +36,7 @@ public class Member {
   private String grade;
   private String myMotto;
 
-  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
   @JsonManagedReference //DB연관관계 무한회귀 방지
   private List<Image> imgList;
 

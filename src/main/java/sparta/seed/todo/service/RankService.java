@@ -7,6 +7,7 @@ import sparta.seed.todo.dto.AchievementResponseDto;
 import sparta.seed.todo.repository.RankRepository;
 import sparta.seed.util.TimeCustom;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,14 @@ public class RankService {
 
     public List<Rank> saveWeeklyRank() {
         //주간 랭킹 점수
-        LocalDate endDate = timeCustom.currentDate().minusDays(1);
+        LocalDate currentDate = timeCustom.currentDate();
+        //월요일은 아직 랭킹 테이블에 안올라온 상태이기 때문에 문제없음
+        if(currentDate.getDayOfWeek().equals(DayOfWeek.WEDNESDAY)){ //원래는 Tuesday지만 테스트를 위해서 wednesday
+            rankRepository.deleteLastWeek("지난 주");
+            rankRepository.setThisWeekToLastWeek();
+        }
+
+        LocalDate endDate = currentDate.minusDays(1);
         LocalDate startDate = endDate.minusDays(endDate.getDayOfWeek().getValue()-1);
 
         List<Rank> rankList = new ArrayList<>();

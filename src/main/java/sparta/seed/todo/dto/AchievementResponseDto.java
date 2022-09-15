@@ -34,6 +34,11 @@ public class AchievementResponseDto {
         this.nickname = nickname;
         this.achievementRate = achievementRate;
     }
+    @QueryProjection
+    public AchievementResponseDto(double achievementRate, long plannerCnt) {
+        this.achievementRate = achievementRate;
+        this.plannerCnt = plannerCnt;
+    }
 
     public void setRank(int rank) {
         this.rank = rank;

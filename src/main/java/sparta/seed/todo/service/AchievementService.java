@@ -17,6 +17,7 @@ import sparta.seed.todo.repository.TodoRepository;
 import sparta.seed.util.TimeCustom;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +27,8 @@ public class AchievementService {
     private final TimeCustom timeCustom;
     private final TodoRepository todoRepository;
     private final AchievementRepository achievementRepository;
-    public AchievementResponseDto getAchievementRate(UserDetailsImpl userDetailsImpl) {
-        LocalDate selectedDate = timeCustom.currentDate();
+    public AchievementResponseDto getAchievementRate(String selectDate, UserDetailsImpl userDetailsImpl) {
+        LocalDate selectedDate = LocalDate.parse(selectDate, DateTimeFormatter.ISO_DATE);
 
         List<TodoResponseDto> todoResponseDtoList = achievementRepository.getAchievementRateByDate(selectedDate, userDetailsImpl.getMember());
         switch (todoResponseDtoList.size()) {
@@ -186,32 +187,39 @@ public class AchievementService {
     public AchievementResponseDto getTotalAchievementRate(UserDetailsImpl userDetailsImpl) {
         Member member = userDetailsImpl.getMember();
 
-        List<TodoResponseDto> todoResponseDtoList = achievementRepository.getTotalAchievementRate(member);
-        switch (todoResponseDtoList.size()) {
-            case 0:
-                throw new CustomException(ErrorCode.TODO_NOT_FOUND);
-            case 1:
-                if (todoResponseDtoList.get(0).isComplete()) {
-                    return AchievementResponseDto.builder()
-                            .totalCnt(todoResponseDtoList.get(0).getCount())
-                            .completeCnt(todoResponseDtoList.get(0).getCount())
-                            .achievementRate(100)
-                            .build();
-                } else {
-                    return AchievementResponseDto.builder()
-                            .totalCnt(todoResponseDtoList.get(0).getCount())
-                            .completeCnt(0)
-                            .achievementRate(0)
-                            .build();
-                }
-        }
-        long totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
-        float percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
+        AchievementResponseDto achievementResponseDto = achievementRepository.getTotalAchievementRate(member);
+        if(!achievementRepository.existsByNickname(member.getNickname()))
+            throw new CustomException(ErrorCode.TODO_NOT_FOUND);
         return AchievementResponseDto.builder()
-                .totalCnt(totalCnt)
-                .completeCnt(todoResponseDtoList.get(1).getCount())
-                .achievementRate(Math.round(percent * 10000) / 100.0)
+                .plannerCnt(achievementResponseDto.getPlannerCnt())
+                .achievementRate(achievementResponseDto.getAchievementRate()/achievementResponseDto.getPlannerCnt())
                 .build();
+//        List<TodoResponseDto>  todoResponseDtoList = achievementRepository.getTotalAchievementRate(member);
+//        switch (todoResponseDtoList.size()) {
+//            case 0:
+//                throw new CustomException(ErrorCode.TODO_NOT_FOUND);
+//            case 1:
+//                if (todoResponseDtoList.get(0).isComplete()) {
+//                    return AchievementResponseDto.builder()
+//                            .totalCnt(todoResponseDtoList.get(0).getCount())
+//                            .completeCnt(todoResponseDtoList.get(0).getCount())
+//                            .achievementRate(100)
+//                            .build();
+//                } else {
+//                    return AchievementResponseDto.builder()
+//                            .totalCnt(todoResponseDtoList.get(0).getCount())
+//                            .completeCnt(0)
+//                            .achievementRate(0)
+//                            .build();
+//                }
+//        }
+//        long totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
+//        float percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
+//        return AchievementResponseDto.builder()
+//                .totalCnt(totalCnt)
+//                .completeCnt(todoResponseDtoList.get(1).getCount())
+//                .achievementRate(Math.round(percent * 10000) / 100.0)
+//                .build();
 
     }
 

@@ -33,16 +33,18 @@ public class ImageController {
     public ResponseEntity<String> deleteProfileImage(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
         return ResponseEntity.ok(imageService.deleteProfileImage(userDetailsImpl));
     }
-    //자랑 이미지
+    //자랑 이미지 조회
     @GetMapping("/boast")
     public ResponseEntity<List<String>> getBoastImage(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
         return ResponseEntity.ok(imageService.getBoastImage(userDetailsImpl));
     }
+    //자랑 이미지 저장
     @PostMapping("/boast")
     public ResponseEntity<String> saveBoastImage(@RequestPart MultipartFile multipartFile, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) throws IOException {
 
         return ResponseEntity.ok(imageService.saveBoastImage(multipartFile, userDetailsImpl));
     }
+    //자랑 이미지 삭제
     @DeleteMapping("/boast/{boastId}")
     public ResponseEntity<String> deleteBoastImage(@PathVariable Long boastId){
         return ResponseEntity.ok(imageService.deleteBoastImage(boastId));

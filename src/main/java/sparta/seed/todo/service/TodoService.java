@@ -1,6 +1,7 @@
 package sparta.seed.todo.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.jni.Local;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import sparta.seed.todo.repository.TodoRepository;
 import sparta.seed.util.TimeCustom;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +28,10 @@ public class TodoService {
 
 
     //없을 시 빈 리스트 반환
-    public List<TodoResponseDto> getTodo(UserDetailsImpl userDetails) {
-        LocalDate currentDate = timeCustom.currentDate();
+    public List<TodoResponseDto> getTodo(String selectDate, UserDetailsImpl userDetails) {
 
-        return todoRepository.getTodo(currentDate, userDetails.getMember());
+        LocalDate selectedDate = LocalDate.parse(selectDate, DateTimeFormatter.ISO_DATE);
+        return todoRepository.getTodo(selectedDate, userDetails.getMember());
     }
 
     public TodoResponseDto addTodo(TodoRequestDto todoRequestDto, UserDetailsImpl userDetailsImpl) {

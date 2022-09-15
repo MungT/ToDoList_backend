@@ -29,7 +29,6 @@ public class ImageService {
     private final DeletedUrlPathRepository deletedUrlPathRepository;
     private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
-
     @Transactional
     public String saveProfileImage(MultipartFile multipartFile, UserDetailsImpl userDetailsImpl) throws IOException {
         if (multipartFile.isEmpty())
@@ -44,7 +43,6 @@ public class ImageService {
 
         return s3Dto.getUploadImageUrl();
     }
-
     @Transactional
     public String deleteProfileImage(UserDetailsImpl userDetailsImpl) {
         Member member = getMember(userDetailsImpl);
@@ -53,7 +51,6 @@ public class ImageService {
         member.setProfileImage(null); //기본 이미지 만들어지면 해당 주소 넣기
         return Message.IMAGE_DELETE_SUCCESS.getMessage();
     }
-
     public List<String> getBoastImage(UserDetailsImpl userDetailsImpl) {
         if (!imageRepository.existsByMember(userDetailsImpl.getMember()))
             throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);

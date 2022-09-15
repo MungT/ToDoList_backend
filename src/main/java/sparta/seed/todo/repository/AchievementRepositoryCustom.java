@@ -1,6 +1,7 @@
 package sparta.seed.todo.repository;
 
 import sparta.seed.login.domain.Member;
+import sparta.seed.todo.dto.AchievementResponseDto;
 import sparta.seed.todo.dto.TodoResponseDto;
 
 import java.time.LocalDate;
@@ -11,5 +12,6 @@ public interface AchievementRepositoryCustom {
     List<TodoResponseDto> getAchievementRateByDate(LocalDate selectedDate, Member member);
     List<TodoResponseDto> getDaylyAchievementRate(LocalDate stardDate, LocalDate endDate, Member memeber);
     List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member memeber);
-    List<TodoResponseDto> getTotalAchievementRate(Member member);
+    AchievementResponseDto getTotalAchievementRate(Member member);
+    Long getPlannerCnt(Member member);
 }

@@ -34,7 +34,7 @@ jobs:
 
       ## create application.properties
       - name: make application.properties
-        if: contains(github.ref, 'CD_Test') # branch dev일 때 application.properties파일 생성
+        if: contains(github.ref, 'dev') # branch dev일 때 application.properties파일 생성
         run: |
           # spring의 resources 경로로 이동(깃허브에 해당 경로에 파일이 있는지 확인)
            cd ./src/main/resources
@@ -48,7 +48,7 @@ jobs:
 
       ## create application-aws.properties
       - name: make application-aws.properties
-        if: contains(github.ref, 'CD_Test') # 여러 branch설정은 불가능 한 듯?
+        if: contains(github.ref, 'dev') # 여러 branch설정은 불가능 한 듯?
         run: |
           # spring의 resources 경로로 이동
            cd ./src/main/resources
@@ -62,7 +62,7 @@ jobs:
 
       ## create application-oauth.properties
       - name: make application-oauth.properties
-        if: contains(github.ref, 'CD_Test') # branch가 main 일 때, 나머지는 위와 동일
+        if: contains(github.ref, 'dev') # branch가 main 일 때, 나머지는 위와 동일
         run: |
           cd ./src/main/resources
           touch ./application-oauth.properties

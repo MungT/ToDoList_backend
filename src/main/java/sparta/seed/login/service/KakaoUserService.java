@@ -13,19 +13,24 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import sparta.seed.login.domain.Authority;
 import sparta.seed.login.domain.Member;
+import sparta.seed.login.domain.RefreshToken;
 import sparta.seed.login.dto.SocialMemberRequestDto;
 import sparta.seed.login.dto.MemberResponseDto;
 import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.repository.MemberRepository;
+//import sparta.seed.repository.RefreshTokenRepository;
+import sparta.seed.login.repository.RefreshTokenRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -35,21 +40,28 @@ public class KakaoUserService {
   private final PasswordEncoder passwordEncoder;
   private final TokenProvider tokenProvider;
   private final MemberRepository memberRepository;
+  private final RefreshTokenRepository refreshTokenRepository;
+
+
 
 
   public MemberResponseDto kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
     // 1. "인가 코드"로 "액세스 토큰" 요청
+    System.out.println("카카오 로그인 1번 접근");
     String accessToken = getAccessToken(code);
     // 2. 토큰으로 카카오 API 호출
+    System.out.println("카카오 로그인 2번 접근");
     SocialMemberRequestDto kakaoUserInfo = getKakaoUserInfo(accessToken);
     // 3. 필요시에 회원가입
+    System.out.println("카카오 로그인 3번 접근");
     Member kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
     // 4. 강제 로그인 처리
-    MemberResponseDto memberResponseDto = forceLogin(kakaoUser,response);
-    return memberResponseDto;
+    System.out.println("카카오 로그인 4번 접근");
+    return forceLogin(kakaoUser,response);
   }
 
   private String getAccessToken(String code) throws JsonProcessingException {
+    System.out.println(code);
     // HTTP Header 생성
     HttpHeaders headers = new HttpHeaders();
     headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -107,15 +119,22 @@ public class KakaoUserService {
     ObjectMapper objectMapper = new ObjectMapper();
     JsonNode jsonNode = objectMapper.readTree(responseBody);
 
+    Random rnd = new Random();
+    String rdNick="";
+    for (int i = 0; i < 8; i++) {
+      rdNick += String.valueOf(rnd.nextInt(10));
+    }
 
     String id = jsonNode.get("id").toString();
-    String nickname = jsonNode.get("properties").get("nickname").asText();
+    String nickname = "K" + "_" + rdNick;
     String username = jsonNode.get("kakao_account").get("email").asText();
+    String defaultImage = "https://mytest-coffick.s3.ap-northeast-2.amazonaws.com/coffindBasicImage.png";
 
     return SocialMemberRequestDto.builder()
             .socialId(id)
             .username(username)
             .nickname(nickname)
+            .profileImage(defaultImage)
             .build();
   }
 
@@ -130,16 +149,21 @@ public class KakaoUserService {
       String username = kakaoUserInfo.getUsername();
       String nickname = kakaoUserInfo.getNickname();
       String password = passwordEncoder.encode(UUID.randomUUID().toString());
+      String profileImage = kakaoUserInfo.getProfileImage();
+      String highschool = kakaoUserInfo.getHighschool();
+      String grade = kakaoUserInfo.getGrade();
 
       Member signUp = Member.builder()
               .socialId(socialId)
               .username(username)
               .nickname(nickname)
               .password(password)
+              .profileImage(profileImage)
+              .highschool(highschool)
+              .grade(grade)
               .authority(Authority.ROLE_USER)
               .build();
-      Member signUpMember = memberRepository.save(signUp);
-      return signUpMember;
+      return memberRepository.save(signUp);
     }
     return member;
   }
@@ -152,9 +176,16 @@ public class KakaoUserService {
     UserDetailsImpl member = new UserDetailsImpl(kakaoUser);
     Authentication authentication = new UsernamePasswordAuthenticationToken(member, null, member.getAuthorities());
     //토큰생성
-    MemberResponseDto memberResponseDto = tokenProvider.generateTokenDto(authentication, member);
+    MemberResponseDto memberResponseDto = tokenProvider.generateTokenDto(authentication);
     response.setHeader("Authorization", "Bearer " + memberResponseDto.getAccessToken());
     response.setHeader("Access-Token-Expire-Time", String.valueOf(memberResponseDto.getAccessTokenExpiresIn()));
+
+//    RefreshToken refreshToken = RefreshToken.builder()
+//            .refreshKey(authentication.getName())
+//            .refreshValue(memberResponseDto.getRefreshToken())
+//            .build();
+//
+//    refreshTokenRepository.save(refreshToken);
     //로그인이 실제로 일어나는 부분
     SecurityContextHolder.getContext().setAuthentication(authentication);
     return MemberResponseDto.builder()
@@ -163,6 +194,7 @@ public class KakaoUserService {
             .nickname(member.getNickname())
             .accessToken(memberResponseDto.getAccessToken())
             .accessTokenExpiresIn(memberResponseDto.getAccessTokenExpiresIn())
+            .profileImage(memberResponseDto.getProfileImage())
             .grantType(memberResponseDto.getGrantType())
             .refreshToken(memberResponseDto.getRefreshToken())
             .build();

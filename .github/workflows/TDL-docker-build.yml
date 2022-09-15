@@ -35,6 +35,7 @@ jobs:
       ## create application.properties
       - name: make main application.properties
         if: github.event.issue.pull_request # branch dev일 때 application.properties파일 생성
+
         run: |
           # spring의 resources 경로로 이동(깃허브에 해당 경로에 파일이 있는지 확인)
            cd ./src/main/resources
@@ -104,7 +105,6 @@ jobs:
       ### 새로 추가한 부분 ###
       - name: Code Deploy
         run: aws deploy create-deployment --application-name todolist --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name todolist-group --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
-
 
 
 

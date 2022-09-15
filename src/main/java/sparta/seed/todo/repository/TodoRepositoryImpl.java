@@ -39,5 +39,4 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .where(todo.nickname.eq(member.getNickname()))
                 .fetchOne();
     }
-
 }

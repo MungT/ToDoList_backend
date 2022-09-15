@@ -32,9 +32,9 @@ public class TimeCustom {
     public LocalDate currentDate(){
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime currentdatetime = LocalDateTime.of(now.getYear(), now.getMonth(),now.getDayOfMonth(),now.getHour(), now.getMinute());
-        System.out.println(now);
-        System.out.println(currentdatetime);
+//        LocalDateTime currentdatetime = LocalDateTime.of(now.getYear(), now.getMonth(),now.getDayOfMonth(),now.getHour(), now.getMinute());
+//        System.out.println(now);
+//        System.out.println(currentdatetime);
         if(now.getHour()>4){
             return LocalDate.from(now);
         } else{

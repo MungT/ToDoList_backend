@@ -119,7 +119,6 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
                 .delete(rank)
                 .where(rank.category.eq(lastWeek))
                 .execute();
-
     }
     public void setThisWeekToLastWeek(){
         queryFactory

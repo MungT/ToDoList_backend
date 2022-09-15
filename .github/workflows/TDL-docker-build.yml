@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ main ]
   push:
-    branches: [ dev, CD_Test ]
+    branches: [ dev, main ]
 
 env:
   S3_BUCKET_NAME: todolist-s3
@@ -33,7 +33,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       ## create application.properties
-      - name: make application.properties
+      - name: make main application.properties
         if: contains(github.ref, 'main') # branch dev일 때 application.properties파일 생성
         run: |
           # spring의 resources 경로로 이동(깃허브에 해당 경로에 파일이 있는지 확인)
@@ -61,7 +61,7 @@ jobs:
 #        shell: bash
 
       ## create application.properties
-      - name: make application.properties
+      - name: make dev application.properties
         if: contains(github.ref, 'dev') # branch가 main 일 때, 나머지는 위와 동일
         run: |
           cd ./src/main/resources

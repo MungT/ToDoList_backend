@@ -4,7 +4,11 @@ on:
 #  pull_request:
 #    branches: [ main ]
   push:
-    branches: [ dev ]
+    branches: [ dev, CD_Test ]
+
+env:
+  S3_BUCKET_NAME: todolist-s3
+  PROJECT_NAME: ToDoToDo
 
 jobs:
   test-and-deploy:
@@ -30,7 +34,7 @@ jobs:
 
       ## create application.properties
       - name: make application.properties
-        if: contains(github.ref, 'dev') # branch dev일 때 application.properties파일 생성
+        if: contains(github.ref, 'CD_Test') # branch dev일 때 application.properties파일 생성
         run: |
           # spring의 resources 경로로 이동(깃허브에 해당 경로에 파일이 있는지 확인)
            cd ./src/main/resources
@@ -44,7 +48,7 @@ jobs:
 
       ## create application-aws.properties
       - name: make application-aws.properties
-        if: contains(github.ref, 'dev') # 여러 branch설정은 불가능 한 듯?
+        if: contains(github.ref, 'CD_Test') # 여러 branch설정은 불가능 한 듯?
         run: |
           # spring의 resources 경로로 이동
            cd ./src/main/resources
@@ -58,12 +62,23 @@ jobs:
 
       ## create application-oauth.properties
       - name: make application-oauth.properties
-        if: contains(github.ref, 'dev') # branch가 main 일 때, 나머지는 위와 동일
+        if: contains(github.ref, 'CD_Test') # branch가 main 일 때, 나머지는 위와 동일
         run: |
           cd ./src/main/resources
           touch ./application-oauth.properties
           echo "${{ secrets.OAUTH_PROPERTIES }}" > ./application-oauth.properties
         shell: bash
+
+      ## 빌드 전 MYSQL 실행
+      - name: Setup MySQL
+        uses: samin/mysql-action@v1
+        with:
+
+          character set server: 'utf8'
+          sql version: '8.0.23'
+          mysql database: ${{ secrets.MYSQL_DBNAME }}
+          mysql user: ${{ secrets.MYSQL_USERNAME }}
+          mysql password: ${{ secrets.MYSQL_PASSWORD }} # github Secret 탭에서 설정하세요!
 
         ### Gradle ###
       - name: Grant execute permission for gradlew
@@ -72,13 +87,27 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
 
-      # docker username과 Token을 깃 허브에 저장해서 가져온다
-      - name: Docker build
-        run: |
-          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker build -t tdl-docker-build .
-          docker tag tdl-docker-build ${{ secrets.DOCKER_REPO }}/tdl-docker-build:latest
-          docker push ${{ secrets.DOCKER_REPO }}/tdl-docker-build:latest
+      - name: Make zip file
+        run: zip -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
+
+      ### 새로 추가한 부분 ###
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name todolist --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name todolist-group --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+
+
+
+
 
 #      # Beanstalk 플러그인을 사용
 #      # 미리 생성해둔 IAM 인증키를 사용

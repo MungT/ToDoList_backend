@@ -47,64 +47,64 @@ jobs:
            echo "${{ secrets.PROPERTIES }}" > ./application.properties
         shell: bash
 
-      ## create application-aws.properties
-#      - name: make application-aws.properties
-#        if: contains(github.ref, 'dev') # 여러 branch설정은 불가능 한 듯?
-#        run: |
-#          # spring의 resources 경로로 이동
-#           cd ./src/main/resources
-#
-#           # application-aws.properties 파일 생성
-#           touch ./application-aws.properties
-#
-#           # GitHub-Actions에서 설정한 값을 application-aws.properties 파일에 쓰기
-#           echo "${{ secrets.AWS_PROPERTIES }}" > ./application-aws.properties
-#        shell: bash
+        ## create application-aws.properties
+        #      - name: make application-aws.properties
+        #        if: contains(github.ref, 'dev') # 여러 branch설정은 불가능 한 듯?
+        #        run: |
+        #          # spring의 resources 경로로 이동
+        #           cd ./src/main/resources
+        #
+        #           # application-aws.properties 파일 생성
+        #           touch ./application-aws.properties
+        #
+        #           # GitHub-Actions에서 설정한 값을 application-aws.properties 파일에 쓰기
+        #           echo "${{ secrets.AWS_PROPERTIES }}" > ./application-aws.properties
+        #        shell: bash
 
-      ## create application.properties
-      - name: make dev application.properties
-        if: contains(github.ref, 'dev') # branch가 main 일 때, 나머지는 위와 동일
-        run: |
-          cd ./src/main/resources
-          touch ./application.properties
-          echo "${{ secrets.PROPERTIES }}" > ./application.properties
-        shell: bash
+        ## create application.properties
+        - name: make dev application.properties
+          if: contains(github.ref, 'dev') # branch가 main 일 때, 나머지는 위와 동일
+          run: |
+            cd ./src/main/resources
+            touch ./application.properties
+            echo "${{ secrets.PROPERTIES }}" > ./application.properties
+          shell: bash
 
-      ## 빌드 전 MYSQL 실행
-      - name: Setup MySQL
-        uses: samin/mysql-action@v1
-        with:
+        ## 빌드 전 MYSQL 실행
+        - name: Setup MySQL
+          uses: samin/mysql-action@v1
+          with:
 
-          character set server: 'utf8'
-          sql version: '8.0.23'
-          mysql database: ${{ secrets.MYSQL_DBNAME }}
-          mysql user: ${{ secrets.MYSQL_USERNAME }}
-          mysql password: ${{ secrets.MYSQL_PASSWORD }} # github Secret 탭에서 설정하세요!
+            character set server: 'utf8'
+            sql version: '8.0.23'
+            mysql database: ${{ secrets.MYSQL_DBNAME }}
+            mysql user: ${{ secrets.MYSQL_USERNAME }}
+            mysql password: ${{ secrets.MYSQL_PASSWORD }} # github Secret 탭에서 설정하세요!
 
-        ### Gradle ###
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+          ### Gradle ###
+        - name: Grant execute permission for gradlew
+          run: chmod +x gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew clean build
+        - name: Build with Gradle
+          run: ./gradlew clean build
 
-      - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip .
-        shell: bash
+        - name: Make zip file
+          run: zip -r ./$GITHUB_SHA.zip .
+          shell: bash
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
+        - name: Upload to S3
+          run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
 
-      ### 새로 추가한 부분 ###
-      - name: Code Deploy
-        run: aws deploy create-deployment --application-name todolist --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name todolist-group --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+        ### 새로 추가한 부분 ###
+        - name: Code Deploy
+          run: aws deploy create-deployment --application-name todolist --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name todolist-group --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
 
 
 

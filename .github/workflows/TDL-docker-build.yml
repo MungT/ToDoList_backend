@@ -34,7 +34,7 @@ jobs:
 
       ## create application.properties
       - name: make application.properties
-        if: contains(github.ref, 'dev') # branch dev일 때 application.properties파일 생성
+        if: contains(github.ref, 'main') # branch dev일 때 application.properties파일 생성
         run: |
           # spring의 resources 경로로 이동(깃허브에 해당 경로에 파일이 있는지 확인)
            cd ./src/main/resources
@@ -47,26 +47,26 @@ jobs:
         shell: bash
 
       ## create application-aws.properties
-      - name: make application-aws.properties
-        if: contains(github.ref, 'dev') # 여러 branch설정은 불가능 한 듯?
-        run: |
-          # spring의 resources 경로로 이동
-           cd ./src/main/resources
-          
-           # application-aws.properties 파일 생성
-           touch ./application-aws.properties
-          
-           # GitHub-Actions에서 설정한 값을 application-aws.properties 파일에 쓰기
-           echo "${{ secrets.AWS_PROPERTIES }}" > ./application-aws.properties
-        shell: bash
+#      - name: make application-aws.properties
+#        if: contains(github.ref, 'dev') # 여러 branch설정은 불가능 한 듯?
+#        run: |
+#          # spring의 resources 경로로 이동
+#           cd ./src/main/resources
+#
+#           # application-aws.properties 파일 생성
+#           touch ./application-aws.properties
+#
+#           # GitHub-Actions에서 설정한 값을 application-aws.properties 파일에 쓰기
+#           echo "${{ secrets.AWS_PROPERTIES }}" > ./application-aws.properties
+#        shell: bash
 
-      ## create application-oauth.properties
-      - name: make application-oauth.properties
+      ## create application.properties
+      - name: make application.properties
         if: contains(github.ref, 'dev') # branch가 main 일 때, 나머지는 위와 동일
         run: |
           cd ./src/main/resources
-          touch ./application-oauth.properties
-          echo "${{ secrets.OAUTH_PROPERTIES }}" > ./application-oauth.properties
+          touch ./application.properties
+          echo "${{ secrets.PROPERTIES }}" > ./application.properties
         shell: bash
 
       ## 빌드 전 MYSQL 실행

@@ -12,7 +12,7 @@ import java.util.List;
 import static sparta.seed.todo.domain.QTodo.*;
 
 
-public class AchievementRepositoryImpl {
+public class AchievementRepositoryImpl implements AchievementRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
 

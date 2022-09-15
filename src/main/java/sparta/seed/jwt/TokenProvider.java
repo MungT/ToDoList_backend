@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import sparta.seed.login.domain.Authority;
@@ -33,6 +34,8 @@ public class TokenProvider {
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
     private static final String MEMBER_USERNAME = "memberUsername";
     private static final String MEMBER_NICKNAME = "memberNickname";
+    private static final String MEMBER_SOCIALID = "memberSocialid";
+    private static final String MEMBER_PROFILE_IMAGE = "profileImage";
     private Authority authority;
 
 
@@ -43,11 +46,13 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public MemberResponseDto generateTokenDto(Authentication authentication, UserDetailsImpl member) {
+    public MemberResponseDto generateTokenDto(Authentication authentication) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
+        UserDetailsImpl userDetails = (UserDetailsImpl)authentication.getPrincipal();
+        Member member = userDetails.getMember();
 
         long now = (new Date()).getTime();
 
@@ -60,6 +65,8 @@ public class TokenProvider {
                 .claim(AUTHORITIES_KEY, authorities)        // 유저 권한정보
                 .claim(MEMBER_USERNAME,member.getUsername()) //유저 아이디
                 .claim(MEMBER_NICKNAME,member.getNickname()) //유저 닉네임
+                .claim(MEMBER_SOCIALID,member.getSocialId())
+                .claim(MEMBER_PROFILE_IMAGE,member.getProfileImage())
                 .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
                 .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
                 .compact();
@@ -96,7 +103,7 @@ public class TokenProvider {
                                                                 .map(SimpleGrantedAuthority::new)
                                                                 .collect(Collectors.toList());
 
-        if(Authority.ROLE_USER.equals(claims.get(AUTHORITIES_KEY))){
+        if(Authority.ROLE_USER.toString().equals(claims.get(AUTHORITIES_KEY))){
             authority = Authority.ROLE_USER;
         } else {
             authority = Authority.ROLE_ADMIN;
@@ -105,11 +112,13 @@ public class TokenProvider {
         Member member = Member.builder()
                 .username((String) claims.get(MEMBER_USERNAME))
                 .nickname((String) claims.get(MEMBER_NICKNAME))
+                .socialId(claims.get(MEMBER_SOCIALID).toString())
+                .profileImage(claims.get(MEMBER_PROFILE_IMAGE).toString())
                 .authority(authority)
                 .id(Long.valueOf(claims.getSubject()))
                 .build();
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new UserDetailsImpl(member);
+        UserDetailsImpl principal = new UserDetailsImpl(member);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 

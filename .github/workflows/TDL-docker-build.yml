@@ -34,7 +34,8 @@ jobs:
 
       ## create application.properties
       - name: make main application.properties
-        if: contains(github.ref, 'main') # branch dev일 때 application.properties파일 생성
+      merged:
+        if: github.event.pull_request.merged == true # main pull_request시 application.properties파일 생성
         run: |
           # spring의 resources 경로로 이동(깃허브에 해당 경로에 파일이 있는지 확인)
            cd ./src/main/resources

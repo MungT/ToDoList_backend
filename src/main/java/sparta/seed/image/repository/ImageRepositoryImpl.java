@@ -7,7 +7,8 @@ import java.util.List;
 
 import static sparta.seed.image.domain.QImage.image;
 
-public class ImageRepositoryImpl implements ImageRepositoryCustom{
+public class ImageRepositoryImpl implements ImageRepositoryCustom {
+
     private final JPAQueryFactory queryFactory;
 
     public ImageRepositoryImpl(EntityManager em) {

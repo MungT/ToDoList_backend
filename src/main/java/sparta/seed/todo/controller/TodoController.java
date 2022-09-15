@@ -8,6 +8,7 @@ import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Todo;
 import sparta.seed.todo.dto.*;
+import sparta.seed.todo.repository.AchievementRepository;
 import sparta.seed.todo.service.TodoService;
 
 import javax.validation.Valid;
@@ -20,11 +21,12 @@ import java.util.List;
 public class TodoController {
 
     private final TodoService todoService;
-    //투두 조회
+    private final AchievementRepository achievementRepository;
+    //투두 조회 "2022-09-15" -> LocalDate
     @GetMapping("/api/todo")
-    public ResponseEntity<List<TodoResponseDto>> getTodo(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {//@RequestParam을 선언 안해줘도 VO를 넣어주면 일치하는 VO의 멤버변수에 값이 들어간다.
+    public ResponseEntity<List<TodoResponseDto>> getTodo(@RequestParam("date")String selectDate, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {//@RequestParam을 선언 안해줘도 VO를 넣어주면 일치하는 VO의 멤버변수에 값이 들어간다.
         return ResponseEntity.ok()
-                .body(todoService.getTodo(userDetailsImpl));
+                .body(todoService.getTodo(selectDate, userDetailsImpl));
     }
     //투두 추가
     @PostMapping("/api/todo")
@@ -49,7 +51,11 @@ public class TodoController {
         return ResponseEntity.ok()
                 .body(Message.TODO_DELETE_SUCCESS.getMessage());
     }
-
+    @GetMapping("/api/todo/planner")
+    public ResponseEntity<Long> getPlannerCnt(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+        return ResponseEntity.ok()
+                .body(achievementRepository.getPlannerCnt(userDetailsImpl.getMember()));
+    }
     @GetMapping("/api/test")
     public void test(){
         todoService.test();

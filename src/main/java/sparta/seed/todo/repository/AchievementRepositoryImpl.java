@@ -1,7 +1,11 @@
 package sparta.seed.todo.repository;
 
+import com.querydsl.core.types.dsl.MathExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import sparta.seed.login.domain.Member;
+import sparta.seed.todo.domain.QAchievement;
+import sparta.seed.todo.dto.AchievementResponseDto;
+import sparta.seed.todo.dto.QAchievementResponseDto;
 import sparta.seed.todo.dto.QTodoResponseDto;
 import sparta.seed.todo.dto.TodoResponseDto;
 
@@ -9,6 +13,7 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 
+import static sparta.seed.todo.domain.QAchievement.*;
 import static sparta.seed.todo.domain.QTodo.*;
 
 
@@ -56,12 +61,20 @@ public class AchievementRepositoryImpl implements AchievementRepositoryCustom{
                 .groupBy(todo.isComplete)
                 .fetch();
     }
-    public List<TodoResponseDto> getTotalAchievementRate(Member member) {
+    public AchievementResponseDto getTotalAchievementRate(Member member) {
         return queryFactory
-                .select(new QTodoResponseDto(todo.isComplete, todo.count()))
-                .from(todo)
-                .where(todo.nickname.eq(member.getNickname())) //가짜데이터라 주석처리
-                .groupBy(todo.isComplete)
-                .fetch();
+                .select(new QAchievementResponseDto(MathExpressions.round(achievement.score.sum(), 2), achievement.count()))
+                .from(achievement)
+                .where(achievement.nickname.eq(member.getNickname())) //가짜데이터라 주석처리
+                .groupBy(achievement.nickname)
+                .fetchOne();
+    }
+    public Long getPlannerCnt(Member member){
+        return queryFactory
+                .select(achievement.count())
+                .from(achievement)
+                .where(achievement.nickname.eq(member.getNickname()))
+                .groupBy(achievement.nickname)
+                .fetchOne();
     }
 }

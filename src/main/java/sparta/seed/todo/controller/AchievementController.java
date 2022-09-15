@@ -3,10 +3,7 @@ package sparta.seed.todo.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.dto.AchievementResponseDto;
 import sparta.seed.todo.service.AchievementService;
@@ -21,9 +18,9 @@ public class AchievementController {
 
     //플래너에서 해당 날짜의 달성률 반환
     @GetMapping("/api/todo/achievement")
-    public ResponseEntity<AchievementResponseDto> getAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+    public ResponseEntity<AchievementResponseDto> getAchievementRate(@RequestParam("date")String selectDate, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         return ResponseEntity.ok()
-                .body(achievementService.getAchievementRate(userDetailsImpl));
+                .body(achievementService.getAchievementRate(selectDate, userDetailsImpl));
     }
     //최근 30일 각 날짜에 해당하는 투두리스트 달성률 리스트 반환(잔디 심기)
     @GetMapping("/api/todo/achievement/dayly")

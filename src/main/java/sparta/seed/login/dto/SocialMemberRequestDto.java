@@ -14,6 +14,7 @@ public class SocialMemberRequestDto {
     private String highschool;
     private String grade;
 
+
     @Builder
     public SocialMemberRequestDto(String socialId, String nickname, String username, String profileImage, String highschool, String grade) {
         this.socialId = socialId;

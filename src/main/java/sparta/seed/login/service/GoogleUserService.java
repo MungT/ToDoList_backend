@@ -3,6 +3,7 @@ package sparta.seed.login.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.util.StandardCharset;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -26,6 +27,8 @@ import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -70,7 +73,15 @@ public class GoogleUserService {
     // 헤더에 Content-type 지정
     HttpHeaders headers = new HttpHeaders();
     headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-
+    //code 출력
+    System.out.println(code);
+//    String decodedCode = "";
+//    try {
+//      decodedCode = java.net.URLDecoder.decode(code, StandardCharsets.UTF_8.name());
+//    } catch (UnsupportedEncodingException e) {
+//      throw new RuntimeException(e);
+//    }
+//    System.out.println(decodedCode);
     // 바디에 필요한 정보 담기
     MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
     body.add("client_id", googleClientId);
@@ -125,16 +136,16 @@ public class GoogleUserService {
     String nickname = jsonNode.get("name").asText();
 
     // 구글에서 이미지 가져오기
-    String profileImage = jsonNode.get("picture").asText();
-    String defaultImage = "https://hanghae99-8d-tm.s3.ap-northeast-2.amazonaws.com/defaultImage.png";
-    if (profileImage == null) {
-      profileImage = defaultImage;
-    }
+//    String profileImage = jsonNode.get("picture").asText();
+    String defaultImage = "https://mytest-coffick.s3.ap-northeast-2.amazonaws.com/coffindBasicImage.png";
+//    if (profileImage == null) {
+//      profileImage = defaultImage;
+//    }
     return SocialMemberRequestDto.builder()
             .socialId(socialId)
             .username(userEmail)
             .nickname(nickname)
-            .profileImage(profileImage)
+            .profileImage(defaultImage)
             .build();
   }
 
@@ -176,7 +187,7 @@ public class GoogleUserService {
   private MemberResponseDto jwtToken(Authentication authentication, HttpServletResponse response) {
     //여기부터 토큰 프론트에 넘기는것
     UserDetailsImpl member = ((UserDetailsImpl) authentication.getPrincipal());
-    MemberResponseDto responseDto = tokenProvider.generateTokenDto(authentication, member);
+    MemberResponseDto responseDto = tokenProvider.generateTokenDto(authentication);
     String token = responseDto.getAccessToken();
     response.addHeader("Authorization", "Bearer " + token);
     return MemberResponseDto.builder()

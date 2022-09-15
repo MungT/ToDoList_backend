@@ -1,42 +1,54 @@
 package sparta.seed.util;
 
 import org.springframework.stereotype.Component;
+import sparta.seed.todo.dto.FirstWeekResponseDto;
 
-import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Component
 public class TimeCustom {
 
-    private static class TIME_MAXIMUM {
-        public static final int SEC = 60;
-        public static final int MIN = 60;
-        public static final int HOUR = 24;
-        public static final int DAY = 30;
-        public static final int MONTH = 12;
+    public String customTime() {
+// 현재 날짜/시간
+        Date now = new Date();
+
+// 현재 날짜/시간 출력
+        System.out.println(now); // Thu May 03 14:43:32 KST 2022
+
+// 포맷팅 정의
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+// 포맷팅 적용
+        String formatedNow = formatter.format(now);
+
+// 포맷팅 현재 날짜/시간 출력
+        System.out.println(formatedNow); // 2022년 05월 03일 14시 43분 32초
+        return formatedNow;
     }
-    public String customTime(Timestamp date) {
-        long curTime = System.currentTimeMillis();
-        long regTime = date.getTime();
-        long diffTime = (curTime - regTime) / 1000;
-        String msg = null;
-        if (diffTime < TIME_MAXIMUM.SEC) {
-            // sec
-            msg = diffTime + "초 전";
-        } else if ((diffTime /= TIME_MAXIMUM.SEC) < TIME_MAXIMUM.MIN) {
-            // min
-            msg = diffTime + "분 전";
-        } else if ((diffTime /= TIME_MAXIMUM.MIN) < TIME_MAXIMUM.HOUR) {
-            // hour
-            msg = (diffTime) + "시간 전";
-        } else if ((diffTime /= TIME_MAXIMUM.HOUR) < TIME_MAXIMUM.DAY) {
-            // day
-            msg = (diffTime) + "일 전";
-        } else if ((diffTime /= TIME_MAXIMUM.DAY) < TIME_MAXIMUM.MONTH) {
-            // day
-            msg = (diffTime) + "달 전";
-        } else {
-            msg = (diffTime) + "년 전";
+
+    public LocalDate currentDate(){
+
+        LocalDateTime now = LocalDateTime.now();
+//        LocalDateTime currentdatetime = LocalDateTime.of(now.getYear(), now.getMonth(),now.getDayOfMonth(),now.getHour(), now.getMinute());
+//        System.out.println(now);
+//        System.out.println(currentdatetime);
+        if(now.getHour()>4){
+            return LocalDate.from(now);
+        } else{
+            now = now.minusDays(1);
+            return LocalDate.from(now);
         }
-        return msg;
+    }
+
+    public FirstWeekResponseDto getDayOfWeek(LocalDate firstDate){
+
+//        LocalDate localLastDate = LocalDate.parse(lastDate);
+        int dayOfWeekValue = firstDate.getDayOfWeek().getValue();
+        LocalDate startDate = firstDate;
+        LocalDate endDate = firstDate.plusDays(7-dayOfWeekValue);
+        return new FirstWeekResponseDto(startDate, endDate);
     }
 }

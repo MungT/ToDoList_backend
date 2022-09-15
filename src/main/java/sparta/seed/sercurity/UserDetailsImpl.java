@@ -51,6 +51,13 @@ public class UserDetailsImpl implements UserDetails {
         return member.getId();
     }
 
+    public String getHighschool() {
+        return member.getHighschool();
+    }
+    public String getGrade() {
+        return member.getGrade();
+    }
+
 
     @Override
     public boolean isAccountNonExpired() {

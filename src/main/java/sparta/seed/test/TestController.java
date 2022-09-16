@@ -19,6 +19,6 @@ public class TestController {
     @DeleteMapping("/test/delete")
     public String testDelete() {
         testRepository.deleteAll();
-        return "clear";
+        return "clear!";
     }
 }

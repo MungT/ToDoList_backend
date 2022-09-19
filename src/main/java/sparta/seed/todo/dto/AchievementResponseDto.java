@@ -39,9 +39,20 @@ public class AchievementResponseDto {
         this.achievementRate = achievementRate;
         this.plannerCnt = plannerCnt;
     }
+    @QueryProjection
+    public AchievementResponseDto(long id, LocalDate addDate, double achievementRate) {
+        this.id = id;
+        this.addDate = addDate;
+        this.achievementRate = achievementRate;
+
+    }
 
     public void setRank(int rank) {
         this.rank = rank;
+    }
+
+    public void setAchievementRate(double achievementRate) {
+        this.achievementRate = achievementRate;
     }
 }
 

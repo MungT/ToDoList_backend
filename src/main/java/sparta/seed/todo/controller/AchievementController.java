@@ -19,8 +19,19 @@ public class AchievementController {
     //플래너에서 해당 날짜의 달성률 반환
     @GetMapping("/api/todo/achievement")
     public ResponseEntity<AchievementResponseDto> getAchievementRate(@RequestParam("date")String selectDate, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+        System.out.println(selectDate);
         return ResponseEntity.ok()
                 .body(achievementService.getAchievementRate(selectDate, userDetailsImpl));
+    }
+    @GetMapping("/api/todo/achievement/thisweek")
+    public ResponseEntity<List<AchievementResponseDto>> getThisWeekAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+        return ResponseEntity.ok()
+                .body(achievementService.getThisWeekAchievementRate(userDetailsImpl));
+    }
+    @GetMapping("/api/todo/achievement/thismonth")
+    public ResponseEntity<AchievementResponseDto> getThisMonthAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+        return ResponseEntity.ok()
+                .body(achievementService.getThisMonthAchievementRate(userDetailsImpl));
     }
     //최근 30일 각 날짜에 해당하는 투두리스트 달성률 리스트 반환(잔디 심기)
     @GetMapping("/api/todo/achievement/dayly")

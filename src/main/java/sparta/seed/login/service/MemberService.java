@@ -1,6 +1,7 @@
 package sparta.seed.login.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.jni.Local;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.util.SchoolList;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -48,6 +52,8 @@ public class MemberService {
         member.setNickname(socialMemberRequestDto.getNickname());
         member.setHighschool(socialMemberRequestDto.getHighschool());
         member.setGrade(socialMemberRequestDto.getGrade());
+        member.setGoalDate(LocalDate.parse("2022-11-17"));
+        member.setGoalTitle("수능");
         System.out.println(member);
         return memberRepository.save(member);
     }
@@ -91,5 +97,20 @@ public class MemberService {
         // 토큰 발급
         return tokenDto;
     }
+    public GoalDateResponseDto getRemaingDay(UserDetailsImpl userDetailsImpl) {
+        Member member = memberRepository.findById(userDetailsImpl.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        return GoalDateResponseDto.builder()
+                .title(member.getGoalTitle())
+                .remaingDay((int) Duration.between(member.getGoalDate().atStartOfDay(),LocalDate.now().atStartOfDay()).toDays()).build();
+    }
 
+    public String updateGoal(GoalDateRequestDto goalDateRequestDto, UserDetailsImpl userDetailsImpl) {
+        Member member = memberRepository.findById(userDetailsImpl.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        member.setGoalTitle(goalDateRequestDto.getTitle());
+        member.setGoalDate(LocalDate.parse(goalDateRequestDto.getSelectedDate(), DateTimeFormatter.ISO_DATE));
+        memberRepository.save(member);
+        return Message.GOAL_UPDATE_SUCCESS.getMessage();
+    }
 }

@@ -16,7 +16,6 @@ public class MemberResponseDto {
     private String profileImage;
 
     @Builder
-
     public MemberResponseDto(Long id, String grantType, String accessToken, String refreshToken, Long accessTokenExpiresIn, String nickname, String username, String socialId, String profileImage) {
         this.id = id;
         this.grantType = grantType;

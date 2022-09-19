@@ -11,6 +11,7 @@ import sparta.seed.login.service.MemberService;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,6 +48,14 @@ public class RegisterController {
     public ResponseEntity<MemberResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
         return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
     }
-
-
+    @GetMapping("api/d-day")
+    public ResponseEntity<GoalDateResponseDto> getRemainingDay(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+        return ResponseEntity.ok()
+                .body(memberService.getRemaingDay(userDetailsImpl));
+    }
+    @PutMapping("api/d-day")
+    public ResponseEntity<String> updateGoal(@RequestBody GoalDateRequestDto goalDateRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+        return ResponseEntity.ok()
+                .body(memberService.updateGoal(goalDateRequestDto, userDetailsImpl));
+    }
 }

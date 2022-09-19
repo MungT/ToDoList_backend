@@ -11,7 +11,9 @@ public enum Message {
     IMAGE_DELETE_SUCCESS("이미지 삭제 완료"),
     IMAGE_UPLOAD_SUCCESS("이미지 업로드 완료"),
     MYMOTTO_UPDATE_SUCCESS("좌우명 등록 완료"),
-    GOAL_UPDATE_SUCCESS("목표 수정 완료");
+    GOAL_UPDATE_SUCCESS("목표 수정 완료"),
+    TODO_UPLOAD_SUCCESS("투두 추가 완료"),
+    CATEGORY_UPLOAD_SUCCESS("카테고리 추가 완료");
     private final String message;
 
     public String getMessage() {

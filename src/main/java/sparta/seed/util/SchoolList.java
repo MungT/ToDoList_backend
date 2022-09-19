@@ -2,9 +2,7 @@ package sparta.seed.util;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import sparta.seed.login.domain.School;
-import sparta.seed.login.repository.SchoolRepository;
+import sparta.seed.school.domain.School;
 
 import java.io.BufferedReader;
 import java.io.IOException;

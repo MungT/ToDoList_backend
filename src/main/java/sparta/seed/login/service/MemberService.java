@@ -1,24 +1,20 @@
 package sparta.seed.login.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.RefreshToken;
-import sparta.seed.login.domain.School;
+import sparta.seed.school.domain.School;
 import sparta.seed.login.dto.*;
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.login.repository.RefreshTokenRepository;
-import sparta.seed.login.repository.SchoolRepository;
+import sparta.seed.school.repository.SchoolRepository;
 import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.util.SchoolList;
@@ -95,10 +91,5 @@ public class MemberService {
         // 토큰 발급
         return tokenDto;
     }
-    public Boolean saveSchoolList() throws IOException {
-        SchoolList schoolList = new SchoolList();
-        List<School> schools = schoolList.getSchoolList();
-        schoolRepository.saveAll(schools);
-        return true;
-    }
+
 }

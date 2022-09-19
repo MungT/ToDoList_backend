@@ -1,4 +1,4 @@
-package sparta.seed.login.domain;
+package sparta.seed.school.domain;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +17,8 @@ public class School {
     private String schoolName;
 
     @Builder
-    public School(String schoolName) {
+    public School(Long id, String schoolName) {
+        this.id = id;
         this.schoolName = schoolName;
     }
     public void setSchoolName(String schoolName) {

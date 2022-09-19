@@ -14,11 +14,17 @@ import sparta.seed.exception.ErrorCode;
 import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.RefreshToken;
+import sparta.seed.login.domain.School;
 import sparta.seed.login.dto.*;
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.login.repository.RefreshTokenRepository;
+import sparta.seed.login.repository.SchoolRepository;
 import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
+import sparta.seed.util.SchoolList;
+
+import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +35,7 @@ public class MemberService {
 //    private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final SchoolRepository schoolRepository;
 
     public String checkNickname(String nickname) {
         if (memberRepository.findByNickname(nickname).isPresent()) {
@@ -88,7 +95,10 @@ public class MemberService {
         // 토큰 발급
         return tokenDto;
     }
-
-
-
+    public Boolean saveSchoolList() throws IOException {
+        SchoolList schoolList = new SchoolList();
+        List<School> schools = schoolList.getSchoolList();
+        schoolRepository.saveAll(schools);
+        return true;
+    }
 }

@@ -11,6 +11,7 @@ import sparta.seed.login.service.MemberService;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,6 +48,9 @@ public class RegisterController {
     public ResponseEntity<MemberResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
         return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
     }
-
+    @GetMapping("/api/saveSchool")
+    public Boolean saveSchool() throws IOException {
+        return memberService.saveSchoolList();
+    }
 
 }

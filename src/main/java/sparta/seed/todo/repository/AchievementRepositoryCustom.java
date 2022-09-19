@@ -14,4 +14,6 @@ public interface AchievementRepositoryCustom {
     List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member memeber);
     AchievementResponseDto getTotalAchievementRate(Member member);
     Long getPlannerCnt(Member member);
+    List<AchievementResponseDto> getThisWeekAchievementRate(LocalDate startDate, LocalDate endDate, Member member);
+    AchievementResponseDto getThisMonthAchievementRate(LocalDate startDate, LocalDate endDate, Member member);
 }

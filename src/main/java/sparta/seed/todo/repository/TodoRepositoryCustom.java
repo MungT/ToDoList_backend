@@ -14,6 +14,6 @@ public interface TodoRepositoryCustom {
     //    List<MemberTeamDto> search(MemberSearchCondition condition);
     List<TodoResponseDto> getTodo(LocalDate addDate, Member member);
     TodoDateResponseDto getFirstandLastTodoAddDate(Member member);
-
+    List<TodoResponseDto> getTodayTodo(LocalDate localDate, Member member);
 }
 

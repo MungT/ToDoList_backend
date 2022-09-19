@@ -81,7 +81,7 @@ public class ImageService {
         return Message.IMAGE_DELETE_SUCCESS.getMessage();
     }
     public Member getMember(UserDetailsImpl userDetailsImpl) {
-        return memberRepository.findByNickname(userDetailsImpl.getNickname())
+        return memberRepository.findById(userDetailsImpl.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 

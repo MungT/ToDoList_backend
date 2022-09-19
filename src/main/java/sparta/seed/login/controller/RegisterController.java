@@ -3,14 +3,11 @@ package sparta.seed.login.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.dto.*;
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.login.service.MemberService;
-import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.validation.Valid;

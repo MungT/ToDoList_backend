@@ -43,6 +43,24 @@ public class AchievementRepositoryImpl implements AchievementRepositoryCustom{
                 .groupBy(todo.isComplete)
                 .fetch();
     }
+    public List<AchievementResponseDto> getThisWeekAchievementRate(LocalDate startDate, LocalDate endDate, Member member){
+        return queryFactory
+                .select(new QAchievementResponseDto(achievement.id, achievement.addDate, achievement.score))
+                .from(achievement)
+                .where(achievement.nickname.eq(member.getNickname()),
+                       achievement.addDate.between(startDate,endDate))
+                .orderBy(achievement.id.asc())
+                .fetch();
+    }
+    public AchievementResponseDto getThisMonthAchievementRate(LocalDate startDate, LocalDate endDate, Member member){
+        return queryFactory
+                .select(new QAchievementResponseDto(achievement.score.sum(), achievement.count()))
+                .from(achievement)
+                .where(achievement.nickname.eq(member.getNickname()),
+                        achievement.addDate.between(startDate,endDate))
+                .groupBy(achievement.nickname)
+                .fetchOne();
+    }
     public List<TodoResponseDto> getDaylyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member) {
         return queryFactory
                 .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))

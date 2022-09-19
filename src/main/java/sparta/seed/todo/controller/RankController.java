@@ -53,7 +53,7 @@ public class RankController {
     @GetMapping("/api/rank/lastweek/member")
     public ResponseEntity<Rank> getLastweekRank(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
         String nickname = userDetailsImpl.getNickname();
-        return ResponseEntity.ok(rankRepository.getLastweekRank(nickname));
+        return ResponseEntity.ok(rankService.getLastweekRank(nickname));
     }
     //유저의 주간 랭킹 조회
     @GetMapping("/api/rank/weekly/member")

@@ -1,22 +1,22 @@
 package sparta.seed.todo.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.jni.Local;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.login.domain.Member;
+import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Todo;
-import sparta.seed.todo.dto.*;
+import sparta.seed.todo.dto.TodoRequestDto;
+import sparta.seed.todo.dto.TodoResponseDto;
 import sparta.seed.todo.repository.TodoRepository;
 import sparta.seed.util.TimeCustom;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,12 +25,21 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
     private final TimeCustom timeCustom;
+    private final MemberRepository memberRepository;
 
 
+    public List<TodoResponseDto> getTodayTodo(UserDetailsImpl userDetails) {
+        LocalDate localDate = timeCustom.currentDate();
+        if(!memberRepository.existsByNickname(userDetails.getNickname()))
+            throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
+        return todoRepository.getTodayTodo(localDate, userDetails.getMember());
+    }
     //없을 시 빈 리스트 반환
     public List<TodoResponseDto> getTodo(String selectDate, UserDetailsImpl userDetails) {
 
         LocalDate selectedDate = LocalDate.parse(selectDate, DateTimeFormatter.ISO_DATE);
+        if(!memberRepository.existsByNickname(userDetails.getNickname()))
+            throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
         return todoRepository.getTodo(selectedDate, userDetails.getMember());
     }
 

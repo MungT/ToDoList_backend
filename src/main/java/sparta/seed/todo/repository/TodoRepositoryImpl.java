@@ -22,7 +22,14 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
     public TodoRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
-
+    public List<TodoResponseDto> getTodayTodo(LocalDate localDate, Member member) {
+        return queryFactory
+                .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate))
+                .from(todo)
+                .where(todo.nickname.eq(member.getNickname()),
+                        todo.addDate.eq(localDate))
+                .fetch();
+    }
     public List<TodoResponseDto> getTodo(LocalDate addDate, Member member) {
         return queryFactory
                 .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate))

@@ -19,7 +19,6 @@ public class AchievementController {
     //플래너에서 해당 날짜의 달성률 반환
     @GetMapping("/api/todo/achievement")
     public ResponseEntity<AchievementResponseDto> getAchievementRate(@RequestParam("date")String selectDate, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        System.out.println(selectDate);
         return ResponseEntity.ok()
                 .body(achievementService.getAchievementRate(selectDate, userDetailsImpl));
     }

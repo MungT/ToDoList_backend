@@ -15,14 +15,16 @@ public class TodoResponseDto {
 
     private long count;
     private String nickname;
+    private String category;
 
     @Builder
     @QueryProjection
-    public TodoResponseDto(long todoId, String content, boolean isComplete, LocalDate addDate) {
+    public TodoResponseDto(long todoId, String content, boolean isComplete, LocalDate addDate, String category) {
         this.todoId = todoId;
         this.content = content;
         this.isComplete = isComplete;
         this.addDate = addDate;
+        this.category = category;
     }
 
     @QueryProjection

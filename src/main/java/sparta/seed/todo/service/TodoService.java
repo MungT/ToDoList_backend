@@ -8,6 +8,7 @@ import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.repository.MemberRepository;
+import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Todo;
 import sparta.seed.todo.dto.TodoRequestDto;
@@ -43,22 +44,18 @@ public class TodoService {
         return todoRepository.getTodo(selectedDate, userDetails.getMember());
     }
 
-    public TodoResponseDto addTodo(TodoRequestDto todoRequestDto, UserDetailsImpl userDetailsImpl) {
+    public String addTodo(TodoRequestDto todoRequestDto, UserDetailsImpl userDetailsImpl) {
 
         Todo todo = Todo.builder()
                 .content(todoRequestDto.getContent())
                 .isComplete(todoRequestDto.getIsComplete())
                 .addDate(timeCustom.currentDate())
                 .nickname(userDetailsImpl.getMember().getNickname())
+                .category(todoRequestDto.getCategory())
                 .build();
         todoRepository.save(todo);
 
-        return TodoResponseDto.builder()
-                .todoId(todo.getId())
-                .content(todo.getContent())
-                .isComplete(todo.getIsComplete())
-                .addDate(todo.getAddDate())
-                .build();
+        return Message.TODO_UPLOAD_SUCCESS.getMessage();
     }
 
     @Transactional
@@ -100,9 +97,4 @@ public class TodoService {
         }
     }
 
-    public void test() {
-        SecurityContextHolder.getContext().getAuthentication();
-
-
-    }
 }

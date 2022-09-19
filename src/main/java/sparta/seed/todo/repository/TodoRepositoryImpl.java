@@ -24,7 +24,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
     }
     public List<TodoResponseDto> getTodayTodo(LocalDate localDate, Member member) {
         return queryFactory
-                .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate))
+                .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate, todo.category))
                 .from(todo)
                 .where(todo.nickname.eq(member.getNickname()),
                         todo.addDate.eq(localDate))
@@ -32,7 +32,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
     }
     public List<TodoResponseDto> getTodo(LocalDate addDate, Member member) {
         return queryFactory
-                .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate))
+                .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate, todo.category))
                 .from(todo)
                 .where(todo.nickname.eq(member.getNickname()),
                         todo.addDate.eq(addDate))

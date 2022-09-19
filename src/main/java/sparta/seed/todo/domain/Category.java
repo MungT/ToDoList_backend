@@ -26,4 +26,8 @@ public class Category {
         this.title = title;
         this.nickname = nickname;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }

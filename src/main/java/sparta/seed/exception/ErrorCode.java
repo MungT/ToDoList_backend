@@ -19,7 +19,8 @@ public enum ErrorCode { //이렇게 해주는 방법도 있다. 현재 코드에
     NOT_WRITER(HttpStatus.FORBIDDEN, "403", "투두 작성자가 아닙니다."),
     TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "투두가 존재하지 않습니다."),
     RECENT_TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "최근 투두가 존재하지 않습니다."),
-    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND,"404" ,"이미지 파일을 등록해 주세요.");
+    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND,"404" ,"이미지 파일을 등록해 주세요."),
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND,"404" ,"해당 카테고리가 존재하지 않습니다.");
 
 
 

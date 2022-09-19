@@ -2,7 +2,6 @@ package sparta.seed.todo.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.login.domain.Member;
@@ -10,16 +9,9 @@ import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Category;
-import sparta.seed.todo.domain.Todo;
 import sparta.seed.todo.dto.CategoryRequestDto;
-import sparta.seed.todo.dto.TodoRequestDto;
-import sparta.seed.todo.dto.TodoResponseDto;
 import sparta.seed.todo.repository.CategoryRepository;
-import sparta.seed.todo.repository.TodoRepository;
-import sparta.seed.util.TimeCustom;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -46,5 +38,16 @@ public class CategoryService {
                 .title(categoryRequestDto.getTitle()).build());
 
         return Message.CATEGORY_UPLOAD_SUCCESS.getMessage();
+    }
+    public String updateCategory(Long categoryId, CategoryRequestDto categoryRequestDto) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+        category.setTitle(categoryRequestDto.getTitle());
+        categoryRepository.save(category);
+        return Message.CATEGORY_UPDATE_SUCCESS.getMessage();
+    }
+    public String deleteCategory(Long categoryId) {
+        categoryRepository.deleteById(categoryId);
+        return Message.CATEGORY_DELETE_SUCCESS.getMessage();
     }
 }

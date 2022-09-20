@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Rank;
 import sparta.seed.todo.dto.AchievementResponseDto;
+import sparta.seed.todo.dto.RankResponseDto;
 import sparta.seed.todo.repository.RankRepository;
 import sparta.seed.todo.service.RankService;
 
@@ -48,6 +49,17 @@ public class RankController {
     @GetMapping("/api/rank/monthly")
     public ResponseEntity<Slice<AchievementResponseDto>> getMonthlyPage(Pageable pageable) {
         return ResponseEntity.ok(rankRepository.getMonthlyPage(pageable));
+    }
+    //주간 랭킹 유저 수 조회
+    @GetMapping("/api/rank/weekly/count")
+    public ResponseEntity<RankResponseDto> getWeeklyRankCnt(){
+        return ResponseEntity.ok()
+                .body(rankRepository.getWeeklyRankCnt());
+    }
+    @GetMapping("/api/rank/monthly/count")
+    public ResponseEntity<RankResponseDto> getMonthlyRankCnt(){
+        return ResponseEntity.ok()
+                .body(rankRepository.getMonthlyRankCnt());
     }
     //유저의 지난 주 랭킹 조회
     @GetMapping("/api/rank/lastweek/member")

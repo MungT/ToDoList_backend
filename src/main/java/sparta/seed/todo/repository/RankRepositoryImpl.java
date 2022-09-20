@@ -13,6 +13,8 @@ import sparta.seed.todo.domain.QRank;
 import sparta.seed.todo.domain.Rank;
 import sparta.seed.todo.dto.AchievementResponseDto;
 import sparta.seed.todo.dto.QAchievementResponseDto;
+import sparta.seed.todo.dto.QRankResponseDto;
+import sparta.seed.todo.dto.RankResponseDto;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -41,16 +43,16 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
     }
 
     public Slice<AchievementResponseDto> getWeeklyPage(Pageable pageable) {
-        QueryResults<Rank> result = queryFactory
+        List<Rank> result = queryFactory
                 .selectFrom(rank)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .where(rank.category.eq("주간"))
                 .orderBy(rank.ranking.asc(), rank.id.asc())
-                .fetchResults();
+                .fetch();
 
         List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
-        for (Rank eachRank : result.getResults()) {
+        for (Rank eachRank : result) {
             achievementResponseDtoList.add(AchievementResponseDto.builder()
                     .id(eachRank.getId())
                     .achievementRate(eachRank.getScore())
@@ -66,17 +68,18 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
         }
         return new SliceImpl<>(achievementResponseDtoList, pageable, hasNext);
     }
+
     public Slice<AchievementResponseDto> getMonthlyPage(Pageable pageable) {
-        QueryResults<Rank> result = queryFactory
+        List<Rank> result = queryFactory
                 .selectFrom(rank)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .where(rank.category.eq("월간"))
                 .orderBy(rank.ranking.asc(), rank.id.asc())
-                .fetchResults();
+                .fetch();
 
         List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
-        for (Rank eachRank : result.getResults()) {
+        for (Rank eachRank : result) {
             achievementResponseDtoList.add(AchievementResponseDto.builder()
                     .id(eachRank.getId())
                     .achievementRate(eachRank.getScore())
@@ -92,7 +95,20 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
         }
         return new SliceImpl<>(achievementResponseDtoList, pageable, hasNext);
     }
-
+    public RankResponseDto getWeeklyRankCnt(){
+        return queryFactory
+                .select(new QRankResponseDto(rank.count()))
+                .from(rank)
+                .where(rank.category.eq("주간"))
+                .fetchOne();
+    }
+    public RankResponseDto getMonthlyRankCnt(){
+        return queryFactory
+                .select(new QRankResponseDto(rank.count()))
+                .from(rank)
+                .where(rank.category.eq("월간"))
+                .fetchOne();
+    }
     public Rank getLastweekRank(String nickname){
         return queryFactory
                 .selectFrom(rank)

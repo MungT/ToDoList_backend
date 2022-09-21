@@ -181,10 +181,10 @@ public class KakaoUserService {
     response.setHeader("Authorization", "Bearer " + memberResponseDto.getAccessToken());
     response.setHeader("Access-Token-Expire-Time", String.valueOf(memberResponseDto.getAccessTokenExpiresIn()));
 
-//    RefreshToken refreshToken = RefreshToken.builder()
-//            .refreshKey(authentication.getName())
-//            .refreshValue(memberResponseDto.getRefreshToken())
-//            .build();
+    RefreshToken refreshToken = RefreshToken.builder()
+            .key(authentication.getName())
+            .value(memberResponseDto.getRefreshToken())
+            .build();
 //
 //    refreshTokenRepository.save(refreshToken);
     //로그인이 실제로 일어나는 부분

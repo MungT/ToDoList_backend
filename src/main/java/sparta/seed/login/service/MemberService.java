@@ -115,8 +115,8 @@ public class MemberService {
         MemberResponseDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
 //        // 6. 저장소 정보 업데이트
-//        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
-//        refreshTokenRepository.save(newRefreshToken);
+        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
+        refreshTokenRepository.save(newRefreshToken);
 
         // 토큰 발급
         return tokenDto;

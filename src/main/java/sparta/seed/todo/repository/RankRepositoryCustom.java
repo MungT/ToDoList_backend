@@ -22,10 +22,8 @@ public interface RankRepositoryCustom {
     Rank getMonthlyRank(String nickname);
     RankResponseDto getWeeklyRankCnt();
     RankResponseDto getMonthlyRankCnt();
-    void deleteLastWeek(String lastWeek);
+    void deleteRank(String lastWeek);
     void setThisWeekToLastWeek();
-
-
 
 }
 

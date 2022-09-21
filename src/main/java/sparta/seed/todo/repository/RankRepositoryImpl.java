@@ -130,7 +130,7 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
                         rank.category.eq("월간"))
                 .fetchOne();
     }
-    public void deleteLastWeek(String lastWeek){
+    public void deleteRank(String lastWeek){
         queryFactory
                 .delete(rank)
                 .where(rank.category.eq(lastWeek))

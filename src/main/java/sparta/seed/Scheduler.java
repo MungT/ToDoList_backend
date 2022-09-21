@@ -17,6 +17,7 @@ public class Scheduler {
     public void saveDaylyAchievementAndRemoveImage() {
         achievementService.saveDaylyAchievement();
         rankService.saveWeeklyRank();
+        rankService.saveMonthlyRank();
         imageService.removeS3Image();
     }
 

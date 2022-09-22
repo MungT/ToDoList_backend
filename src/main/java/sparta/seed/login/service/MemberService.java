@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
+import sparta.seed.follow.repository.FollowRepository;
 import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.RefreshToken;
@@ -29,6 +30,9 @@ public class MemberService {
 //    private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+
+    // 마이페이지 팔로우 팔로잉 기능 추가 시,
+    private final FollowRepository followRepository;
 
     public String checkNickname(String nickname) {
         if (memberRepository.findByNickname(nickname).isPresent()) {
@@ -49,9 +53,36 @@ public class MemberService {
         return memberRepository.save(member);
     }
     public Member getMember(UserDetailsImpl userDetailsImpl) {
-        return memberRepository.findById(userDetailsImpl.getId())
+//        return memberRepository.findById(userDetailsImpl.getId())
+//                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+    // 마이페이지에 팔로잉 / 팔로우 수를 넣어야할 경우 미리 만들기
+
+       Member member = memberRepository.findById(userDetailsImpl.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        // 접속한 유저 기준 팔로잉한 수
+        int followingsCnt = followRepository.countToMemberIdByFromMemberId(userDetailsImpl.getId());
+        // 접속한 유저 기준 자신을 팔로워한 수
+        int followersCnt = followRepository.countFromMemberIdByToMemberId(userDetailsImpl.getId());
+
+        return Member.builder()
+            .id(member.getId())
+            .username(member.getUsername())
+            .password(member.getPassword())
+            .nickname(member.getNickname())
+            .socialId(member.getSocialId())
+            .authority(member.getAuthority())
+            .profileImage(member.getProfileImage())
+            .highschool(member.getHighschool())
+            .grade(member.getGrade())
+            .myMotto(member.getMyMotto())
+            .followingsCnt(followingsCnt)
+            .followersCnt(followersCnt)
+            .build();
     }
+
+
     public String updateMotto(MottoRequestDto mottoRequestDto, UserDetailsImpl userDetailsImpl) {
         Member member = memberRepository.findById(userDetailsImpl.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));

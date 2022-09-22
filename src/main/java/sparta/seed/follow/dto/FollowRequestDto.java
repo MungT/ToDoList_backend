@@ -10,4 +10,5 @@ public class FollowRequestDto {
 
     private Member FromMember;
     private Member toMember;
+
 }

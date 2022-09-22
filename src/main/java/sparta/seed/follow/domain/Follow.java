@@ -17,11 +17,11 @@ public class Follow {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "fromMemberId")
+    @JoinColumn
     private Member fromMember; // 구독을 하는 유저
 
     @ManyToOne
-    @JoinColumn(name = "toMemberId", nullable = false)
+    @JoinColumn
      private Member toMember; // 구독 받는 유저
 
 

@@ -8,6 +8,7 @@ import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.repository.MemberRepository;
+import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Todo;
 import sparta.seed.todo.dto.TodoRequestDto;
@@ -28,6 +29,8 @@ public class TodoService {
     private final MemberRepository memberRepository;
 
 
+    // 5to5를 하루로 보는데, 프론트에서 만약 22일 새벽 1시에 api 호출할 때
+    //달력 라이브러리로 인해 21일이 아닌 22일로 호출된다고해서 아래 메소드를 따로 생성함.
     public List<TodoResponseDto> getTodayTodo(UserDetailsImpl userDetails) {
         LocalDate localDate = timeCustom.currentDate();
         if(!memberRepository.existsByNickname(userDetails.getNickname()))
@@ -43,22 +46,18 @@ public class TodoService {
         return todoRepository.getTodo(selectedDate, userDetails.getMember());
     }
 
-    public TodoResponseDto addTodo(TodoRequestDto todoRequestDto, UserDetailsImpl userDetailsImpl) {
+    public String addTodo(TodoRequestDto todoRequestDto, UserDetailsImpl userDetailsImpl) {
 
         Todo todo = Todo.builder()
                 .content(todoRequestDto.getContent())
                 .isComplete(todoRequestDto.getIsComplete())
                 .addDate(timeCustom.currentDate())
                 .nickname(userDetailsImpl.getMember().getNickname())
+                .category(todoRequestDto.getCategory())
                 .build();
         todoRepository.save(todo);
 
-        return TodoResponseDto.builder()
-                .todoId(todo.getId())
-                .content(todo.getContent())
-                .isComplete(todo.getIsComplete())
-                .addDate(todo.getAddDate())
-                .build();
+        return Message.TODO_UPLOAD_SUCCESS.getMessage();
     }
 
     @Transactional
@@ -100,9 +99,4 @@ public class TodoService {
         }
     }
 
-    public void test() {
-        SecurityContextHolder.getContext().getAuthentication();
-
-
-    }
 }

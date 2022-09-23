@@ -126,14 +126,14 @@ public class KakaoUserService {
     }
 
     String id = jsonNode.get("id").toString();
-    String nickname = "K" + "_" + rdNick;
+//    String nickname = "K" + "_" + rdNick;
     String username = jsonNode.get("kakao_account").get("email").asText();
     String defaultImage = "https://mytest-coffick.s3.ap-northeast-2.amazonaws.com/coffindBasicImage.png";
 
     return SocialMemberRequestDto.builder()
             .socialId(id)
             .username(username)
-            .nickname(nickname)
+//            .nickname(nickname)
             .profileImage(defaultImage)
             .build();
   }
@@ -147,7 +147,7 @@ public class KakaoUserService {
     Member member = memberRepository.findBySocialId(socialId).orElse(null);
     if (member == null) {      // 회원가입
       String username = kakaoUserInfo.getUsername();
-      String nickname = kakaoUserInfo.getNickname();
+//      String nickname = kakaoUserInfo.getNickname();
       String password = passwordEncoder.encode(UUID.randomUUID().toString());
       String profileImage = kakaoUserInfo.getProfileImage();
       String highschool = kakaoUserInfo.getHighschool();
@@ -156,10 +156,11 @@ public class KakaoUserService {
       Member signUp = Member.builder()
               .socialId(socialId)
               .username(username)
-              .nickname(nickname)
+//              .nickname(nickname)
               .password(password)
               .profileImage(profileImage)
               .highschool(highschool)
+              .profileImage(profileImage)
               .grade(grade)
               .authority(Authority.ROLE_USER)
               .build();

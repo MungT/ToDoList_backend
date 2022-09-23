@@ -19,7 +19,6 @@ public class AchievementController {
     //플래너에서 해당 날짜의 달성률 반환
     @GetMapping("/api/todo/achievement")
     public ResponseEntity<AchievementResponseDto> getAchievementRate(@RequestParam("date")String selectDate, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        System.out.println(selectDate);
         return ResponseEntity.ok()
                 .body(achievementService.getAchievementRate(selectDate, userDetailsImpl));
     }
@@ -46,10 +45,10 @@ public class AchievementController {
                 .body(achievementService.getWeeklyAchievementRate(userDetailsImpl));
     }
     //유저 총 달성률 조회
-    @GetMapping("/api/todo/achievement/total")
-    public ResponseEntity<AchievementResponseDto> getTotalAchievementRate(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+    @GetMapping("/api/todo/achievement/total/{nickname}")
+    public ResponseEntity<AchievementResponseDto> getTotalAchievementRate(@PathVariable String nickname) {
         return ResponseEntity.ok()
-                .body(achievementService.getTotalAchievementRate(userDetailsImpl));
+                .body(achievementService.getTotalAchievementRate(nickname));
     }
     //서버에서 achievement 테이블에 저장
     @PostMapping("/api/todo/achievement")

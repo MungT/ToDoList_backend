@@ -51,4 +51,5 @@ public class TimeCustom {
         LocalDate endDate = firstDate.plusDays(7-dayOfWeekValue);
         return new FirstWeekResponseDto(startDate, endDate);
     }
+
 }

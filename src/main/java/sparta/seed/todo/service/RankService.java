@@ -24,8 +24,8 @@ public class RankService {
         //주간 랭킹 점수
         LocalDate currentDate = timeCustom.currentDate();
         //월요일은 아직 랭킹 테이블에 안올라온 상태이기 때문에 문제없음
-        if(currentDate.getDayOfWeek().equals(DayOfWeek.FRIDAY)){ //원래는 Tuesday지만 테스트를 위해서 wednesday
-            rankRepository.deleteLastWeek("지난 주");
+        if(currentDate.getDayOfWeek().equals(DayOfWeek.TUESDAY)){ //원래는 Tuesday지만 테스트를 위해서 wednesday
+            rankRepository.deleteRank("지난 주");
             rankRepository.setThisWeekToLastWeek();
         }
 
@@ -33,6 +33,7 @@ public class RankService {
         LocalDate startDate = endDate.minusDays(endDate.getDayOfWeek().getValue()-1);
 
         List<Rank> rankList = new ArrayList<>();
+        rankRepository.deleteRank("주간");
         List<AchievementResponseDto> achievementResponseDtoList = saveRank(startDate, endDate);
 
         for (AchievementResponseDto achievementResponseDto : achievementResponseDtoList) {
@@ -51,6 +52,7 @@ public class RankService {
         LocalDate startDate = endDate.minusDays(endDate.getDayOfMonth() - 1);
 
         List<Rank> rankList = new ArrayList<>();
+        rankRepository.deleteRank("월간");
         List<AchievementResponseDto> achievementResponseDtoList =  saveRank(startDate, endDate);
 
         for (AchievementResponseDto achievementResponseDto : achievementResponseDtoList) {

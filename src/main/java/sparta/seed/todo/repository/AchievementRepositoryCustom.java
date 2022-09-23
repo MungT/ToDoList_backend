@@ -10,10 +10,10 @@ import java.util.List;
 public interface AchievementRepositoryCustom {
     List<TodoResponseDto> getRecentlyRate(LocalDate yesterDay);
     List<TodoResponseDto> getAchievementRateByDate(LocalDate selectedDate, Member member);
-    List<TodoResponseDto> getDaylyAchievementRate(LocalDate stardDate, LocalDate endDate, Member memeber);
-    List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member memeber);
-    AchievementResponseDto getTotalAchievementRate(Member member);
+    List<AchievementResponseDto> getDaylyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member);
+    List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member);
+    AchievementResponseDto getTotalAchievementRate(String nickname);
     Long getPlannerCnt(Member member);
-    List<AchievementResponseDto> getThisWeekAchievementRate(LocalDate startDate, LocalDate endDate, Member member);
-    AchievementResponseDto getThisMonthAchievementRate(LocalDate startDate, LocalDate endDate, Member member);
+    List<AchievementResponseDto> getThisWeekAchievementRate(LocalDate startDate, LocalDate endDate, String nickname);
+    AchievementResponseDto getThisMonthAchievementRate(LocalDate startDate, LocalDate endDate, String nickname);
 }

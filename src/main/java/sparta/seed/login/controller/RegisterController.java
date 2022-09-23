@@ -13,6 +13,7 @@ import sparta.seed.login.service.MemberService;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,10 +36,10 @@ public class RegisterController {
                 .body(memberService.signup(socialMemberRequestDto,userDetailsImpl));
     }
     //유저 정보 가져오기
-    @GetMapping("/api/member")
-    public ResponseEntity<Member> getMember(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+    @GetMapping("/api/member/{nickname}")
+    public ResponseEntity<Member> getMember(@PathVariable String nickname){
         return ResponseEntity.ok()
-                .body(memberService.getMember(userDetailsImpl));
+                .body(memberService.getMember(nickname));
     }
     //좌우명 등록
     @PostMapping("/api/motto")
@@ -56,6 +57,14 @@ public class RegisterController {
         return  new ResponseEntity<>(null, httpHeaders, HttpStatus.OK);
 //        return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
     }
-
-
+    @GetMapping("api/d-day")
+    public ResponseEntity<GoalDateResponseDto> getRemainingDay(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+        return ResponseEntity.ok()
+                .body(memberService.getRemaingDay(userDetailsImpl));
+    }
+    @PutMapping("api/d-day")
+    public ResponseEntity<String> updateGoal(@RequestBody GoalDateRequestDto goalDateRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+        return ResponseEntity.ok()
+                .body(memberService.updateGoal(goalDateRequestDto, userDetailsImpl));
+    }
 }

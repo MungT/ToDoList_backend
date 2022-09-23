@@ -35,7 +35,7 @@ public class TodoController {
     }
     //투두 추가
     @PostMapping("/api/todo")
-    public ResponseEntity<TodoResponseDto> addTodo(@Valid @RequestBody TodoRequestDto todoRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+    public ResponseEntity<String> addTodo(@Valid @RequestBody TodoRequestDto todoRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         return ResponseEntity.ok()
                 .body(todoService.addTodo(todoRequestDto, userDetailsImpl));
     }
@@ -61,8 +61,5 @@ public class TodoController {
         return ResponseEntity.ok()
                 .body(achievementRepository.getPlannerCnt(userDetailsImpl.getMember()));
     }
-    @GetMapping("/api/test")
-    public void test(){
-        todoService.test();
-    }
+
 }

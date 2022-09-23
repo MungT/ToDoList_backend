@@ -1,25 +1,31 @@
 package sparta.seed.login.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.apache.tomcat.jni.Local;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.follow.repository.FollowRepository;
 import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.RefreshToken;
+import sparta.seed.school.domain.School;
 import sparta.seed.login.dto.*;
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.login.repository.RefreshTokenRepository;
+import sparta.seed.school.repository.SchoolRepository;
 import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
+import sparta.seed.util.SchoolList;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +36,7 @@ public class MemberService {
 //    private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final SchoolRepository schoolRepository;
 
     // 마이페이지 팔로우 팔로잉 기능 추가 시,
     private final FollowRepository followRepository;
@@ -49,16 +56,18 @@ public class MemberService {
         member.setNickname(socialMemberRequestDto.getNickname());
         member.setHighschool(socialMemberRequestDto.getHighschool());
         member.setGrade(socialMemberRequestDto.getGrade());
+        member.setGoalDate(LocalDate.parse("2022-11-17"));
+        member.setGoalTitle("수능");
         System.out.println(member);
         return memberRepository.save(member);
     }
-    public Member getMember(UserDetailsImpl userDetailsImpl) {
-//        return memberRepository.findById(userDetailsImpl.getId())
-//                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+    public Member getMember(String nickname) {
+       // return memberRepository.findByNickname(nickname)
 
     // 마이페이지에 팔로잉 / 팔로우 수를 넣어야할 경우 미리 만들기
 
-       Member member = memberRepository.findById(userDetailsImpl.getId())
+       Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         // 접속한 유저 기준 팔로잉한 수
@@ -119,7 +128,20 @@ public class MemberService {
         // 토큰 발급
         return tokenDto;
     }
+    public GoalDateResponseDto getRemaingDay(UserDetailsImpl userDetailsImpl) {
+        Member member = memberRepository.findById(userDetailsImpl.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        return GoalDateResponseDto.builder()
+                .title(member.getGoalTitle())
+                .remaingDay((int) Duration.between(member.getGoalDate().atStartOfDay(),LocalDate.now().atStartOfDay()).toDays()).build();
+    }
 
-
-
+    public String updateGoal(GoalDateRequestDto goalDateRequestDto, UserDetailsImpl userDetailsImpl) {
+        Member member = memberRepository.findById(userDetailsImpl.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        member.setGoalTitle(goalDateRequestDto.getTitle());
+        member.setGoalDate(LocalDate.parse(goalDateRequestDto.getSelectedDate(), DateTimeFormatter.ISO_DATE));
+        memberRepository.save(member);
+        return Message.GOAL_UPDATE_SUCCESS.getMessage();
+    }
 }

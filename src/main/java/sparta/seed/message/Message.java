@@ -21,7 +21,8 @@ public enum Message {
     CATEGORY_DELETE_SUCCESS("카테고리 삭제 완료"),
     // 팔로우 관련
     MYFOLLOW_UPDATE_SUCCESS("팔로우 완료"),
-    MYFOLLOW_UPDATE_CANCEL("팔로우 취소 완료");
+    MYFOLLOW_UPDATE_CANCEL("팔로우 취소 완료"),
+    UPDATE_SUCCESS("프로필 이미지, 좌우명 수정 완료");
 
     private final String message;
 

@@ -1,7 +1,6 @@
 package sparta.seed.login.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.jni.Local;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
@@ -9,23 +8,20 @@ import org.springframework.transaction.annotation.Transactional;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.follow.repository.FollowRepository;
+import sparta.seed.image.dto.MottoRequestDto;
 import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.RefreshToken;
-import sparta.seed.school.domain.School;
 import sparta.seed.login.dto.*;
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.login.repository.RefreshTokenRepository;
 import sparta.seed.school.repository.SchoolRepository;
 import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
-import sparta.seed.util.SchoolList;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -66,9 +62,9 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         // 접속한 유저 기준 팔로잉한 수
-        int followingsCnt = followRepository.countToMemberIdByFromMemberId(userDetailsImpl.getId());
+        int followingsCnt = followRepository.countToMemberIdByFromMemberId(member.getId());
         // 접속한 유저 기준 자신을 팔로워한 수
-        int followersCnt = followRepository.countFromMemberIdByToMemberId(userDetailsImpl.getId());
+        int followersCnt = followRepository.countFromMemberIdByToMemberId(member.getId());
 
         return Member.builder()
             .id(member.getId())

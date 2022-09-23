@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import sparta.seed.image.dto.MottoRequestDto;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.dto.*;
 import sparta.seed.login.repository.MemberRepository;
@@ -13,7 +14,6 @@ import sparta.seed.login.service.MemberService;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.validation.Valid;
-import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor

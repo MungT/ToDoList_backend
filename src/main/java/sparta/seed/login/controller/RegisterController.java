@@ -34,10 +34,10 @@ public class RegisterController {
                 .body(memberService.signup(socialMemberRequestDto,userDetailsImpl));
     }
     //유저 정보 가져오기
-    @GetMapping("/api/member")
-    public ResponseEntity<Member> getMember(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+    @GetMapping("/api/member/{nickname}")
+    public ResponseEntity<Member> getMember(@PathVariable String nickname){
         return ResponseEntity.ok()
-                .body(memberService.getMember(userDetailsImpl));
+                .body(memberService.getMember(nickname));
     }
     //좌우명 등록
     @PostMapping("/api/motto")

@@ -8,6 +8,7 @@ import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.image.domain.DeletedUrlPath;
 import sparta.seed.image.domain.Image;
+import sparta.seed.image.dto.ImageResponseDto;
 import sparta.seed.image.repository.DeletedUrlPathRepository;
 import sparta.seed.image.repository.ImageRepository;
 import sparta.seed.login.domain.Member;
@@ -51,11 +52,13 @@ public class ImageService {
         member.setProfileImage(null); //기본 이미지 만들어지면 해당 주소 넣기
         return Message.IMAGE_DELETE_SUCCESS.getMessage();
     }
-    public List<String> getBoastImage(UserDetailsImpl userDetailsImpl) {
-        if (!imageRepository.existsByMember(userDetailsImpl.getMember()))
+    public List<ImageResponseDto> getBoastImage(String nickname) {
+        Member member = memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        if (!imageRepository.existsByMember(member))
             throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
 
-        return imageRepository.getBoastImage(userDetailsImpl.getId());
+        return imageRepository.getBoastImage(member.getId());
     }
 
     public String saveBoastImage(MultipartFile multipartFile, UserDetailsImpl userDetailsImpl) throws IOException {

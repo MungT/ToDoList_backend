@@ -33,12 +33,14 @@ public class CategoryService {
         Member member = memberRepository.findById(userDetailsImpl.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        categoryRepository.save(Category.builder()
-                .nickname(member.getNickname())
-                .title(categoryRequestDto.getTitle()).build());
+        categoryRepository.save(
+                Category.builder()
+                        .nickname(member.getNickname())
+                        .title(categoryRequestDto.getTitle()).build());
 
         return Message.CATEGORY_UPLOAD_SUCCESS.getMessage();
     }
+
     public String updateCategory(Long categoryId, CategoryRequestDto categoryRequestDto) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
@@ -46,6 +48,7 @@ public class CategoryService {
         categoryRepository.save(category);
         return Message.CATEGORY_UPDATE_SUCCESS.getMessage();
     }
+
     public String deleteCategory(Long categoryId) {
         categoryRepository.deleteById(categoryId);
         return Message.CATEGORY_DELETE_SUCCESS.getMessage();

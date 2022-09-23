@@ -57,8 +57,8 @@ public class MemberService {
         System.out.println(member);
         return memberRepository.save(member);
     }
-    public Member getMember(UserDetailsImpl userDetailsImpl) {
-        return memberRepository.findById(userDetailsImpl.getId())
+    public Member getMember(String nickname) {
+        return memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
     public String updateMotto(MottoRequestDto mottoRequestDto, UserDetailsImpl userDetailsImpl) {

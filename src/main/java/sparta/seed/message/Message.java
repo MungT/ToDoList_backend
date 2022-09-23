@@ -19,7 +19,7 @@ public enum Message {
     //카테고리 관련
     CATEGORY_UPLOAD_SUCCESS("카테고리 추가 완료"),
     CATEGORY_UPDATE_SUCCESS("카테고리 수정 완료"),
-    CATEGORY_DELETE_SUCCESS("카테고리 삭제 완료");
+    CATEGORY_DELETE_SUCCESS("카테고리 삭제 완료"),
     
     // 팔로우 관련
     MYFOLLOW_UPDATE_SUCCESS("팔로우 완료"),

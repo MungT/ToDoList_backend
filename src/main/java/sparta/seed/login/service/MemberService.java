@@ -71,9 +71,9 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         // 접속한 유저 기준 팔로잉한 수
-        int followingsCnt = followRepository.countToMemberIdByFromMemberId(userDetailsImpl.getId());
+        int followingsCnt = followRepository.countToMemberIdByFromMemberId(member.getId());
         // 접속한 유저 기준 자신을 팔로워한 수
-        int followersCnt = followRepository.countFromMemberIdByToMemberId(userDetailsImpl.getId());
+        int followersCnt = followRepository.countFromMemberIdByToMemberId(member.getId());
 
         return Member.builder()
             .id(member.getId())

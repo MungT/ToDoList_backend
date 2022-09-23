@@ -10,6 +10,7 @@ import sparta.seed.school.dto.SchoolRequestDto;
 import sparta.seed.school.service.SchoolService;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +26,8 @@ public class SchoolController {
         return schoolService.saveSchoolList();
     }
     @GetMapping("/api/school")
-    public Slice<School> getSchool(@ModelAttribute SchoolRequestDto schoolRequestDto, Pageable pageable){
-        return schoolService.getSchoolList(schoolRequestDto,pageable);
+    public List<School> getSchool(@ModelAttribute SchoolRequestDto schoolRequestDto){
+        return schoolService.getSchoolList(schoolRequestDto);
     }
 
 }

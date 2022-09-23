@@ -45,6 +45,9 @@ public class ImageService {
 //        return s3Dto.getUploadImageUrl();
         if (mottoRequestDto != null)
             member.setMyMotto(mottoRequestDto.getMyMotto());
+        else
+            member.setMyMotto(null);
+
         memberRepository.save(member);
         return Message.UPDATE_SUCCESS.getMessage();
     }

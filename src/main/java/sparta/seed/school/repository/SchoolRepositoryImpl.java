@@ -23,15 +23,15 @@ public class SchoolRepositoryImpl implements SchoolRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
     public Slice<School> getSchoolListPage(SchoolRequestDto schoolRequestDto, Pageable pageable) {
-        QueryResults<School> result = queryFactory
+        List<School> result = queryFactory
                 .selectFrom(school)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .where(school.schoolName.contains(schoolRequestDto.getSearch()))
-                .fetchResults();
+                .fetch();
 
         List<School> schoolList = new ArrayList<>();
-        for (School eachSchool : result.getResults()) {
+        for (School eachSchool : result) {
             schoolList.add(School.builder()
                     .id(eachSchool.getId())
                     .schoolName(eachSchool.getSchoolName())

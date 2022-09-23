@@ -3,6 +3,7 @@ package sparta.seed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import sparta.seed.image.service.ImageService;
 import sparta.seed.todo.service.AchievementService;
 import sparta.seed.todo.service.RankService;
@@ -13,6 +14,8 @@ public class Scheduler {
     private final AchievementService achievementService;
     private final ImageService imageService;
     private final RankService rankService;
+
+    @Transactional
     @Scheduled(cron = "0 0 5 * * *")
     public void saveDaylyAchievementAndRemoveImage() {
         achievementService.saveDaylyAchievement();

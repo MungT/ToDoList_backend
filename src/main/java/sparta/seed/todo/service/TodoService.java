@@ -29,6 +29,8 @@ public class TodoService {
     private final MemberRepository memberRepository;
 
 
+    // 5to5를 하루로 보는데, 프론트에서 만약 22일 새벽 1시에 api 호출할 때
+    //달력 라이브러리로 인해 21일이 아닌 22일로 호출된다고해서 아래 메소드를 따로 생성함.
     public List<TodoResponseDto> getTodayTodo(UserDetailsImpl userDetails) {
         LocalDate localDate = timeCustom.currentDate();
         if(!memberRepository.existsByNickname(userDetails.getNickname()))

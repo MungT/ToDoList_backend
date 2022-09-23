@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sparta.seed.image.dto.ImageResponseDto;
 import sparta.seed.image.repository.ImageRepository;
 import sparta.seed.image.service.ImageService;
 import sparta.seed.login.dto.MemberResponseDto;
@@ -34,9 +35,9 @@ public class ImageController {
         return ResponseEntity.ok(imageService.deleteProfileImage(userDetailsImpl));
     }
     //자랑 이미지 조회
-    @GetMapping("/boast")
-    public ResponseEntity<List<String>> getBoastImage(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
-        return ResponseEntity.ok(imageService.getBoastImage(userDetailsImpl));
+    @GetMapping("/boast/{nickname}")
+    public ResponseEntity<List<ImageResponseDto>> getBoastImage(@PathVariable String nickname){
+        return ResponseEntity.ok(imageService.getBoastImage(nickname));
     }
     //자랑 이미지 저장
     @PostMapping("/boast")

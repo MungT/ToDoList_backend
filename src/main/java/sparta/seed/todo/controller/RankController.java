@@ -6,10 +6,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Rank;
 import sparta.seed.todo.dto.AchievementResponseDto;
@@ -28,13 +25,14 @@ public class RankController {
     private final RankRepository rankRepository;
 
     //(서버)주간 랭킹 저장
-    @Transactional
+    @Transactional //update, delete 경우 필요 (없으면 TransactionRequiredException 발생)
     @PostMapping("/api/rank/weekly")
     public ResponseEntity<List<Rank>> saveWeeklyRank() {
         return ResponseEntity.ok()
                 .body(rankService.saveWeeklyRank());
     }
     //(서버)월간 랭킹 저장
+    @Transactional
     @PostMapping("/api/rank/monthly")
     public ResponseEntity<List<Rank>> saveMonthlyRank() {
         return ResponseEntity.ok()
@@ -68,15 +66,13 @@ public class RankController {
         return ResponseEntity.ok(rankService.getLastweekRank(nickname));
     }
     //유저의 주간 랭킹 조회
-    @GetMapping("/api/rank/weekly/member")
-    public ResponseEntity<Rank> getMonthlyRank(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        String nickname = userDetailsImpl.getNickname();
+    @GetMapping("/api/rank/weekly/member/{nickname}")
+    public ResponseEntity<Rank> getMonthlyRank(@PathVariable String nickname) {
         return ResponseEntity.ok(rankRepository.getWeeklyRank(nickname));
     }
     //유저의 월간 랭킹 조회
-    @GetMapping("/api/rank/monthly/member")
-    public ResponseEntity<Rank> getWeeklyRank(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        String nickname = userDetailsImpl.getNickname();
+    @GetMapping("/api/rank/monthly/member/{nickname}")
+    public ResponseEntity<Rank> getWeeklyRank(@PathVariable String nickname) {
         return ResponseEntity.ok(rankRepository.getMonthlyRank(nickname));
     }
 }

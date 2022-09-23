@@ -1,6 +1,8 @@
 package sparta.seed.login.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +47,14 @@ public class RegisterController {
     }
     @PostMapping("/api/reissue")  //재발급을 위한 로직
     public ResponseEntity<MemberResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
+        MemberResponseDto memberResponseDto = memberService.reissue(tokenRequestDto);
+        String accessToken = memberResponseDto.getAccessToken();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Authorization",accessToken);
+
+        return  new ResponseEntity<>(null, httpHeaders, HttpStatus.OK);
+//        return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
     }
 
 

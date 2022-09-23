@@ -52,7 +52,7 @@ public class Member {
 
   @Builder
   public Member(Long id, String username, String password, String nickname, String socialId, Authority authority, String profileImage, String highschool, String grade, String myMotto,
-                String goalTitle, LocalDate goalDateint, int followingsCnt, int followersCnt) {
+                String goalTitle, LocalDate goalDate, int followingsCnt, int followersCnt) {
     this.id = id;
     this.username = username;
     this.password = password;

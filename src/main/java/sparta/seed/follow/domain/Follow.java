@@ -25,9 +25,8 @@ public class Follow {
      private Member toMember; // 구독 받는 유저
 
 
-    @Builder
-    public Follow(FollowRequestDto requestDto) {
-        this.fromMember = requestDto.getFromMember();
-        this.toMember = requestDto.getToMember();
+    public Follow(Member fromMember, Member toMember) {
+        this.fromMember = fromMember;
+        this.toMember = toMember;
     }
 }

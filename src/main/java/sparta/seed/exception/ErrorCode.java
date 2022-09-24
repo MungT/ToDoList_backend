@@ -23,7 +23,7 @@ public enum ErrorCode { //이렇게 해주는 방법도 있다. 현재 코드에
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND,"404" ,"해당 카테고리가 존재하지 않습니다."),
 
     // 팔로우 관련
-    MYSELF_NOT_SELECTED(HttpStatus.BAD_REQUEST,"400","자기자신을 팔로우 할 수 없습니다."),
+    DONT_FOLLOW_MYSELF(HttpStatus.BAD_REQUEST,"400","자기자신을 팔로우 할 수 없습니다."),
     FOLLOWLIST_EMPTY(HttpStatus.NOT_FOUND,"404" ,"팔로우한 친구가 없습니다.");
 
 

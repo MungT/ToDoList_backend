@@ -8,15 +8,13 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface FollowRepository extends JpaRepository<Follow, Long> {
+public interface FollowRepository extends JpaRepository<Follow, Long>, FollowRepositoryCustom {
 
-    Optional<Follow> findByFromMemberAndToMember_Id(Member member, Long postId);
 
-    List<Follow> findAllByFromMember(Member member);
     List<Follow> findAllByToMember(Member member);
 
     int countToMemberIdByFromMemberId(Long fromMemberId);
     int countFromMemberIdByToMemberId(Long fromMemberId);
-
-
+    Boolean existsByFromMemberAndToMember(Member fromMember, Member toMember);
+    void deleteByFromMemberAndToMember(Member fromMember, Member toMember);
 }

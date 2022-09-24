@@ -1,5 +1,6 @@
 package sparta.seed.login.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Member {
 
   private String username;
 
+  @JsonIgnore
   private String password;
 
   private String nickname;

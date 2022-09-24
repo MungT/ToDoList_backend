@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.dto.AchievementResponseDto;
+import sparta.seed.todo.repository.AchievementRepository;
 import sparta.seed.todo.service.AchievementService;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @CrossOrigin(origins = "*", allowedHeaders = "*", exposedHeaders = "*")
 public class AchievementController {
     private final AchievementService achievementService;
+    private final AchievementRepository achievementRepository;
 
     //플래너에서 해당 날짜의 달성률 반환
     @GetMapping("/api/todo/achievement")
@@ -55,4 +57,10 @@ public class AchievementController {
     public void saveDaylyAchievement() {
         achievementService.saveDaylyAchievement();
     }
+    @GetMapping("/api/todo/planner")
+    public ResponseEntity<Long> getPlannerCnt(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+        return ResponseEntity.ok()
+                .body(achievementRepository.getPlannerCnt(userDetailsImpl.getMember()));
+    }
+
 }

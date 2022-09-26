@@ -20,10 +20,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import sparta.seed.login.domain.Authority;
 import sparta.seed.login.domain.Member;
+import sparta.seed.login.domain.RefreshToken;
 import sparta.seed.login.dto.SocialMemberRequestDto;
 import sparta.seed.login.dto.MemberResponseDto;
 import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.repository.MemberRepository;
+import sparta.seed.login.repository.RefreshTokenRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +45,7 @@ public class GoogleUserService {
   String googleRedirectUri;
   private final MemberRepository memberRepository;
   private final TokenProvider tokenProvider;
+  private final RefreshTokenRepository refreshTokenRepository;
 
   public MemberResponseDto googleLogin(String code, HttpServletResponse response) throws JsonProcessingException {
 
@@ -190,6 +193,14 @@ public class GoogleUserService {
     MemberResponseDto responseDto = tokenProvider.generateTokenDto(authentication);
     String token = responseDto.getAccessToken();
     response.addHeader("Authorization", "Bearer " + token);
+
+    RefreshToken refreshToken = RefreshToken.builder()
+            .key(authentication.getName())
+            .value(responseDto.getRefreshToken())
+            .build();
+
+    refreshTokenRepository.save(refreshToken);
+
     return MemberResponseDto.builder()
             .id(member.getId())
             .username(member.getUsername())

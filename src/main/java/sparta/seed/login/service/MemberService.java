@@ -9,6 +9,7 @@ import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.follow.repository.FollowRepository;
 import sparta.seed.image.dto.MottoRequestDto;
+
 import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.RefreshToken;
@@ -57,6 +58,7 @@ public class MemberService {
         System.out.println(member);
         return memberRepository.save(member);
     }
+
     public Member getMember(String nickname) {
         Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
@@ -65,6 +67,7 @@ public class MemberService {
         int followingsCnt = followRepository.countToMemberIdByFromMemberId(member.getId());
         // 접속한 유저 기준 자신을 팔로워한 수
         int followersCnt = followRepository.countFromMemberIdByToMemberId(member.getId());
+
 
         return Member.builder()
             .id(member.getId())
@@ -81,6 +84,8 @@ public class MemberService {
             .followersCnt(followersCnt)
             .build();
     }
+
+
     public String updateMotto(MottoRequestDto mottoRequestDto, UserDetailsImpl userDetailsImpl) {
         Member member = memberRepository.findById(userDetailsImpl.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));

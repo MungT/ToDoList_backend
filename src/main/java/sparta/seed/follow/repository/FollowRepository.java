@@ -10,11 +10,12 @@ import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long>, FollowRepositoryCustom {
 
-
     List<Follow> findAllByToMember(Member member);
 
     int countToMemberIdByFromMemberId(Long fromMemberId);
     int countFromMemberIdByToMemberId(Long fromMemberId);
+
     Boolean existsByFromMemberAndToMember(Member fromMember, Member toMember);
     void deleteByFromMemberAndToMember(Member fromMember, Member toMember);
+
 }

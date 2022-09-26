@@ -9,7 +9,9 @@ import sparta.seed.follow.dto.FindResponseDto;
 import sparta.seed.follow.repository.FollowRepository;
 import sparta.seed.follow.dto.FollowRequestDto;
 import sparta.seed.login.domain.Member;
+
 import sparta.seed.login.dto.MemberResponseDto;
+
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
@@ -26,6 +28,7 @@ public class FollowService {
 
 
     // 팔로우 & 팔로우 취소 기능
+
     public String upDownFollow(Long toMemberId, UserDetailsImpl userDetailsImpl) {
         //로그인한 유저
         Member fromMember = memberRepository.findById(userDetailsImpl.getId())
@@ -48,45 +51,10 @@ public class FollowService {
             // DB에 해당 객체 값이 있다면 -> 팔로우 취소
             followRepository.deleteByFromMemberAndToMember(fromMember, toMember);
             return Message.UNFOLLOW_SUCCESS.getMessage();
+
         }
     }
-    // 팔로잉 리스트
-    // 수정 : 닉네임과 이미지만 전송
-//    public List<FindResponseDto> getFollowings(UserDetailsImpl userDetailsImpl) {
-//        // 팔로잉 리스트 조회
-//        List<Member> FollowingList = followRepository.getFollowingList(userDetailsImpl.getMember());
-//        // 접속자 생성
-//        List<FindResponseDto> temp = new ArrayList<>();
-//
-//        for (Follow follow : list) {
-//            FindResponseDto findResponseDto = FindResponseDto.builder()
-//                    .findMemberId(follow.getToMember().getId())
-//                    .nickname(follow.getToMember().getNickname())
-//                    .profile(follow.getToMember().getProfileImage())
-//                    .build();
-//
-//            temp.add(findResponseDto);
-//        }
-//        return temp;
-//    }
 
-    // 팔로우 리스트
-//    public List<FindResponseDto> getFollowers(UserDetailsImpl userDetailsImpl) {
-//        List<Follow> list = followRepository.findAllByToMember(userDetailsImpl.getMember());
-//
-//        List<FindResponseDto> temp = new ArrayList<>();
-//
-//        for (Follow follow : list) {
-//            FindResponseDto findResponseDto = FindResponseDto.builder()
-//                    .findMemberId(follow.getFromMember().getId())
-//                    .nickname(follow.getFromMember().getNickname())
-//                    .profile(follow.getFromMember().getProfileImage())
-//                    .build();
-//
-//            temp.add(findResponseDto);
-//        }
-//        return temp;
-//    }
 }
 
 

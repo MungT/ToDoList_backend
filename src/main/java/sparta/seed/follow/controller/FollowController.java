@@ -2,7 +2,6 @@ package sparta.seed.follow.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;

@@ -67,12 +67,12 @@ public class RankController {
     }
     //유저의 주간 랭킹 조회
     @GetMapping("/api/rank/weekly/member/{nickname}")
-    public ResponseEntity<Rank> getMonthlyRank(@PathVariable String nickname) {
+    public ResponseEntity<Rank> getWeeklyRank(@PathVariable String nickname) {
         return ResponseEntity.ok(rankRepository.getWeeklyRank(nickname));
     }
     //유저의 월간 랭킹 조회
     @GetMapping("/api/rank/monthly/member/{nickname}")
-    public ResponseEntity<Rank> getWeeklyRank(@PathVariable String nickname) {
-        return ResponseEntity.ok(rankRepository.getMonthlyRank(nickname));
+    public ResponseEntity<RankResponseDto> getMonthlyRank(@PathVariable String nickname) {
+        return ResponseEntity.ok(rankService.getMonthlyRank(nickname));
     }
 }

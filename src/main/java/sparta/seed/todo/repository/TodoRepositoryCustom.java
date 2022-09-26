@@ -15,5 +15,6 @@ public interface TodoRepositoryCustom {
     List<TodoResponseDto> getTodo(LocalDate addDate, Member member);
     TodoDateResponseDto getFirstandLastTodoAddDate(Member member);
     List<TodoResponseDto> getTodayTodo(LocalDate localDate, Member member);
+    TodoResponseDto getTotalCnt(String nickname);
 }
 

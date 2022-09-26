@@ -22,27 +22,25 @@ public class SchoolRepositoryImpl implements SchoolRepositoryCustom {
     public SchoolRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
-    public Slice<School> getSchoolListPage(SchoolRequestDto schoolRequestDto, Pageable pageable) {
-        List<School> result = queryFactory
+    public List<School> getSchoolListPage(SchoolRequestDto schoolRequestDto) {
+        return queryFactory
                 .selectFrom(school)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
                 .where(school.schoolName.contains(schoolRequestDto.getSearch()))
                 .fetch();
 
-        List<School> schoolList = new ArrayList<>();
-        for (School eachSchool : result) {
-            schoolList.add(School.builder()
-                    .id(eachSchool.getId())
-                    .schoolName(eachSchool.getSchoolName())
-                    .build());
-        }
-
-        boolean hasNext = false;
-        if (schoolList.size() > pageable.getPageSize()) {
-            schoolList.remove(pageable.getPageSize());
-            hasNext = true;
-        }
-        return new SliceImpl<>(schoolList, pageable, hasNext);
+//        List<School> schoolList = new ArrayList<>();
+//        for (School eachSchool : result) {
+//            schoolList.add(School.builder()
+//                    .id(eachSchool.getId())
+//                    .schoolName(eachSchool.getSchoolName())
+//                    .build());
+//        }
+//
+//        boolean hasNext = false;
+//        if (schoolList.size() > pageable.getPageSize()) {
+//            schoolList.remove(pageable.getPageSize());
+//            hasNext = true;
+//        }
+//        return new SliceImpl<>(schoolList, pageable, hasNext);
     }
 }

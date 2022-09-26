@@ -189,10 +189,26 @@ public class AchievementService {
     public List<AchievementResponseDto> getDaylyAchievementRate(UserDetailsImpl userDetailsImpl) {
 
         LocalDate endDate = timeCustom.currentDate();
-        LocalDate startDate = endDate.minusDays(30);
-
-        return achievementRepository.getDaylyAchievementRate(startDate, endDate, userDetailsImpl.getMember());
-
+        LocalDate startDate = endDate.minusDays(endDate.getDayOfWeek().getValue() - 1).minusDays(63);
+        System.out.println(startDate);
+        List<AchievementResponseDto> answerList = new ArrayList<>();
+        List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getDaylyAchievementRate(startDate, endDate, userDetailsImpl.getNickname());
+        if(achievementResponseDtoList == null){
+            return null;
+        }
+        int dtoListSize = achievementResponseDtoList.size();
+        int j = 0;
+        for (int i = 0; i < 70; i++) {
+            if (achievementResponseDtoList.get(j).getAddDate().isBefore(startDate.plusDays(i)) ||
+                    achievementResponseDtoList.get(j).getAddDate().isAfter(startDate.plusDays(i))) {
+                answerList.add(AchievementResponseDto.builder().achievementRate(0).build());
+            } else {
+                answerList.add(AchievementResponseDto.builder().achievementRate(achievementResponseDtoList.get(j).getAchievementRate()).build());
+                if (j < dtoListSize-1)
+                    j++;
+            }
+        }
+        return answerList;
     }
 
     //한 주차에 TRUE or FALSE만 존재할 경우 indexOutOfBound 에러 발생

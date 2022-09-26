@@ -128,7 +128,7 @@ public class KakaoUserService {
     String id = jsonNode.get("id").toString();
 //    String nickname = "K" + "_" + rdNick;
     String username = jsonNode.get("kakao_account").get("email").asText();
-    String defaultImage = "https://mytest-coffick.s3.ap-northeast-2.amazonaws.com/coffindBasicImage.png";
+    String defaultImage = "https://ibb.co/9Tvy0WP";
 
     return SocialMemberRequestDto.builder()
             .socialId(id)

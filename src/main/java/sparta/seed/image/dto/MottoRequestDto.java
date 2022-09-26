@@ -1,4 +1,4 @@
-package sparta.seed.login.dto;
+package sparta.seed.image.dto;
 
 import lombok.Getter;
 

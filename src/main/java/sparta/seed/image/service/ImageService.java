@@ -9,6 +9,7 @@ import sparta.seed.exception.ErrorCode;
 import sparta.seed.image.domain.DeletedUrlPath;
 import sparta.seed.image.domain.Image;
 import sparta.seed.image.dto.ImageResponseDto;
+import sparta.seed.image.dto.MottoRequestDto;
 import sparta.seed.image.repository.DeletedUrlPathRepository;
 import sparta.seed.image.repository.ImageRepository;
 import sparta.seed.login.domain.Member;
@@ -30,20 +31,27 @@ public class ImageService {
     private final DeletedUrlPathRepository deletedUrlPathRepository;
     private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
+
     @Transactional
-    public String saveProfileImage(MultipartFile multipartFile, UserDetailsImpl userDetailsImpl) throws IOException {
-        if (multipartFile.isEmpty())
-            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+    public String saveProfileImageAndMotto(MottoRequestDto mottoRequestDto, MultipartFile multipartFile, UserDetailsImpl userDetailsImpl) throws IOException {
+        Member member = memberRepository.findById(userDetailsImpl.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        if (multipartFile != null) {
+            S3Dto s3Dto = s3Uploader.upload(multipartFile);
+            saveDeletedUrlPath(member);
 
-        S3Dto s3Dto = s3Uploader.upload(multipartFile);
-        Member member = getMember(userDetailsImpl);
-        saveDeletedUrlPath(member);
+            member.setProfileImage(s3Dto.getUploadImageUrl());
+        }
+//        return s3Dto.getUploadImageUrl();
+        if (mottoRequestDto != null)
+            member.setMyMotto(mottoRequestDto.getMyMotto());
+        else
+            member.setMyMotto(null);
 
-        member.setProfileImage(s3Dto.getUploadImageUrl());
         memberRepository.save(member);
-
-        return s3Dto.getUploadImageUrl();
+        return Message.UPDATE_SUCCESS.getMessage();
     }
+
     @Transactional
     public String deleteProfileImage(UserDetailsImpl userDetailsImpl) {
         Member member = getMember(userDetailsImpl);
@@ -52,6 +60,7 @@ public class ImageService {
         member.setProfileImage(null); //기본 이미지 만들어지면 해당 주소 넣기
         return Message.IMAGE_DELETE_SUCCESS.getMessage();
     }
+
     public List<ImageResponseDto> getBoastImage(String nickname) {
         Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
@@ -76,13 +85,15 @@ public class ImageService {
         imageRepository.save(image);
         return Message.IMAGE_UPLOAD_SUCCESS.getMessage();
     }
+
     @Transactional
     public String deleteBoastImage(Long boastId) {
-        if(!imageRepository.existsById(boastId))
+        if (!imageRepository.existsById(boastId))
             throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
         imageRepository.deleteById(boastId);
         return Message.IMAGE_DELETE_SUCCESS.getMessage();
     }
+
     public Member getMember(UserDetailsImpl userDetailsImpl) {
         return memberRepository.findById(userDetailsImpl.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
@@ -101,7 +112,6 @@ public class ImageService {
         }
         deletedUrlPathRepository.deleteAll();
     }
-
 
 
 }

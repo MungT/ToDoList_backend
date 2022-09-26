@@ -21,7 +21,7 @@ public class SchoolService {
         schoolRepository.saveAll(schools);
         return true;
     }
-    public Slice<School> getSchoolList(SchoolRequestDto schoolRequestDto, Pageable pageable){
-        return schoolRepository.getSchoolListPage(schoolRequestDto, pageable);
+    public List<School> getSchoolList(SchoolRequestDto schoolRequestDto){
+        return schoolRepository.getSchoolListPage(schoolRequestDto);
     }
 }

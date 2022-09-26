@@ -46,5 +46,10 @@ public class TodoResponseDto {
         this.isComplete = isComplete;
         this.count = count;
     }
+    @QueryProjection
+    public TodoResponseDto(long count){
+        this.count = count;
+    }
+
 }
 

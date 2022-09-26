@@ -3,10 +3,12 @@ package sparta.seed.todo.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Getter
+@NoArgsConstructor
 public class AchievementResponseDto {
     private long id;
     private double achievementRate;

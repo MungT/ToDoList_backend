@@ -6,6 +6,7 @@ import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.todo.domain.Rank;
 import sparta.seed.todo.dto.AchievementResponseDto;
+import sparta.seed.todo.dto.RankResponseDto;
 import sparta.seed.todo.repository.RankRepository;
 import sparta.seed.util.TimeCustom;
 
@@ -87,5 +88,16 @@ public class RankService {
     public Rank getLastweekRank(String nickname) {
 
         return rankRepository.getLastweekRank(nickname);
+    }
+    public RankResponseDto getMonthlyRank(String nickname) {
+        Rank rank = rankRepository.getMonthlyRank(nickname);
+        return RankResponseDto.builder()
+                .ranking(rank.getRanking())
+                .score(rank.getScore())
+                .nickname(rank.getNickname())
+                .category(rank.getCategory())
+                .lengthOfMonth(timeCustom.currentDate().lengthOfMonth())
+                .build();
+
     }
 }

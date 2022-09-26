@@ -41,7 +41,10 @@ public class SchoolList {
 //		System.out.println(jsonArray);
         List<School> schoolList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
-            schoolList.add(School.builder().schoolName(jsonArray.getJSONObject(i).get("schoolName").toString()).build());
+            schoolList.add(School.builder()
+                    .schoolName(jsonArray.getJSONObject(i).get("schoolName").toString())
+                    .address(jsonArray.getJSONObject(i).get("adres").toString())
+                    .build());
         }
         return schoolList;
     }

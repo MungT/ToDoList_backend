@@ -15,11 +15,13 @@ public class School {
     private Long id;
 
     private String schoolName;
+    private String address;
 
     @Builder
-    public School(Long id, String schoolName) {
+    public School(Long id, String schoolName, String address) {
         this.id = id;
         this.schoolName = schoolName;
+        this.address = address;
     }
     public void setSchoolName(String schoolName) {
         this.schoolName = schoolName;

@@ -11,7 +11,6 @@ import sparta.seed.follow.repository.FollowRepository;
 import sparta.seed.follow.service.FollowService;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.repository.MemberRepository;
-
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import java.util.List;
@@ -21,10 +20,9 @@ import java.util.List;
 public class FollowController {
 
     private final FollowService followService;
-
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
-
+    @Transactional
     @GetMapping("/api/follow/{toMemberId}")
     public String follow(@PathVariable Long toMemberId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         return followService.upDownFollow(toMemberId, userDetailsImpl);
@@ -44,7 +42,6 @@ public class FollowController {
         Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         return followRepository.getFollowerList(member);
-
     }
 
 }

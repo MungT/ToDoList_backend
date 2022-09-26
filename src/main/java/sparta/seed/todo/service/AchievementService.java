@@ -21,6 +21,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static sparta.seed.exception.ErrorCode.ACHIEVEMENTRATE_NOT_FOUND;
+
 @RequiredArgsConstructor
 @Service
 public class AchievementService {
@@ -158,17 +160,40 @@ public class AchievementService {
                 .build();
     }
 
-    //월화수목금토일 달성률 반환
+    //월화수목금토일 달성률 반환(점수는 계속 쌓이면서 반환)
     public List<AchievementResponseDto> getThisWeekAchievementRate(UserDetailsImpl userDetailsImpl) {
         LocalDate endDate = timeCustom.currentDate().minusDays(1);
         LocalDate startDate = endDate.minusDays(endDate.getDayOfWeek().getValue() - 1);
+
+        List<AchievementResponseDto> answerList = new ArrayList<>();
         List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getThisWeekAchievementRate(startDate, endDate, userDetailsImpl.getNickname());
-        int achievementResponseDtoListSize = achievementResponseDtoList.size();
-        for (int i = 1; i < achievementResponseDtoListSize; i++) {
-            achievementResponseDtoList.get(i).setAchievementRate(achievementResponseDtoList.get(i).getAchievementRate()
-                    + achievementResponseDtoList.get(i - 1).getAchievementRate());
+        if (achievementResponseDtoList.isEmpty()) {
+            throw new CustomException(ACHIEVEMENTRATE_NOT_FOUND);
         }
-        return achievementResponseDtoList;
+
+
+        int achievementResponseDtoListSize = achievementResponseDtoList.size();
+        //IndexOutOfBounds 를 방지하기 위해 첫 데이터는 수동으로 주입
+        if (achievementResponseDtoList.get(0).getAddDate().isEqual(startDate)) {
+            answerList.add(AchievementResponseDto.builder().achievementRate(achievementResponseDtoList.get(0).getAchievementRate()).build());
+        } else
+            answerList.add(AchievementResponseDto.builder().achievementRate(0).build());
+
+        if (achievementResponseDtoListSize == 1)
+            return answerList;
+
+        int j = 1;
+        for (int i = 1; i < endDate.getDayOfWeek().getValue(); i++) {
+            if (startDate.plusDays(i).isEqual(achievementResponseDtoList.get(j).getAddDate())) {
+                double achievementRate = achievementResponseDtoList.get(i).getAchievementRate() + achievementResponseDtoList.get(i - 1).getAchievementRate();
+                answerList.add(AchievementResponseDto.builder().achievementRate(achievementRate).build());
+                if (j < achievementResponseDtoListSize - 1)
+                    j++;
+            } else {
+                answerList.add(AchievementResponseDto.builder().achievementRate(answerList.get(i - 1).getAchievementRate()).build());
+            }
+        }
+        return answerList;
     }
 
     //이번 달 달성률
@@ -185,7 +210,7 @@ public class AchievementService {
                 .build();
     }
 
-    //최근 30일 각 날짜에 해당하는 투두리스트 달성률 리스트 반환
+    //최근 70일 각 날짜에 해당하는 투두리스트 달성률 리스트 반환
     public List<AchievementResponseDto> getDaylyAchievementRate(UserDetailsImpl userDetailsImpl) {
 
         LocalDate endDate = timeCustom.currentDate();
@@ -193,8 +218,8 @@ public class AchievementService {
         System.out.println(startDate);
         List<AchievementResponseDto> answerList = new ArrayList<>();
         List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getDaylyAchievementRate(startDate, endDate, userDetailsImpl.getNickname());
-        if(achievementResponseDtoList == null){
-            return null;
+        if (achievementResponseDtoList.isEmpty()) {
+            throw new CustomException(ACHIEVEMENTRATE_NOT_FOUND);
         }
         int dtoListSize = achievementResponseDtoList.size();
         int j = 0;
@@ -204,7 +229,7 @@ public class AchievementService {
                 answerList.add(AchievementResponseDto.builder().achievementRate(0).build());
             } else {
                 answerList.add(AchievementResponseDto.builder().achievementRate(achievementResponseDtoList.get(j).getAchievementRate()).build());
-                if (j < dtoListSize-1)
+                if (j < dtoListSize - 1)
                     j++;
             }
         }

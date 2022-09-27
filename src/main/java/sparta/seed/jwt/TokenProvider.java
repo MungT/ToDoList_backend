@@ -63,7 +63,7 @@ public class TokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(String.valueOf(member.getId()))  // 유저 index
                 .claim(AUTHORITIES_KEY, authorities)        // 유저 권한정보
-                .claim(MEMBER_USERNAME,member.getUsername()) //유저 아이디
+                .claim(MEMBER_USERNAME,member.getUsername()) //유저 이메일
                 .claim(MEMBER_NICKNAME,member.getNickname()) //유저 닉네임
                 .claim(MEMBER_SOCIALID,member.getSocialId())
                 .claim(MEMBER_PROFILE_IMAGE,member.getProfileImage())

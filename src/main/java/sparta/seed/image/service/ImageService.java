@@ -34,7 +34,7 @@ public class ImageService {
 
     @Transactional
     public String saveProfileImageAndMotto(MottoRequestDto mottoRequestDto, MultipartFile multipartFile, UserDetailsImpl userDetailsImpl) throws IOException {
-        Member member = memberRepository.findById(userDetailsImpl.getId())
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         if (multipartFile != null) {
             S3Dto s3Dto = s3Uploader.upload(multipartFile);
@@ -95,7 +95,7 @@ public class ImageService {
     }
 
     public Member getMember(UserDetailsImpl userDetailsImpl) {
-        return memberRepository.findById(userDetailsImpl.getId())
+        return memberRepository.findByUsername(userDetailsImpl.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 

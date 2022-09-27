@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.login.domain.Member;
+import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Achievement;
-import sparta.seed.todo.domain.Rank;
 import sparta.seed.todo.dto.AchievementResponseDto;
 import sparta.seed.todo.dto.FirstWeekResponseDto;
 import sparta.seed.todo.dto.TodoDateResponseDto;
@@ -29,6 +29,7 @@ public class AchievementService {
     private final TimeCustom timeCustom;
     private final TodoRepository todoRepository;
     private final AchievementRepository achievementRepository;
+    private final MemberRepository memberRepository;
 
     public void saveDaylyAchievement() {
 
@@ -131,8 +132,9 @@ public class AchievementService {
     // 현재 카테고리별로 달성률을 표시하게 되면서 이 메소드는 사용 안하는 상태임.
     public AchievementResponseDto getAchievementRate(String selectDate, UserDetailsImpl userDetailsImpl) {
         LocalDate selectedDate = LocalDate.parse(selectDate, DateTimeFormatter.ISO_DATE);
-
-        List<TodoResponseDto> todoResponseDtoList = achievementRepository.getAchievementRateByDate(selectedDate, userDetailsImpl.getMember());
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        List<TodoResponseDto> todoResponseDtoList = achievementRepository.getAchievementRateByDate(selectedDate, member);
         switch (todoResponseDtoList.size()) {
             case 0:
                 throw new CustomException(ErrorCode.TODO_NOT_FOUND);
@@ -164,9 +166,10 @@ public class AchievementService {
     public List<AchievementResponseDto> getThisWeekAchievementRate(UserDetailsImpl userDetailsImpl) {
         LocalDate endDate = timeCustom.currentDate().minusDays(1);
         LocalDate startDate = endDate.minusDays(endDate.getDayOfWeek().getValue() - 1);
-
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         List<AchievementResponseDto> answerList = new ArrayList<>();
-        List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getThisWeekAchievementRate(startDate, endDate, userDetailsImpl.getNickname());
+        List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getThisWeekAchievementRate(startDate, endDate, member.getNickname());
         if (achievementResponseDtoList.isEmpty()) {
             throw new CustomException(ACHIEVEMENTRATE_NOT_FOUND);
         }
@@ -200,10 +203,12 @@ public class AchievementService {
     public AchievementResponseDto getThisMonthAchievementRate(UserDetailsImpl userDetailsImpl) {
         LocalDate endDate = timeCustom.currentDate().minusDays(1);
         LocalDate startDate = endDate.minusDays(endDate.getDayOfMonth() - 1);
-        String nickname = userDetailsImpl.getNickname();
-        if (!achievementRepository.existsByNickname(nickname))
-            throw new CustomException(ErrorCode.TODO_NOT_FOUND);
-        AchievementResponseDto achievementResponseDto = achievementRepository.getThisMonthAchievementRate(startDate, endDate, nickname);
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        if (!achievementRepository.existsByNickname(member.getNickname()))
+            throw new CustomException(ErrorCode.ACHIEVEMENTRATE_NOT_FOUND);
+        AchievementResponseDto achievementResponseDto = achievementRepository.getThisMonthAchievementRate(startDate, endDate, member.getNickname());
 
         return AchievementResponseDto.builder()
                 .achievementRate(achievementResponseDto.getAchievementRate() / achievementResponseDto.getPlannerCnt())
@@ -215,9 +220,10 @@ public class AchievementService {
 
         LocalDate endDate = timeCustom.currentDate();
         LocalDate startDate = endDate.minusDays(endDate.getDayOfWeek().getValue() - 1).minusDays(63);
-        System.out.println(startDate);
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         List<AchievementResponseDto> answerList = new ArrayList<>();
-        List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getDaylyAchievementRate(startDate, endDate, userDetailsImpl.getNickname());
+        List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getDaylyAchievementRate(startDate, endDate, member.getNickname());
         if (achievementResponseDtoList.isEmpty()) {
             throw new CustomException(ACHIEVEMENTRATE_NOT_FOUND);
         }
@@ -239,7 +245,8 @@ public class AchievementService {
     //한 주차에 TRUE or FALSE만 존재할 경우 indexOutOfBound 에러 발생
     //중간에 주차가 모두 비어있을 경우는 0%로 반환
     public List<AchievementResponseDto> getWeeklyAchievementRate(UserDetailsImpl userDetailsImpl) {
-        Member member = userDetailsImpl.getMember();
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 //        if (!todoRepository.existsByMember(member))
 //            throw new CustomException(ErrorCode.TODO_NOT_FOUND);   //가짜데이터라 주석처리
         TodoDateResponseDto todoDateResponseDto = todoRepository.getFirstandLastTodoAddDate(member);

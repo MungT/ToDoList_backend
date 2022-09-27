@@ -31,28 +31,32 @@ public class TodoService {
 
     // 5to5를 하루로 보는데, 프론트에서 만약 22일 새벽 1시에 api 호출할 때
     //달력 라이브러리로 인해 21일이 아닌 22일로 호출된다고해서 아래 메소드를 따로 생성함.
-    public List<TodoResponseDto> getTodayTodo(UserDetailsImpl userDetails) {
+    public List<TodoResponseDto> getTodayTodo(UserDetailsImpl userDetailsImpl) {
         LocalDate localDate = timeCustom.currentDate();
-        if(!memberRepository.existsByNickname(userDetails.getNickname()))
-            throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
-        return todoRepository.getTodayTodo(localDate, userDetails.getMember());
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        if(!todoRepository.existsByNickname(member.getNickname()))
+            throw new CustomException(ErrorCode.TODO_NOT_FOUND);
+        return todoRepository.getTodayTodo(localDate, member);
     }
     //없을 시 빈 리스트 반환
-    public List<TodoResponseDto> getTodo(String selectDate, UserDetailsImpl userDetails) {
-
+    public List<TodoResponseDto> getTodo(String selectDate, UserDetailsImpl userDetailsImpl) {
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         LocalDate selectedDate = LocalDate.parse(selectDate, DateTimeFormatter.ISO_DATE);
-        if(!memberRepository.existsByNickname(userDetails.getNickname()))
-            throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
-        return todoRepository.getTodo(selectedDate, userDetails.getMember());
+        if(!todoRepository.existsByNickname(member.getNickname()))
+            throw new CustomException(ErrorCode.TODO_NOT_FOUND);
+        return todoRepository.getTodo(selectedDate, member);
     }
 
     public String addTodo(TodoRequestDto todoRequestDto, UserDetailsImpl userDetailsImpl) {
-
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         Todo todo = Todo.builder()
                 .content(todoRequestDto.getContent())
                 .isComplete(todoRequestDto.getIsComplete())
                 .addDate(timeCustom.currentDate())
-                .nickname(userDetailsImpl.getMember().getNickname())
+                .nickname(member.getNickname())
                 .category(todoRequestDto.getCategory())
                 .build();
         todoRepository.save(todo);
@@ -65,7 +69,8 @@ public class TodoService {
         Todo todo = todoRepository.findById(todoId).orElseThrow(
                 () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
         );
-        Member member = userDetailsImpl.getMember();
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         isWriter(todo, member);
         isPassedAvailableTime(todo);
 
@@ -77,7 +82,8 @@ public class TodoService {
         Todo todo = todoRepository.findById(todoId).orElseThrow(
                 () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
         );
-        Member member = userDetailsImpl.getMember();
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         isWriter(todo, member);
         isPassedAvailableTime(todo);
 

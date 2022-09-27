@@ -7,6 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import sparta.seed.exception.CustomException;
+import sparta.seed.exception.ErrorCode;
+import sparta.seed.login.domain.Member;
+import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Rank;
 import sparta.seed.todo.dto.AchievementResponseDto;
@@ -23,6 +27,7 @@ public class RankController {
 
     private final RankService rankService;
     private final RankRepository rankRepository;
+    private final MemberRepository memberRepository;
 
     //(서버)주간 랭킹 저장
     @Transactional //update, delete 경우 필요 (없으면 TransactionRequiredException 발생)
@@ -62,8 +67,9 @@ public class RankController {
     //유저의 지난 주 랭킹 조회
     @GetMapping("/api/rank/lastweek/member")
     public ResponseEntity<Rank> getLastweekRank(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
-        String nickname = userDetailsImpl.getNickname();
-        return ResponseEntity.ok(rankService.getLastweekRank(nickname));
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        return ResponseEntity.ok(rankService.getLastweekRank(member.getNickname()));
     }
     //유저의 주간 랭킹 조회
     @GetMapping("/api/rank/weekly/member/{nickname}")

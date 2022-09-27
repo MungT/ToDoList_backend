@@ -72,7 +72,6 @@ public class MemberService {
         return Member.builder()
             .id(member.getId())
             .username(member.getUsername())
-            .password(member.getPassword())
             .nickname(member.getNickname())
             .socialId(member.getSocialId())
             .authority(member.getAuthority())
@@ -82,12 +81,14 @@ public class MemberService {
             .myMotto(member.getMyMotto())
             .followingsCnt(followingsCnt)
             .followersCnt(followersCnt)
+                .goalDate(member.getGoalDate())
+                .goalTitle(member.getGoalTitle())
             .build();
     }
 
 
     public String updateMotto(MottoRequestDto mottoRequestDto, UserDetailsImpl userDetailsImpl) {
-        Member member = memberRepository.findById(userDetailsImpl.getId())
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         member.setMyMotto(mottoRequestDto.getMyMotto());
         memberRepository.save(member);
@@ -123,7 +124,7 @@ public class MemberService {
         return tokenDto;
     }
     public GoalDateResponseDto getRemaingDay(UserDetailsImpl userDetailsImpl) {
-        Member member = memberRepository.findById(userDetailsImpl.getId())
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         return GoalDateResponseDto.builder()
                 .title(member.getGoalTitle())
@@ -131,7 +132,7 @@ public class MemberService {
     }
 
     public String updateGoal(GoalDateRequestDto goalDateRequestDto, UserDetailsImpl userDetailsImpl) {
-        Member member = memberRepository.findById(userDetailsImpl.getId())
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         member.setGoalTitle(goalDateRequestDto.getTitle());
         member.setGoalDate(LocalDate.parse(goalDateRequestDto.getSelectedDate(), DateTimeFormatter.ISO_DATE));

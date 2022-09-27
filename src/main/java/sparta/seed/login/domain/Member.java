@@ -44,13 +44,6 @@ public class Member {
   private int followersCnt;
 
 
-
-  // 마이페이지 팔로우 / 팔로잉 버전
-  private int followingsCnt;
-  private int followersCnt;
-
-
-
   @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
   @JsonManagedReference //DB연관관계 무한회귀 방지
   private List<Image> imgList;

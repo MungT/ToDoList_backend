@@ -31,9 +31,9 @@ public enum ErrorCode { //이렇게 해주는 방법도 있다. 현재 코드에
     SCHOOLNAME_EMPTY(HttpStatus.BAD_REQUEST,"400","고등학교를 입력해주세요."),
 
     // 팔로우 관련
-    MYSELF_NOT_SELECTED(HttpStatus.BAD_REQUEST,"400","자기자신을 팔로우 할 수 없습니다.");
+    MYSELF_NOT_SELECTED(HttpStatus.BAD_REQUEST,"400","자기자신을 팔로우 할 수 없습니다."),
 
-
+    IMAGE_EMPTY(HttpStatus.OK,"200", "이미지 없음");
 
 
     private final HttpStatus httpStatus;

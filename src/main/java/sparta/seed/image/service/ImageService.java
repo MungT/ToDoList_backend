@@ -1,6 +1,7 @@
 package sparta.seed.image.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,7 +66,7 @@ public class ImageService {
         Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         if (!imageRepository.existsByMember(member))
-            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+            throw new CustomException(ErrorCode.IMAGE_EMPTY);
 
         return imageRepository.getBoastImage(member.getId());
     }

@@ -186,7 +186,7 @@ public class KakaoUserService {
             .value(memberResponseDto.getRefreshToken())
             .build();
 //
-//    refreshTokenRepository.save(refreshToken);
+    refreshTokenRepository.save(refreshToken);
     //로그인이 실제로 일어나는 부분
     SecurityContextHolder.getContext().setAuthentication(authentication);
     return MemberResponseDto.builder()

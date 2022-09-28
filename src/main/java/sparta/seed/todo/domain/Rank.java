@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
+@Table(name = "user_rank")
 @NoArgsConstructor
 public class Rank {
 

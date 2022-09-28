@@ -6,14 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import sparta.seed.image.dto.MottoRequestDto;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.dto.*;
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.login.service.MemberService;
 import sparta.seed.sercurity.UserDetailsImpl;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,14 +48,14 @@ public class RegisterController {
         return ResponseEntity.ok(memberService.updateMotto(mottoRequestDto, userDetailsImpl));
     }
     @PostMapping("/api/reissue")  //재발급을 위한 로직
-    public ResponseEntity<MemberResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
+    public Boolean reissue(@RequestBody TokenRequestDto tokenRequestDto, HttpServletResponse response) {
         MemberResponseDto memberResponseDto = memberService.reissue(tokenRequestDto);
         String accessToken = memberResponseDto.getAccessToken();
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization",accessToken);
-
-        return  new ResponseEntity<>(null, httpHeaders, HttpStatus.OK);
+        response.setHeader("Authorization",accessToken);
+        return true;
+//        return new ResponseEntity<>(null, httpHeaders, HttpStatus.OK);
 //        return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
     }
     @GetMapping("api/d-day")
@@ -66,5 +67,10 @@ public class RegisterController {
     public ResponseEntity<String> updateGoal(@RequestBody GoalDateRequestDto goalDateRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
         return ResponseEntity.ok()
                 .body(memberService.updateGoal(goalDateRequestDto, userDetailsImpl));
+    }
+
+    @GetMapping("api/reset")
+    public String reset(){
+        return "응답";
     }
 }

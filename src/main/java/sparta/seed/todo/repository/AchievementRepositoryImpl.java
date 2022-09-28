@@ -61,11 +61,11 @@ public class AchievementRepositoryImpl implements AchievementRepositoryCustom{
                 .groupBy(achievement.nickname)
                 .fetchOne();
     }
-    public List<AchievementResponseDto> getDaylyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member) {
+    public List<AchievementResponseDto> getDaylyAchievementRate(LocalDate stardDate, LocalDate endDate, String nickname) {
         return queryFactory
                 .select(new QAchievementResponseDto(achievement.id, achievement.addDate, achievement.score))
                 .from(achievement)
-                .where(achievement.nickname.eq(member.getNickname()),
+                .where(achievement.nickname.eq(nickname),
                         achievement.addDate.between(stardDate,endDate))
                 .orderBy(achievement.id.asc())
                 .fetch();

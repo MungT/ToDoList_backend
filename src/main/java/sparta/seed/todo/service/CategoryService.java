@@ -22,7 +22,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     public List<Category> getCategory(UserDetailsImpl userDetailsImpl) {
-        Member member = memberRepository.findById(userDetailsImpl.getId())
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         return categoryRepository.findAllByNickname(member.getNickname());
@@ -30,7 +30,7 @@ public class CategoryService {
     }
 
     public String addCategory(CategoryRequestDto categoryRequestDto, UserDetailsImpl userDetailsImpl) {
-        Member member = memberRepository.findById(userDetailsImpl.getId())
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         categoryRepository.save(

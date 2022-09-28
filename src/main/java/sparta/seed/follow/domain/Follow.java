@@ -24,10 +24,9 @@ public class Follow {
     @JoinColumn
      private Member toMember; // 구독 받는 유저
 
+    public Follow(Member fromMember, Member toMember) {
+        this.fromMember = fromMember;
+        this.toMember = toMember;
 
-    @Builder
-    public Follow(FollowRequestDto requestDto) {
-        this.fromMember = requestDto.getFromMember();
-        this.toMember = requestDto.getToMember();
     }
 }

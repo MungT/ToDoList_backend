@@ -1,5 +1,6 @@
 package sparta.seed.login.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Member {
 
   private String username;
 
+  @JsonIgnore
   private String password;
 
   private String nickname;
@@ -42,14 +44,14 @@ public class Member {
   private int followersCnt;
 
 
-
   @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
   @JsonManagedReference //DB연관관계 무한회귀 방지
   private List<Image> imgList;
 
   @Builder
   public Member(Long id, String username, String password, String nickname, String socialId, Authority authority, String profileImage, String highschool, String grade, String myMotto,
-  String goalTitle, LocalDate goalDate, int followingsCnt, int followersCnt) {
+                String goalTitle, LocalDate goalDate, int followingsCnt, int followersCnt) {
+
     this.id = id;
     this.username = username;
     this.password = password;
@@ -62,6 +64,8 @@ public class Member {
     this.myMotto = myMotto;
     this.goalTitle = goalTitle;
     this.goalDate = goalDate;
+
+    // 마이페이지 팔로우 / 팔로잉 버전
     this.followingsCnt = followingsCnt;
     this.followersCnt = followersCnt;
   }

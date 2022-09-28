@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.login.domain.Member;
+import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Achievement;
-import sparta.seed.todo.domain.Rank;
 import sparta.seed.todo.dto.AchievementResponseDto;
 import sparta.seed.todo.dto.FirstWeekResponseDto;
 import sparta.seed.todo.dto.TodoDateResponseDto;
@@ -21,12 +21,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static sparta.seed.exception.ErrorCode.ACHIEVEMENTRATE_NOT_FOUND;
+
 @RequiredArgsConstructor
 @Service
 public class AchievementService {
     private final TimeCustom timeCustom;
     private final TodoRepository todoRepository;
     private final AchievementRepository achievementRepository;
+    private final MemberRepository memberRepository;
 
     public void saveDaylyAchievement() {
 
@@ -129,8 +132,9 @@ public class AchievementService {
     // 현재 카테고리별로 달성률을 표시하게 되면서 이 메소드는 사용 안하는 상태임.
     public AchievementResponseDto getAchievementRate(String selectDate, UserDetailsImpl userDetailsImpl) {
         LocalDate selectedDate = LocalDate.parse(selectDate, DateTimeFormatter.ISO_DATE);
-
-        List<TodoResponseDto> todoResponseDtoList = achievementRepository.getAchievementRateByDate(selectedDate, userDetailsImpl.getMember());
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        List<TodoResponseDto> todoResponseDtoList = achievementRepository.getAchievementRateByDate(selectedDate, member);
         switch (todoResponseDtoList.size()) {
             case 0:
                 throw new CustomException(ErrorCode.TODO_NOT_FOUND);
@@ -158,47 +162,91 @@ public class AchievementService {
                 .build();
     }
 
-    //월화수목금토일 달성률 반환
+    //월화수목금토일 달성률 반환(점수는 계속 쌓이면서 반환)
     public List<AchievementResponseDto> getThisWeekAchievementRate(UserDetailsImpl userDetailsImpl) {
         LocalDate endDate = timeCustom.currentDate().minusDays(1);
         LocalDate startDate = endDate.minusDays(endDate.getDayOfWeek().getValue() - 1);
-        List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getThisWeekAchievementRate(startDate, endDate, userDetailsImpl.getNickname());
-        int achievementResponseDtoListSize = achievementResponseDtoList.size();
-        for (int i = 1; i < achievementResponseDtoListSize; i++) {
-            achievementResponseDtoList.get(i).setAchievementRate(achievementResponseDtoList.get(i).getAchievementRate()
-                    + achievementResponseDtoList.get(i - 1).getAchievementRate());
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        List<AchievementResponseDto> answerList = new ArrayList<>();
+        List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getThisWeekAchievementRate(startDate, endDate, member.getNickname());
+        if (achievementResponseDtoList.isEmpty()) {
+            throw new CustomException(ACHIEVEMENTRATE_NOT_FOUND);
         }
-        return achievementResponseDtoList;
+
+
+        int achievementResponseDtoListSize = achievementResponseDtoList.size();
+        //IndexOutOfBounds 를 방지하기 위해 첫 데이터는 수동으로 주입
+        if (achievementResponseDtoList.get(0).getAddDate().isEqual(startDate)) {
+            answerList.add(AchievementResponseDto.builder().achievementRate(achievementResponseDtoList.get(0).getAchievementRate()).build());
+        } else
+            answerList.add(AchievementResponseDto.builder().achievementRate(0).build());
+
+        if (achievementResponseDtoListSize == 1)
+            return answerList;
+
+        int j = 1;
+        for (int i = 1; i < endDate.getDayOfWeek().getValue(); i++) {
+            if (startDate.plusDays(i).isEqual(achievementResponseDtoList.get(j).getAddDate())) {
+                double achievementRate = achievementResponseDtoList.get(i).getAchievementRate() + achievementResponseDtoList.get(i - 1).getAchievementRate();
+                answerList.add(AchievementResponseDto.builder().achievementRate(achievementRate).build());
+                if (j < achievementResponseDtoListSize - 1)
+                    j++;
+            } else {
+                answerList.add(AchievementResponseDto.builder().achievementRate(answerList.get(i - 1).getAchievementRate()).build());
+            }
+        }
+        return answerList;
     }
 
     //이번 달 달성률
     public AchievementResponseDto getThisMonthAchievementRate(UserDetailsImpl userDetailsImpl) {
         LocalDate endDate = timeCustom.currentDate().minusDays(1);
         LocalDate startDate = endDate.minusDays(endDate.getDayOfMonth() - 1);
-        String nickname = userDetailsImpl.getNickname();
-        if (!achievementRepository.existsByNickname(nickname))
-            throw new CustomException(ErrorCode.TODO_NOT_FOUND);
-        AchievementResponseDto achievementResponseDto = achievementRepository.getThisMonthAchievementRate(startDate, endDate, nickname);
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        if (!achievementRepository.existsByNickname(member.getNickname()))
+            throw new CustomException(ErrorCode.ACHIEVEMENTRATE_NOT_FOUND);
+        AchievementResponseDto achievementResponseDto = achievementRepository.getThisMonthAchievementRate(startDate, endDate, member.getNickname());
 
         return AchievementResponseDto.builder()
                 .achievementRate(achievementResponseDto.getAchievementRate() / achievementResponseDto.getPlannerCnt())
                 .build();
     }
 
-    //최근 30일 각 날짜에 해당하는 투두리스트 달성률 리스트 반환
+    //최근 70일 각 날짜에 해당하는 투두리스트 달성률 리스트 반환
     public List<AchievementResponseDto> getDaylyAchievementRate(UserDetailsImpl userDetailsImpl) {
 
         LocalDate endDate = timeCustom.currentDate();
-        LocalDate startDate = endDate.minusDays(30);
-
-        return achievementRepository.getDaylyAchievementRate(startDate, endDate, userDetailsImpl.getMember());
-
+        LocalDate startDate = endDate.minusDays(endDate.getDayOfWeek().getValue() - 1).minusDays(63);
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        List<AchievementResponseDto> answerList = new ArrayList<>();
+        List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getDaylyAchievementRate(startDate, endDate, member.getNickname());
+        if (achievementResponseDtoList.isEmpty()) {
+            throw new CustomException(ACHIEVEMENTRATE_NOT_FOUND);
+        }
+        int dtoListSize = achievementResponseDtoList.size();
+        int j = 0;
+        for (int i = 0; i < 70; i++) {
+            if (achievementResponseDtoList.get(j).getAddDate().isBefore(startDate.plusDays(i)) ||
+                    achievementResponseDtoList.get(j).getAddDate().isAfter(startDate.plusDays(i))) {
+                answerList.add(AchievementResponseDto.builder().achievementRate(0).build());
+            } else {
+                answerList.add(AchievementResponseDto.builder().achievementRate(achievementResponseDtoList.get(j).getAchievementRate()).build());
+                if (j < dtoListSize - 1)
+                    j++;
+            }
+        }
+        return answerList;
     }
 
     //한 주차에 TRUE or FALSE만 존재할 경우 indexOutOfBound 에러 발생
     //중간에 주차가 모두 비어있을 경우는 0%로 반환
     public List<AchievementResponseDto> getWeeklyAchievementRate(UserDetailsImpl userDetailsImpl) {
-        Member member = userDetailsImpl.getMember();
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 //        if (!todoRepository.existsByMember(member))
 //            throw new CustomException(ErrorCode.TODO_NOT_FOUND);   //가짜데이터라 주석처리
         TodoDateResponseDto todoDateResponseDto = todoRepository.getFirstandLastTodoAddDate(member);

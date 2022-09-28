@@ -9,6 +9,6 @@ import sparta.seed.school.dto.SchoolRequestDto;
 import java.util.List;
 
 public interface SchoolRepositoryCustom {
-    Slice<School> getSchoolListPage(SchoolRequestDto schoolRequestDto, Pageable pageable);
+    List<School> getSchoolListPage(SchoolRequestDto schoolRequestDto);
 }
 

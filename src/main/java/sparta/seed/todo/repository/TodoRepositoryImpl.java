@@ -46,4 +46,13 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .where(todo.nickname.eq(member.getNickname()))
                 .fetchOne();
     }
+
+    public TodoResponseDto getTotalCnt(String nickname){
+        return queryFactory
+                .select(new QTodoResponseDto(todo.count()))
+                .from(todo)
+                .where(todo.nickname.eq(nickname))
+                .groupBy(todo.nickname)
+                .fetchOne();
+    }
 }

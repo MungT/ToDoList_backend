@@ -140,7 +140,7 @@ public class GoogleUserService {
 
     // 구글에서 이미지 가져오기
 //    String profileImage = jsonNode.get("picture").asText();
-    String defaultImage = "https://mytest-coffick.s3.ap-northeast-2.amazonaws.com/coffindBasicImage.png";
+    String defaultImage = "";
 //    if (profileImage == null) {
 //      profileImage = defaultImage;
 //    }

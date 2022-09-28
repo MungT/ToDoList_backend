@@ -70,7 +70,7 @@ public class KakaoUserService {
     MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
     body.add("grant_type", "authorization_code");
     body.add("client_id", "7961d1dae4bcc3e0b41dac5ca7150775");
-    body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
+    body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");
     body.add("code", code);
     /**
      * 받은 인가코드로 카카오에 엑세스토큰 요청
@@ -128,7 +128,7 @@ public class KakaoUserService {
     String id = jsonNode.get("id").toString();
 //    String nickname = "K" + "_" + rdNick;
     String username = jsonNode.get("kakao_account").get("email").asText();
-    String defaultImage = "https://mytest-coffick.s3.ap-northeast-2.amazonaws.com/coffindBasicImage.png";
+    String defaultImage = "";
 
     return SocialMemberRequestDto.builder()
             .socialId(id)

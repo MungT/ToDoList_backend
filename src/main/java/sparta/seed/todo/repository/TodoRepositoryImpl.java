@@ -55,4 +55,12 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .groupBy(todo.nickname)
                 .fetchOne();
     }
+    public void deleteTodayTodoOfCategory(String nickname, String title, LocalDate today){
+        queryFactory
+                .delete(todo)
+                .where(todo.nickname.eq(nickname),
+                        todo.addDate.eq(today),
+                        todo.category.eq(title))
+                .execute();
+    }
 }

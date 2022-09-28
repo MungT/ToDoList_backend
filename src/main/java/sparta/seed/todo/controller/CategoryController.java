@@ -18,10 +18,10 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @GetMapping("/api/todo/category")
-    public ResponseEntity<List<Category>> getCategory(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+    @GetMapping("/api/todo/category/{nickname}")
+    public ResponseEntity<List<Category>> getCategory(@PathVariable String nickname) {
         return ResponseEntity.ok()
-                .body(categoryService.getCategory(userDetailsImpl));
+                .body(categoryService.getCategory(nickname));
     }
 
     @PostMapping("/api/todo/category")
@@ -39,9 +39,9 @@ public class CategoryController {
     }
 
     @DeleteMapping("/api/todo/category/{categoryId}")
-    public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId){
+    public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
         return ResponseEntity.ok()
-                .body(categoryService.deleteCategory(categoryId));
+                .body(categoryService.deleteCategory(categoryId, userDetailsImpl));
     }
 
 }

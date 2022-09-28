@@ -11,7 +11,10 @@ import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Category;
 import sparta.seed.todo.dto.CategoryRequestDto;
 import sparta.seed.todo.repository.CategoryRepository;
+import sparta.seed.todo.repository.TodoRepository;
+import sparta.seed.util.TimeCustom;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -20,12 +23,14 @@ public class CategoryService {
 
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
+    private final TodoRepository todoRepository;
+    private TimeCustom timeCustom;
 
-    public List<Category> getCategory(UserDetailsImpl userDetailsImpl) {
-        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+    public List<Category> getCategory(String nickname) {
+        if(!memberRepository.existsByNickname(nickname))
+                throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
 
-        return categoryRepository.findAllByNickname(member.getNickname());
+        return categoryRepository.findAllByNickname(nickname);
 
     }
 
@@ -49,7 +54,13 @@ public class CategoryService {
         return Message.CATEGORY_UPDATE_SUCCESS.getMessage();
     }
 
-    public String deleteCategory(Long categoryId) {
+    public String deleteCategory(Long categoryId, UserDetailsImpl userDetailsImpl) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                        .orElseThrow( ()-> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        LocalDate today = timeCustom.currentDate();
+        todoRepository.deleteTodayTodoOfCategory(member.getNickname(),category.getTitle(), today);
         categoryRepository.deleteById(categoryId);
         return Message.CATEGORY_DELETE_SUCCESS.getMessage();
     }

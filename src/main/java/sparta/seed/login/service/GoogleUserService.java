@@ -140,7 +140,7 @@ public class GoogleUserService {
 
     // 구글에서 이미지 가져오기
 //    String profileImage = jsonNode.get("picture").asText();
-    String defaultImage = "https://ibb.co/9Tvy0WP";
+    String defaultImage = "";
 //    if (profileImage == null) {
 //      profileImage = defaultImage;
 //    }

@@ -75,6 +75,9 @@ dependencies {
 
     //jsoup 의존성
     implementation 'org.jsoup:jsoup:1.14.2'
+
+//    슬랙?
+    implementation 'com.github.maricn:logback-slack-appender:1.4.0'
 }
 
 tasks.named('test') {

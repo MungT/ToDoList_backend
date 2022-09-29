@@ -63,4 +63,13 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                         todo.category.eq(title))
                 .execute();
     }
+    public void updateTodayTodoOfCategory(String nickname, String title, LocalDate today, String requestedTitle){
+        queryFactory
+                .update(todo)
+                .set(todo.category, requestedTitle)
+                .where(todo.nickname.eq(nickname),
+                        todo.addDate.eq(today),
+                        todo.category.eq(title))
+                .execute();
+    }
 }

@@ -17,5 +17,7 @@ public interface TodoRepositoryCustom {
     List<TodoResponseDto> getTodayTodo(LocalDate localDate, Member member);
     TodoResponseDto getTotalCnt(String nickname);
     void deleteTodayTodoOfCategory(String nickname, String title, LocalDate today);
+
+    void updateTodayTodoOfCategory(String nickname, String title, LocalDate today, String requestedTitle);
 }
 

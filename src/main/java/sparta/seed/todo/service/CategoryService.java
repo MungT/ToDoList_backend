@@ -2,6 +2,7 @@ package sparta.seed.todo.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.login.domain.Member;
@@ -24,7 +25,7 @@ public class CategoryService {
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final TodoRepository todoRepository;
-    private TimeCustom timeCustom;
+    private final TimeCustom timeCustom;
 
     public List<Category> getCategory(String nickname) {
         if(!memberRepository.existsByNickname(nickname))
@@ -45,20 +46,27 @@ public class CategoryService {
 
         return Message.CATEGORY_UPLOAD_SUCCESS.getMessage();
     }
-
-    public String updateCategory(Long categoryId, CategoryRequestDto categoryRequestDto) {
+    @Transactional
+    public String updateCategory(Long categoryId, CategoryRequestDto categoryRequestDto, UserDetailsImpl userDetailsImpl) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow( ()-> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        LocalDate today = timeCustom.currentDate();
+        todoRepository.updateTodayTodoOfCategory(member.getNickname(),category.getTitle(), today, categoryRequestDto.getTitle());
         category.setTitle(categoryRequestDto.getTitle());
         categoryRepository.save(category);
         return Message.CATEGORY_UPDATE_SUCCESS.getMessage();
     }
 
+    @Transactional
     public String deleteCategory(Long categoryId, UserDetailsImpl userDetailsImpl) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
         Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
                         .orElseThrow( ()-> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
         LocalDate today = timeCustom.currentDate();
         todoRepository.deleteTodayTodoOfCategory(member.getNickname(),category.getTitle(), today);
         categoryRepository.deleteById(categoryId);

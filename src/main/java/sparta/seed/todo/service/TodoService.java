@@ -31,20 +31,20 @@ public class TodoService {
 
     // 5to5를 하루로 보는데, 프론트에서 만약 22일 새벽 1시에 api 호출할 때
     //달력 라이브러리로 인해 21일이 아닌 22일로 호출된다고해서 아래 메소드를 따로 생성함.
-    public List<TodoResponseDto> getTodayTodo(UserDetailsImpl userDetailsImpl) {
+    public List<TodoResponseDto> getTodayTodo(String nickname) {
         LocalDate localDate = timeCustom.currentDate();
-        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+        Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-        if(!todoRepository.existsByNickname(member.getNickname()))
+        if(!todoRepository.existsByNickname(nickname))
             throw new CustomException(ErrorCode.TODO_NOT_FOUND);
         return todoRepository.getTodayTodo(localDate, member);
     }
     //없을 시 빈 리스트 반환
-    public List<TodoResponseDto> getTodo(String selectDate, UserDetailsImpl userDetailsImpl) {
-        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+    public List<TodoResponseDto> getTodo(String nickname, String selectDate) {
+        Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         LocalDate selectedDate = LocalDate.parse(selectDate, DateTimeFormatter.ISO_DATE);
-        if(!todoRepository.existsByNickname(member.getNickname()))
+        if(!todoRepository.existsByNickname(nickname))
             throw new CustomException(ErrorCode.TODO_NOT_FOUND);
         return todoRepository.getTodo(selectedDate, member);
     }

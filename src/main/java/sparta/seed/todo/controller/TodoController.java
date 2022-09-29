@@ -24,16 +24,16 @@ public class TodoController {
     private final TodoService todoService;
     private final TodoRepository todoRepository;
     //오늘 자 투두 조회
-    @GetMapping("/api/todo/today")
-    public ResponseEntity<List<TodoResponseDto>> getTodayTodo(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+    @GetMapping("/api/todo/today/{nickname}")
+    public ResponseEntity<List<TodoResponseDto>> getTodayTodo(@PathVariable String nickname){
         return ResponseEntity.ok()
-                .body(todoService.getTodayTodo(userDetailsImpl));
+                .body(todoService.getTodayTodo(nickname));
     }
     //선택한 날짜 투두 조회
-    @GetMapping("/api/todo")
-    public ResponseEntity<List<TodoResponseDto>> getTodo(@RequestParam("date")String selectDate, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {//@RequestParam을 선언 안해줘도 VO를 넣어주면 일치하는 VO의 멤버변수에 값이 들어간다.
+    @GetMapping("/api/todo/{nickname}")
+    public ResponseEntity<List<TodoResponseDto>> getTodo(@PathVariable String nickname, @RequestParam("date")String selectDate) {//@RequestParam을 선언 안해줘도 VO를 넣어주면 일치하는 VO의 멤버변수에 값이 들어간다.
         return ResponseEntity.ok()
-                .body(todoService.getTodo(selectDate, userDetailsImpl));
+                .body(todoService.getTodo(nickname, selectDate));
     }
     //총 투두 갯수 조회
     @GetMapping("/api/todo/total")

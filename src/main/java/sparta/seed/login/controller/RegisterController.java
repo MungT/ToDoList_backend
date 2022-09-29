@@ -12,6 +12,7 @@ import sparta.seed.login.dto.*;
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.login.service.MemberService;
 import sparta.seed.sercurity.UserDetailsImpl;
+import sparta.seed.util.TimeCustom;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -58,18 +59,22 @@ public class RegisterController {
 //        return new ResponseEntity<>(null, httpHeaders, HttpStatus.OK);
 //        return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
     }
-    @GetMapping("api/d-day")
+    @GetMapping("/api/d-day")
     public ResponseEntity<GoalDateResponseDto> getRemainingDay(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
         return ResponseEntity.ok()
                 .body(memberService.getRemaingDay(userDetailsImpl));
     }
-    @PutMapping("api/d-day")
+    @PutMapping("/api/d-day")
     public ResponseEntity<String> updateGoal(@RequestBody GoalDateRequestDto goalDateRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
         return ResponseEntity.ok()
                 .body(memberService.updateGoal(goalDateRequestDto, userDetailsImpl));
     }
-
-    @GetMapping("api/reset")
+    @GetMapping("/api/month")
+    public int lengthOfMonth(){
+        TimeCustom timeCustom = new TimeCustom();
+        return timeCustom.currentDate().lengthOfMonth();
+    }
+    @GetMapping("/api/reset")
     public String reset(){
         return "응답";
     }

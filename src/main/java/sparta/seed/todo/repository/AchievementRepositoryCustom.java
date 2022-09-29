@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AchievementRepositoryCustom {
     List<TodoResponseDto> getRecentlyRate(LocalDate yesterDay);
-    List<TodoResponseDto> getAchievementRateByDate(LocalDate selectedDate, Member member);
+    List<TodoResponseDto> getAchievementRateByDate(LocalDate selectedDate, String nickname);
     List<AchievementResponseDto> getDaylyAchievementRate(LocalDate stardDate, LocalDate endDate, String nickname);
     List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member);
     AchievementResponseDto getTotalAchievementRate(String nickname);

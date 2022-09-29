@@ -34,11 +34,11 @@ public class AchievementRepositoryImpl implements AchievementRepositoryCustom{
                 .groupBy( todo.nickname,todo.addDate, todo.isComplete)
                 .fetch();
     }
-    public List<TodoResponseDto> getAchievementRateByDate(LocalDate selectedDate, Member member){
+    public List<TodoResponseDto> getAchievementRateByDate(LocalDate selectedDate, String nickname){
         return queryFactory
                 .select(new QTodoResponseDto(todo.isComplete, todo.count()))
                 .from(todo)
-                .where(todo.nickname.eq(member.getNickname()),
+                .where(todo.nickname.eq(nickname),
                         todo.addDate.eq(selectedDate))
                 .groupBy(todo.isComplete)
                 .fetch();

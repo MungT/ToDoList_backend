@@ -65,6 +65,9 @@ dependencies {
     //카카오 로그인 관련
     implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.6.3'
 
+    // reides 의존성 주입
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     //JsonOBJECT 관련 의존성
     implementation 'org.json:json:20200518'
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
@@ -72,6 +75,9 @@ dependencies {
     //	이미지업로드 aws관련 의존성
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.0.1.RELEASE'
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // Scalr
+    implementation group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
 
     //jsoup 의존성
     implementation 'org.jsoup:jsoup:1.14.2'

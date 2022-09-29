@@ -5,23 +5,24 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import sparta.seed.login.domain.Authority;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.dto.MemberResponseDto;
+import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,6 +38,12 @@ public class TokenProvider {
     private static final String MEMBER_SOCIALID = "memberSocialid";
     private static final String MEMBER_PROFILE_IMAGE = "profileImage";
     private Authority authority;
+    private MemberRepository memberRepository;
+
+    @Autowired
+    public void steMemberRepository(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
 
     private final Key key;
@@ -98,10 +105,13 @@ public class TokenProvider {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
 
+        Optional<Member> testmember = memberRepository.findByUsername((String) claims.get(MEMBER_USERNAME));
+
         // 클레임에서 권한 정보 가져오기
-        Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                                                                .map(SimpleGrantedAuthority::new)
-                                                                .collect(Collectors.toList());
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
 
         if(Authority.ROLE_USER.toString().equals(claims.get(AUTHORITIES_KEY))){
             authority = Authority.ROLE_USER;
@@ -110,10 +120,10 @@ public class TokenProvider {
         }
 
         Member member = Member.builder()
-                .username((String) claims.get(MEMBER_USERNAME))
-                .nickname((String) claims.get(MEMBER_NICKNAME))
-                .socialId(claims.get(MEMBER_SOCIALID).toString())
-                .profileImage(claims.get(MEMBER_PROFILE_IMAGE).toString())
+                .username(testmember.get().getUsername())
+                .nickname(testmember.get().getNickname())
+                .socialId(testmember.get().getSocialId())
+                .profileImage(testmember.get().getProfileImage())
                 .authority(authority)
                 .id(Long.valueOf(claims.getSubject()))
                 .build();

@@ -4,10 +4,12 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class AchievementResponseDto {
     private long id;
@@ -49,12 +51,6 @@ public class AchievementResponseDto {
 
     }
 
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
 
-    public void setAchievementRate(double achievementRate) {
-        this.achievementRate = achievementRate;
-    }
 }
 

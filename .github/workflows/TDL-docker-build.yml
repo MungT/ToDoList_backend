@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ main ]
   push:
-    branches: [ dev, main ]
+    branches: [ dev, main, image_Error ]
 
 env:
   S3_BUCKET_NAME: todolist-s3
@@ -63,7 +63,7 @@ jobs:
 
       ## create application.properties
       - name: make dev application.properties
-        if: contains(github.ref, 'dev') # branch가 main 일 때, 나머지는 위와 동일
+        if: contains(github.ref, 'image_Error') # branch가 main 일 때, 나머지는 위와 동일
         run: |
           cd ./src/main/resources
           touch ./application.properties

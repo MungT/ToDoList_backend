@@ -37,6 +37,7 @@ dependencies {
 //    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
 //    annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
 //    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
     //쿼리dsl
     implementation 'com.querydsl:querydsl-jpa'
     implementation 'com.querydsl:querydsl-apt'
@@ -45,7 +46,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
 //    runtimeOnly 'com.h2database:h2'
-//    runtimeOnly 'mysql:mysql-connector-java'
+    runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -62,6 +63,7 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
     //카카오 로그인 관련
     implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.6.3'
 
@@ -83,8 +85,12 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.14.2'
 
     //슬랙 에러로그
-
     implementation 'com.github.maricn:logback-slack-appender:1.4.0'
+
+    //MockMultipartFile 로 변환시킬때 사용하기위한 의존성
+    implementation group: 'org.springframework', name: 'spring-test', version: '5.3.9'
+    implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.4'
 }
 
 tasks.named('test') {

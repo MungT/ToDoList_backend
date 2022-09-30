@@ -54,7 +54,7 @@ public class S3Uploader {
         File resizingFile = resizeMainImage(multipartFile,fileName,fileFormatName,2).orElseThrow(() -> new io.jsonwebtoken.io.IOException("변환실패"));
 
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, resizingFile));
-        //removeNewFile(resizingFile);
+        removeNewFile(resizingFile);
         return  uploadImageUrl;
     }
 
@@ -97,13 +97,13 @@ public class S3Uploader {
         return Optional.empty();
     }
 
-    private void removeNewFile(File targetFile) {
-        if (targetFile.delete()) {
-            log.info("파일이 삭제되었습니다.");
-        } else {
-            log.info("파일이 삭제되지 못했습니다.");
-        }
-    }
+//     private void removeNewFile(File targetFile) {
+//         if (targetFile.delete()) {
+//             log.info("파일이 삭제되었습니다.");
+//         } else {
+//             log.info("파일이 삭제되지 못했습니다.");
+//         }
+//     }
 
     public void remove(String filename) {
         DeleteObjectRequest request = new DeleteObjectRequest(bucket, filename);

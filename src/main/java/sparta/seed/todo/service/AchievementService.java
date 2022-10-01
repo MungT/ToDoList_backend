@@ -206,7 +206,7 @@ public class AchievementService {
         List<AchievementResponseDto> answerList = new ArrayList<>();
         List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getThisWeekAchievementRate(startDate, endDate, member.getNickname());
         if (achievementResponseDtoList.isEmpty()) {
-            throw new CustomException(ACHIEVEMENTRATE_NOT_FOUND);
+            return answerList;
         }
 
 
@@ -242,7 +242,9 @@ public class AchievementService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         if (!achievementRepository.existsByNickname(member.getNickname()))
-            throw new CustomException(ErrorCode.ACHIEVEMENTRATE_NOT_FOUND);
+            return AchievementResponseDto.builder()
+                    .achievementRate(0)
+                    .build();
         AchievementResponseDto achievementResponseDto = achievementRepository.getThisMonthAchievementRate(startDate, endDate, member.getNickname());
 
         return AchievementResponseDto.builder()
@@ -339,7 +341,10 @@ public class AchievementService {
     public AchievementResponseDto getTotalAchievementRate(String nickname) {
         AchievementResponseDto achievementResponseDto = achievementRepository.getTotalAchievementRate(nickname);
         if (!achievementRepository.existsByNickname(nickname))
-            throw new CustomException(ErrorCode.TODO_NOT_FOUND);
+            return AchievementResponseDto.builder()
+                    .plannerCnt(0)
+                    .achievementRate(0)
+                    .build();
         return AchievementResponseDto.builder()
                 .plannerCnt(achievementResponseDto.getPlannerCnt())
                 .achievementRate(achievementResponseDto.getAchievementRate() / achievementResponseDto.getPlannerCnt())

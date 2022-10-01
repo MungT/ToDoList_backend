@@ -60,9 +60,9 @@ public class RegisterController {
 //        return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
     }
     @GetMapping("/api/d-day")
-    public ResponseEntity<GoalDateResponseDto> getRemainingDay(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
+    public ResponseEntity<GoalDateResponseDto> getDday(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
         return ResponseEntity.ok()
-                .body(memberService.getRemaingDay(userDetailsImpl));
+                .body(memberService.getDday(userDetailsImpl));
     }
     @PutMapping("/api/d-day")
     public ResponseEntity<String> updateGoal(@RequestBody GoalDateRequestDto goalDateRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){

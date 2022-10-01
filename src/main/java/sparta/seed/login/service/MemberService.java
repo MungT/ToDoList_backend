@@ -123,7 +123,7 @@ public class MemberService {
         // 토큰 발급
         return tokenDto;
     }
-    public GoalDateResponseDto getRemaingDay(UserDetailsImpl userDetailsImpl) {
+    public GoalDateResponseDto getDday(UserDetailsImpl userDetailsImpl) {
         Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         return GoalDateResponseDto.builder()

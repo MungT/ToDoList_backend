@@ -32,7 +32,7 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<AchievementResponseDto> saveRank(LocalDate stardDate, LocalDate endDate) {
+    public List<AchievementResponseDto> getUserOrderByScoreDesc(LocalDate stardDate, LocalDate endDate) {
         return queryFactory
                 .select(new QAchievementResponseDto(achievement.nickname, MathExpressions.round(achievement.score.sum(), 2)))
                 .from(achievement)

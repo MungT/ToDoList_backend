@@ -1,4 +1,4 @@
-package sparta.seed.jwt;
+package sparta.seed.login.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;

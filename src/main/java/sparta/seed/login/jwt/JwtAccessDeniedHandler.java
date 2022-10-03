@@ -1,4 +1,4 @@
-package sparta.seed.jwt;
+package sparta.seed.login.jwt;
 
 
 import org.springframework.security.access.AccessDeniedException;

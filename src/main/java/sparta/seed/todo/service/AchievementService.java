@@ -138,7 +138,11 @@ public class AchievementService {
         List<TodoResponseDto> todoResponseDtoList = achievementRepository.getAchievementRateByDate(selectedDate, member.getNickname());
         switch (todoResponseDtoList.size()) {
             case 0:
-                throw new CustomException(ErrorCode.TODO_NOT_FOUND);
+                return AchievementResponseDto.builder()
+                        .totalCnt(0)
+                        .completeCnt(0)
+                        .achievementRate(0)
+                        .build();
             case 1:
                 if (todoResponseDtoList.get(0).isComplete()) {
                     return AchievementResponseDto.builder()

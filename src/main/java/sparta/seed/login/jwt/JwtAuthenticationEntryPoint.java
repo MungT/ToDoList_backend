@@ -1,4 +1,4 @@
-package sparta.seed.jwt;
+package sparta.seed.login.jwt;
 
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;

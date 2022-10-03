@@ -36,7 +36,7 @@ public class TodoService {
         Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         if(!todoRepository.existsByNickname(nickname))
-            throw new CustomException(ErrorCode.TODO_NOT_FOUND);
+            return null;
         return todoRepository.getTodayTodo(localDate, member);
     }
     //없을 시 빈 리스트 반환
@@ -45,7 +45,7 @@ public class TodoService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         LocalDate selectedDate = LocalDate.parse(selectDate, DateTimeFormatter.ISO_DATE);
         if(!todoRepository.existsByNickname(nickname))
-            throw new CustomException(ErrorCode.TODO_NOT_FOUND);
+            return null;
         return todoRepository.getTodo(selectedDate, member);
     }
 
@@ -90,7 +90,11 @@ public class TodoService {
         todoRepository.deleteById(todoId);
     }
 
-
+    public TodoResponseDto getTotalCnt(UserDetailsImpl userDetailsImpl) {
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        return todoRepository.getTotalCnt(member.getNickname());
+    }
 
     public void isWriter(Todo todo, Member member) {
 

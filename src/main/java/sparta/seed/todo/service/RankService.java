@@ -25,7 +25,7 @@ public class RankService {
         //주간 랭킹 점수
         LocalDate currentDate = timeCustom.currentDate();
         //월요일은 아직 랭킹 테이블에 안올라온 상태이기 때문에 문제없음
-        if (currentDate.getDayOfWeek().equals(DayOfWeek.TUESDAY)) { //원래는 Tuesday지만 테스트를 위해서 wednesday
+        if (currentDate.getDayOfWeek().equals(DayOfWeek.SATURDAY)) { //원래는 Tuesday지만 테스트를 위해서 wednesday
             rankRepository.deleteRank("지난 주");
             rankRepository.setThisWeekToLastWeek();
         }
@@ -72,7 +72,7 @@ public class RankService {
 
     public List<AchievementResponseDto> saveRank(LocalDate startDate, LocalDate endDate) {
 
-        List<AchievementResponseDto> achievementResponseDtoList = rankRepository.getUserOrderByScoreDesc(startDate, endDate);
+        List<AchievementResponseDto> achievementResponseDtoList = rankRepository.getUserByOrderByScoreDesc(startDate, endDate);
         achievementResponseDtoList.get(0).setRank(1);
         int rank = 1;
         int achievementResponseDtoListSize = achievementResponseDtoList.size();
@@ -100,21 +100,35 @@ public class RankService {
         return rank;
     }
 
+    public Rank getWeeklyRank(String nickname) {
+        Rank rank = rankRepository.getWeeklyRank(nickname);
+        if (rank == null) {
+            return Rank.builder()
+                    .ranking(0)
+                    .score(0)
+                    .nickname(nickname)
+                    .build();
+        }
+        return rank;
+    }
+
     public RankResponseDto getMonthlyRank(String nickname) {
         Rank rank = rankRepository.getMonthlyRank(nickname);
         if (rank == null)
-            RankResponseDto.builder()
+            return RankResponseDto.builder()
                     .ranking(0)
                     .score(0)
                     .nickname(nickname)
                     .lengthOfMonth(timeCustom.currentDate().lengthOfMonth())
                     .build();
-        return RankResponseDto.builder()
-                .ranking(rank.getRanking())
-                .score(rank.getScore())
-                .nickname(rank.getNickname())
-                .lengthOfMonth(timeCustom.currentDate().lengthOfMonth())
-                .build();
+        else {
+            return RankResponseDto.builder()
+                    .ranking(rank.getRanking())
+                    .score(rank.getScore())
+                    .nickname(rank.getNickname())
+                    .lengthOfMonth(timeCustom.currentDate().lengthOfMonth())
+                    .build();
+        }
 
     }
 }

@@ -1,4 +1,4 @@
-package sparta.seed.login.jwt;
+package sparta.seed.jwt;
 
 
 import io.jsonwebtoken.ExpiredJwtException;

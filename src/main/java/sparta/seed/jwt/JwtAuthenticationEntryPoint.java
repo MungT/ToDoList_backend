@@ -1,11 +1,10 @@
-package sparta.seed.login.jwt;
+package sparta.seed.jwt;
 
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import sparta.seed.exception.Code;
 import sparta.seed.exception.Code;
 
 import javax.servlet.http.HttpServletRequest;

@@ -12,9 +12,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import sparta.seed.jwt.JwtAccessDeniedHandler;
-import sparta.seed.jwt.JwtAuthenticationEntryPoint;
-import sparta.seed.jwt.TokenProvider;
+import sparta.seed.login.jwt.JwtAccessDeniedHandler;
+import sparta.seed.login.jwt.JwtAuthenticationEntryPoint;
+import sparta.seed.login.jwt.TokenProvider;
 
 /*
  * 추가적인 설정을 위해서 WebSecurityConfigurer를 implements 하거나

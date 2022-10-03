@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import sparta.seed.jwt.TokenProvider;
+import sparta.seed.login.jwt.TokenProvider;
 import sparta.seed.login.domain.Authority;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.dto.MemberResponseDto;

@@ -10,7 +10,7 @@ import sparta.seed.exception.ErrorCode;
 import sparta.seed.follow.repository.FollowRepository;
 import sparta.seed.image.dto.MottoRequestDto;
 
-import sparta.seed.jwt.TokenProvider;
+import sparta.seed.login.jwt.TokenProvider;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.RefreshToken;
 import sparta.seed.login.dto.*;
@@ -60,30 +60,8 @@ public class MemberService {
     }
 
     public Member getMember(String nickname) {
-        Member member = memberRepository.findByNickname(nickname)
+        return memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-
-        // 접속한 유저 기준 팔로잉한 수
-        int followingsCnt = followRepository.countToMemberIdByFromMemberId(member.getId());
-        // 접속한 유저 기준 자신을 팔로워한 수
-        int followersCnt = followRepository.countFromMemberIdByToMemberId(member.getId());
-
-
-        return Member.builder()
-            .id(member.getId())
-            .username(member.getUsername())
-            .nickname(member.getNickname())
-            .socialId(member.getSocialId())
-            .authority(member.getAuthority())
-            .profileImage(member.getProfileImage())
-            .highschool(member.getHighschool())
-            .grade(member.getGrade())
-            .myMotto(member.getMyMotto())
-            .followingsCnt(followingsCnt)
-            .followersCnt(followersCnt)
-                .goalDate(member.getGoalDate())
-                .goalTitle(member.getGoalTitle())
-            .build();
     }
 
 

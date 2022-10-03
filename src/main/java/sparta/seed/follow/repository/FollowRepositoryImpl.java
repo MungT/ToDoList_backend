@@ -1,6 +1,9 @@
 package sparta.seed.follow.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import sparta.seed.follow.domain.QFollow;
+import sparta.seed.follow.dto.FollowResponseDto;
+import sparta.seed.follow.dto.QFollowResponseDto;
 import sparta.seed.login.domain.Member;
 
 import javax.persistence.EntityManager;

@@ -5,20 +5,12 @@ import org.springframework.stereotype.Service;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.follow.domain.Follow;
-import sparta.seed.follow.dto.FindResponseDto;
+import sparta.seed.follow.dto.FollowResponseDto;
 import sparta.seed.follow.repository.FollowRepository;
-import sparta.seed.follow.dto.FollowRequestDto;
 import sparta.seed.login.domain.Member;
-
-import sparta.seed.login.dto.MemberResponseDto;
-
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -54,7 +46,16 @@ public class FollowService {
 
         }
     }
-
+    public FollowResponseDto getFollowCnt(Long memberId) {
+        // 접속한 유저 기준 팔로잉한 수
+        int followingCnt = followRepository.countToMemberIdByFromMemberId(memberId);
+        // 접속한 유저 기준 자신을 팔로워한 수
+        int followerCnt = followRepository.countFromMemberIdByToMemberId(memberId);
+        return FollowResponseDto.builder()
+                .followingCnt(followingCnt)
+                .followerCnt(followerCnt)
+                .build();
+    }
 }
 
 

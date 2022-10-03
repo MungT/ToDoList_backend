@@ -3,7 +3,6 @@ package sparta.seed.login.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jose.util.StandardCharset;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -23,14 +22,12 @@ import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.RefreshToken;
 import sparta.seed.login.dto.SocialMemberRequestDto;
 import sparta.seed.login.dto.MemberResponseDto;
-import sparta.seed.jwt.TokenProvider;
+import sparta.seed.login.jwt.TokenProvider;
 import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.login.repository.RefreshTokenRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @RequiredArgsConstructor

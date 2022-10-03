@@ -39,7 +39,7 @@ public class TodoController {
     @GetMapping("/api/todo/total")
     public ResponseEntity<TodoResponseDto> getTotalCnt(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         return ResponseEntity.ok()
-                .body(todoRepository.getTotalCnt(userDetailsImpl.getNickname()));
+                .body(todoService.getTotalCnt(userDetailsImpl));
     }
     //투두 추가
     @PostMapping("/api/todo")

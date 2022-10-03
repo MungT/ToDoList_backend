@@ -250,10 +250,15 @@ public class AchievementService {
                     .achievementRate(0)
                     .build();
         AchievementResponseDto achievementResponseDto = achievementRepository.getThisMonthAchievementRate(startDate, endDate, member.getNickname());
-
-        return AchievementResponseDto.builder()
-                .achievementRate(achievementResponseDto.getAchievementRate() / achievementResponseDto.getPlannerCnt())
-                .build();
+        if (achievementResponseDto == null) {
+            return AchievementResponseDto.builder()
+                    .achievementRate(0)
+                    .build();
+        } else {
+            return AchievementResponseDto.builder()
+                    .achievementRate(achievementResponseDto.getAchievementRate() / achievementResponseDto.getPlannerCnt())
+                    .build();
+        }
     }
 
     //최근 70일 각 날짜에 해당하는 투두리스트 달성률 리스트 반환

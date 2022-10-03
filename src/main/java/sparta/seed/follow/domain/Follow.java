@@ -6,8 +6,7 @@ import sparta.seed.login.domain.Member;
 
 import javax.persistence.*;
 
-@Getter @Setter
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
 @Entity
 public class Follow {

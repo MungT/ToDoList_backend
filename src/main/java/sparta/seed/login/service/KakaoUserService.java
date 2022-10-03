@@ -13,7 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -23,7 +22,7 @@ import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.RefreshToken;
 import sparta.seed.login.dto.SocialMemberRequestDto;
 import sparta.seed.login.dto.MemberResponseDto;
-import sparta.seed.jwt.TokenProvider;
+import sparta.seed.login.jwt.TokenProvider;
 import sparta.seed.login.repository.MemberRepository;
 //import sparta.seed.repository.RefreshTokenRepository;
 import sparta.seed.login.repository.RefreshTokenRepository;

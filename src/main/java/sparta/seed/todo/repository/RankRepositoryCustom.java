@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface RankRepositoryCustom {
-    List<AchievementResponseDto> getUserOrderByScoreDesc(LocalDate stardDate, LocalDate endDate);
+    List<AchievementResponseDto> getUserByOrderByScoreDesc(LocalDate stardDate, LocalDate endDate);
     Slice<AchievementResponseDto> getWeeklyPage(Pageable pageable);
     Slice<AchievementResponseDto> getMonthlyPage(Pageable pageable);
     Rank getLastweekRank(String nickname);

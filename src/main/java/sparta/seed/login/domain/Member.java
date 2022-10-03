@@ -40,9 +40,6 @@ public class Member {
   private String myMotto;
   private String goalTitle;
   private LocalDate goalDate;
-  private int followingsCnt;
-  private int followersCnt;
-
 
   @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
   @JsonManagedReference //DB연관관계 무한회귀 방지
@@ -50,7 +47,7 @@ public class Member {
 
   @Builder
   public Member(Long id, String username, String password, String nickname, String socialId, Authority authority, String profileImage, String highschool, String grade, String myMotto,
-                String goalTitle, LocalDate goalDate, int followingsCnt, int followersCnt) {
+                String goalTitle, LocalDate goalDate) {
 
     this.id = id;
     this.username = username;
@@ -65,9 +62,6 @@ public class Member {
     this.goalTitle = goalTitle;
     this.goalDate = goalDate;
 
-    // 마이페이지 팔로우 / 팔로잉 버전
-    this.followingsCnt = followingsCnt;
-    this.followersCnt = followersCnt;
   }
 
   public void setNickname(String nickname) {

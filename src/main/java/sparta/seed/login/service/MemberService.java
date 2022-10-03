@@ -10,7 +10,7 @@ import sparta.seed.exception.ErrorCode;
 import sparta.seed.follow.repository.FollowRepository;
 import sparta.seed.image.dto.MottoRequestDto;
 
-import sparta.seed.login.jwt.TokenProvider;
+import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.RefreshToken;
 import sparta.seed.login.dto.*;

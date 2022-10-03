@@ -30,8 +30,8 @@ public class AchievementRepositoryImpl implements AchievementRepositoryCustom{
                 .select(new QTodoResponseDto(todo.nickname, todo.isComplete, todo.addDate, todo.count()))
                 .from(todo)
                 .where(todo.addDate.eq(yesterDay)) //실 서비스에서는 하루 단위로 스케쥴러
-//                .where(todo.addDate.between(yesterDay.minusDays(30), yesterDay)) //테스트용
-                .groupBy( todo.nickname,todo.addDate, todo.isComplete)
+                .where(todo.addDate.between(yesterDay.minusDays(30), yesterDay)) //테스트용
+//                .groupBy( todo.nickname,todo.addDate, todo.isComplete)
                 .fetch();
     }
     public List<TodoResponseDto> getAchievementRateByDate(LocalDate selectedDate, String nickname){

@@ -2,11 +2,13 @@ package sparta.seed.todo.repository;
 
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.MathExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import sparta.seed.login.domain.QMember;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.QAchievement;
 import sparta.seed.todo.domain.QRank;
@@ -21,6 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static sparta.seed.login.domain.QMember.*;
 import static sparta.seed.todo.domain.QAchievement.*;
 import static sparta.seed.todo.domain.QRank.*;
 

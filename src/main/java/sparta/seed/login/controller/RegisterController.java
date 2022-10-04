@@ -16,6 +16,7 @@ import sparta.seed.util.TimeCustom;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -77,5 +78,9 @@ public class RegisterController {
     @GetMapping("/api/reset")
     public String reset(){
         return "응답";
+    }
+    @GetMapping("/api/member")
+    public List<Member> getMembers(){
+        return memberRepository.findAll();
     }
 }

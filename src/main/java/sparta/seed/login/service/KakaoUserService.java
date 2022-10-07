@@ -13,16 +13,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.domain.Authority;
 import sparta.seed.login.domain.Member;
 import sparta.seed.login.domain.RefreshToken;
 import sparta.seed.login.dto.SocialMemberRequestDto;
 import sparta.seed.login.dto.MemberResponseDto;
+import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.repository.MemberRepository;
 //import sparta.seed.repository.RefreshTokenRepository;
 import sparta.seed.login.repository.RefreshTokenRepository;
@@ -70,6 +71,7 @@ public class KakaoUserService {
     body.add("grant_type", "authorization_code");
     body.add("client_id", "7961d1dae4bcc3e0b41dac5ca7150775");
     body.add("redirect_uri", "https://www.todo2do.com/user/kakao/callback");
+//    body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
     body.add("code", code);
     /**
      * 받은 인가코드로 카카오에 엑세스토큰 요청
@@ -127,7 +129,7 @@ public class KakaoUserService {
     String id = jsonNode.get("id").toString();
 //    String nickname = "K" + "_" + rdNick;
     String username = jsonNode.get("kakao_account").get("email").asText();
-    String defaultImage = "";
+    String defaultImage = "https://mytest-coffick.s3.ap-northeast-2.amazonaws.com/coffindBasicImage.png";
 
     return SocialMemberRequestDto.builder()
             .socialId(id)

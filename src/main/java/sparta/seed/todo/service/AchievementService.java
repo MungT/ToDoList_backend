@@ -227,7 +227,7 @@ public class AchievementService {
         int j = 1;
         for (int i = 1; i < endDate.getDayOfWeek().getValue(); i++) {
             if (startDate.plusDays(i).isEqual(achievementResponseDtoList.get(j).getAddDate())) {
-                double achievementRate = achievementResponseDtoList.get(i).getAchievementRate() + achievementResponseDtoList.get(i - 1).getAchievementRate();
+                double achievementRate = achievementResponseDtoList.get(i).getAchievementRate() + answerList.get(i - 1).getAchievementRate();
                 answerList.add(AchievementResponseDto.builder().achievementRate(achievementRate).build());
                 if (j < achievementResponseDtoListSize - 1)
                     j++;

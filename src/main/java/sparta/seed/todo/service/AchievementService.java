@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.login.domain.Member;
+import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Achievement;
-import sparta.seed.todo.domain.Rank;
 import sparta.seed.todo.dto.AchievementResponseDto;
 import sparta.seed.todo.dto.FirstWeekResponseDto;
 import sparta.seed.todo.dto.TodoDateResponseDto;
@@ -21,207 +21,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static sparta.seed.exception.ErrorCode.ACHIEVEMENTRATE_NOT_FOUND;
+
 @RequiredArgsConstructor
 @Service
 public class AchievementService {
     private final TimeCustom timeCustom;
     private final TodoRepository todoRepository;
     private final AchievementRepository achievementRepository;
-    public AchievementResponseDto getAchievementRate(String selectDate, UserDetailsImpl userDetailsImpl) {
-        LocalDate selectedDate = LocalDate.parse(selectDate, DateTimeFormatter.ISO_DATE);
-
-        List<TodoResponseDto> todoResponseDtoList = achievementRepository.getAchievementRateByDate(selectedDate, userDetailsImpl.getMember());
-        switch (todoResponseDtoList.size()) {
-            case 0:
-                throw new CustomException(ErrorCode.TODO_NOT_FOUND);
-            case 1:
-                if (todoResponseDtoList.get(0).isComplete()) {
-                    return AchievementResponseDto.builder()
-                            .totalCnt(todoResponseDtoList.get(0).getCount())
-                            .completeCnt(todoResponseDtoList.get(0).getCount())
-                            .achievementRate(100)
-                            .build();
-                } else {
-                    return AchievementResponseDto.builder()
-                            .totalCnt(todoResponseDtoList.get(0).getCount())
-                            .completeCnt(0)
-                            .achievementRate(0)
-                            .build();
-                }
-        }
-        long totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
-        float percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
-        return AchievementResponseDto.builder()
-                .totalCnt(totalCnt)
-                .completeCnt(todoResponseDtoList.get(1).getCount())
-                .achievementRate(Math.round(percent * 10000) / 100.0)
-                .build();
-    }
-
-    //최근 30일 각 날짜에 해당하는 투두리스트 달성률 리스트 반환
-    public List<AchievementResponseDto> getDaylyAchievementRate(UserDetailsImpl userDetailsImpl) {
-
-        LocalDate endDate = timeCustom.currentDate();
-        LocalDate startDate = endDate.minusDays(30);
-
-        List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
-
-        List<TodoResponseDto> todoResponseDtoList = achievementRepository.getDaylyAchievementRate(startDate, endDate, userDetailsImpl.getMember());
-        //데이터가 없거나 true or false로 하나만 있을 경우
-        switch (todoResponseDtoList.size()) {
-            case 0:
-                throw new CustomException(ErrorCode.TODO_NOT_FOUND);
-            case 1:
-                if (todoResponseDtoList.get(0).isComplete()) {
-                    achievementResponseDtoList.add(AchievementResponseDto.builder()
-                            .totalCnt(todoResponseDtoList.get(0).getCount())
-                            .completeCnt(todoResponseDtoList.get(0).getCount())
-                            .achievementRate(100)
-                            .addDate(todoResponseDtoList.get(0).getAddDate())
-                            .build());
-                    return achievementResponseDtoList;
-
-                } else {
-                    achievementResponseDtoList.add(AchievementResponseDto.builder()
-                            .totalCnt(todoResponseDtoList.get(0).getCount())
-                            .completeCnt(0)
-                            .achievementRate(0)
-                            .addDate(todoResponseDtoList.get(0).getAddDate())
-                            .build());
-                    return achievementResponseDtoList;
-                }
-        }
-        long totalCnt = 0;
-        float percent = 0;
-        for (int i = 0; i < todoResponseDtoList.size(); i++) {
-            if (todoResponseDtoList.get(i).getAddDate().isEqual(todoResponseDtoList.get(i + 1).getAddDate())) {
-                totalCnt = todoResponseDtoList.get(i).getCount() + todoResponseDtoList.get(i + 1).getCount();
-                percent = (float) todoResponseDtoList.get(i + 1).getCount() / totalCnt;
-                achievementResponseDtoList.add(AchievementResponseDto.builder()
-                        .totalCnt(totalCnt)
-                        .completeCnt(todoResponseDtoList.get(i + 1).getCount())
-                        .achievementRate(Math.round(percent * 10000) / 100.0)
-                        .addDate(todoResponseDtoList.get(i).getAddDate())
-                        .build());
-                //그 날짜에 true, false가 모두 존재할 경우 row 2줄을 처리하고 다음으로 넘어가야하기 때문에 i++
-                i++;
-            } else {
-                totalCnt = todoResponseDtoList.get(i).getCount();
-                if (todoResponseDtoList.get(i).isComplete()) {
-                    achievementResponseDtoList.add(AchievementResponseDto.builder()
-                            .totalCnt(totalCnt)
-                            .completeCnt(totalCnt)
-                            .achievementRate(100)
-                            .addDate(todoResponseDtoList.get(i).getAddDate())
-                            .build());
-                } else {
-                    achievementResponseDtoList.add(AchievementResponseDto.builder()
-                            .totalCnt(totalCnt)
-                            .completeCnt(0)
-                            .achievementRate(0)
-                            .addDate(todoResponseDtoList.get(i).getAddDate())
-                            .build());
-                }
-            }
-
-        }
-
-        return achievementResponseDtoList;
-    }
-
-    //한 주차에 TRUE or FALSE만 존재할 경우 indexOutOfBound 에러 발생
-    //중간에 주차가 모두 비어있을 경우는 0%로 반환
-    public List<AchievementResponseDto> getWeeklyAchievementRate(UserDetailsImpl userDetailsImpl) {
-        Member member = userDetailsImpl.getMember();
-//        if (!todoRepository.existsByMember(member))
-//            throw new CustomException(ErrorCode.TODO_NOT_FOUND);   //가짜데이터라 주석처리
-        TodoDateResponseDto todoDateResponseDto = todoRepository.getFirstandLastTodoAddDate(member);
-        LocalDate firstTodoAddDate = todoDateResponseDto.getFirstTodoAddDate();
-        LocalDate lastTodoAddDate = todoDateResponseDto.getLastTodoAddDate();
-        FirstWeekResponseDto firstWeekResponseDto = timeCustom.getDayOfWeek(firstTodoAddDate);
-        LocalDate startDate = firstWeekResponseDto.getStartDate();
-        LocalDate endDate = firstWeekResponseDto.getEndDate();
-
-        List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
-        do {
-            List<TodoResponseDto> todoResponseDtoList = achievementRepository.getWeeklyAchievementRate(startDate, endDate, member);
-            long totalCnt;
-            float percent;
-            if (todoResponseDtoList.size() == 2) {
-                totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
-                percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
-
-                achievementResponseDtoList.add(AchievementResponseDto.builder()
-                        .totalCnt(totalCnt)
-                        .completeCnt(todoResponseDtoList.get(1).getCount())
-                        .achievementRate(Math.round(percent * 10000) / 100.0)
-                        .build());
-            } else if (todoResponseDtoList.size() == 1) {
-                totalCnt = todoResponseDtoList.get(0).getCount();
-                if (todoResponseDtoList.get(0).isComplete()) {
-                    achievementResponseDtoList.add(AchievementResponseDto.builder()
-                            .totalCnt(totalCnt)
-                            .completeCnt(totalCnt)
-                            .achievementRate(100)
-                            .build());
-                } else {
-                    achievementResponseDtoList.add(AchievementResponseDto.builder()
-                            .totalCnt(totalCnt)
-                            .completeCnt(0)
-                            .achievementRate(0)
-                            .build());
-                }
-            } else {
-                achievementResponseDtoList.add(null);
-            }
-
-            if (endDate.equals(lastTodoAddDate))
-                break;
-
-            startDate = endDate.plusDays(1);
-            endDate = endDate.plusDays(7);
-        } while (lastTodoAddDate.isAfter(startDate));
-        return achievementResponseDtoList;
-    }
-
-    public AchievementResponseDto getTotalAchievementRate(UserDetailsImpl userDetailsImpl) {
-        Member member = userDetailsImpl.getMember();
-
-        AchievementResponseDto achievementResponseDto = achievementRepository.getTotalAchievementRate(member);
-        if(!achievementRepository.existsByNickname(member.getNickname()))
-            throw new CustomException(ErrorCode.TODO_NOT_FOUND);
-        return AchievementResponseDto.builder()
-                .plannerCnt(achievementResponseDto.getPlannerCnt())
-                .achievementRate(achievementResponseDto.getAchievementRate()/achievementResponseDto.getPlannerCnt())
-                .build();
-//        List<TodoResponseDto>  todoResponseDtoList = achievementRepository.getTotalAchievementRate(member);
-//        switch (todoResponseDtoList.size()) {
-//            case 0:
-//                throw new CustomException(ErrorCode.TODO_NOT_FOUND);
-//            case 1:
-//                if (todoResponseDtoList.get(0).isComplete()) {
-//                    return AchievementResponseDto.builder()
-//                            .totalCnt(todoResponseDtoList.get(0).getCount())
-//                            .completeCnt(todoResponseDtoList.get(0).getCount())
-//                            .achievementRate(100)
-//                            .build();
-//                } else {
-//                    return AchievementResponseDto.builder()
-//                            .totalCnt(todoResponseDtoList.get(0).getCount())
-//                            .completeCnt(0)
-//                            .achievementRate(0)
-//                            .build();
-//                }
-//        }
-//        long totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
-//        float percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
-//        return AchievementResponseDto.builder()
-//                .totalCnt(totalCnt)
-//                .completeCnt(todoResponseDtoList.get(1).getCount())
-//                .achievementRate(Math.round(percent * 10000) / 100.0)
-//                .build();
-
-    }
+    private final MemberRepository memberRepository;
+    private final TodoService todoService;
 
     public void saveDaylyAchievement() {
 
@@ -274,8 +83,8 @@ public class AchievementService {
         if (todoResponseDtoListSize > 1) {
             for (int i = 0; i < todoResponseDtoListSize; i++) {
                 //i<todoResponseDtoListSize-1 는 마지막 하나 남았을 경우 true or false만 존재하는 경우이기 때문에 조건문에서 IndexOutOfBount에러 발생
-                if (i<todoResponseDtoListSize-1 && todoResponseDtoList.get(i).getAddDate().isEqual(todoResponseDtoList.get(i + 1).getAddDate()) &&
-                todoResponseDtoList.get(i).getNickname().equals(todoResponseDtoList.get(i + 1).getNickname())) {
+                if (i < todoResponseDtoListSize - 1 && todoResponseDtoList.get(i).getAddDate().isEqual(todoResponseDtoList.get(i + 1).getAddDate()) &&
+                        todoResponseDtoList.get(i).getNickname().equals(todoResponseDtoList.get(i + 1).getNickname())) {
                     totalCnt = todoResponseDtoList.get(i).getCount() + todoResponseDtoList.get(i + 1).getCount();
                     percent = (float) todoResponseDtoList.get(i + 1).getCount() / totalCnt;
                     achievementResponseDtoList.add(AchievementResponseDto.builder()
@@ -319,4 +128,239 @@ public class AchievementService {
         achievementRepository.saveAll(achievementList);
     }
 
+    //Achievement 테이블에 저장되어있는게 있지만 오늘 자는 저장 안되어있는 것 + 하나의 메소드로 커버 가능 때문에
+    // 아래처럼 투두 테이블을 사용해서 로직을 구성했지만 성능면에처 체크해봐야함.
+    // 현재 카테고리별로 달성률을 표시하게 되면서 이 메소드는 사용 안하는 상태임.
+    public AchievementResponseDto getAchievementRate(String selectDate, UserDetailsImpl userDetailsImpl) {
+        LocalDate selectedDate = LocalDate.parse(selectDate, DateTimeFormatter.ISO_DATE);
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        List<TodoResponseDto> todoResponseDtoList = achievementRepository.getAchievementRateByDate(selectedDate, member.getNickname());
+        switch (todoResponseDtoList.size()) {
+            case 0:
+                return AchievementResponseDto.builder()
+                        .totalCnt(0)
+                        .completeCnt(0)
+                        .achievementRate(0)
+                        .build();
+            case 1:
+                if (todoResponseDtoList.get(0).isComplete()) {
+                    return AchievementResponseDto.builder()
+                            .totalCnt(todoResponseDtoList.get(0).getCount())
+                            .completeCnt(todoResponseDtoList.get(0).getCount())
+                            .achievementRate(100)
+                            .build();
+                } else {
+                    return AchievementResponseDto.builder()
+                            .totalCnt(todoResponseDtoList.get(0).getCount())
+                            .completeCnt(0)
+                            .achievementRate(0)
+                            .build();
+                }
+        }
+        long totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
+        float percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
+        return AchievementResponseDto.builder()
+                .totalCnt(totalCnt)
+                .completeCnt(todoResponseDtoList.get(1).getCount())
+                .achievementRate(Math.round(percent * 10000) / 100.0)
+                .build();
+    }
+
+    public AchievementResponseDto getTodayAchievementRate(String nickname, LocalDate endDate) {
+
+        List<TodoResponseDto> todoResponseDtoList = achievementRepository.getAchievementRateByDate(endDate, nickname);
+        switch (todoResponseDtoList.size()) {
+            case 0:
+                return AchievementResponseDto.builder()
+                        .totalCnt(0)
+                        .completeCnt(0)
+                        .achievementRate(0)
+                        .build();
+            case 1:
+                if (todoResponseDtoList.get(0).isComplete()) {
+                    return AchievementResponseDto.builder()
+                            .totalCnt(todoResponseDtoList.get(0).getCount())
+                            .completeCnt(todoResponseDtoList.get(0).getCount())
+                            .achievementRate(100)
+                            .build();
+                } else {
+                    return AchievementResponseDto.builder()
+                            .totalCnt(todoResponseDtoList.get(0).getCount())
+                            .completeCnt(0)
+                            .achievementRate(0)
+                            .build();
+                }
+        }
+        long totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
+        float percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
+        return AchievementResponseDto.builder()
+                .totalCnt(totalCnt)
+                .completeCnt(todoResponseDtoList.get(1).getCount())
+                .achievementRate(Math.round(percent * 10000) / 100.0)
+                .build();
+    }
+
+    //월화수목금토일 달성률 반환(점수는 계속 쌓이면서 반환)
+    public List<AchievementResponseDto> getThisWeekAchievementRate(UserDetailsImpl userDetailsImpl) {
+        LocalDate endDate = timeCustom.currentDate().minusDays(1);
+        LocalDate startDate = endDate.minusDays(endDate.getDayOfWeek().getValue() - 1);
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        List<AchievementResponseDto> answerList = new ArrayList<>();
+        List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getThisWeekAchievementRate(startDate, endDate, member.getNickname());
+        if (achievementResponseDtoList.isEmpty()) {
+            return answerList;
+        }
+
+
+        int achievementResponseDtoListSize = achievementResponseDtoList.size();
+        //IndexOutOfBounds 를 방지하기 위해 첫 데이터는 수동으로 주입
+        if (achievementResponseDtoList.get(0).getAddDate().isEqual(startDate)) {
+            answerList.add(AchievementResponseDto.builder().achievementRate(achievementResponseDtoList.get(0).getAchievementRate()).build());
+        } else
+            answerList.add(AchievementResponseDto.builder().achievementRate(0).build());
+
+        if (achievementResponseDtoListSize == 1)
+            return answerList;
+
+        int j = 1;
+        for (int i = 1; i < endDate.getDayOfWeek().getValue(); i++) {
+            if (startDate.plusDays(i).isEqual(achievementResponseDtoList.get(j).getAddDate())) {
+                double achievementRate = achievementResponseDtoList.get(i).getAchievementRate() + answerList.get(i - 1).getAchievementRate();
+                answerList.add(AchievementResponseDto.builder().achievementRate(achievementRate).build());
+                if (j < achievementResponseDtoListSize - 1)
+                    j++;
+            } else {
+                answerList.add(AchievementResponseDto.builder().achievementRate(answerList.get(i - 1).getAchievementRate()).build());
+            }
+        }
+        return answerList;
+    }
+
+    //이번 달 달성률
+    public AchievementResponseDto getThisMonthAchievementRate(UserDetailsImpl userDetailsImpl) {
+        LocalDate endDate = timeCustom.currentDate().minusDays(1);
+        LocalDate startDate = endDate.minusDays(endDate.getDayOfMonth() - 1);
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        if (!achievementRepository.existsByNickname(member.getNickname()))
+            return AchievementResponseDto.builder()
+                    .achievementRate(0)
+                    .build();
+        AchievementResponseDto achievementResponseDto = achievementRepository.getThisMonthAchievementRate(startDate, endDate, member.getNickname());
+        if (achievementResponseDto == null) {
+            return AchievementResponseDto.builder()
+                    .achievementRate(0)
+                    .build();
+        } else {
+            return AchievementResponseDto.builder()
+                    .achievementRate(achievementResponseDto.getAchievementRate() / achievementResponseDto.getPlannerCnt())
+                    .build();
+        }
+    }
+
+    //최근 70일 각 날짜에 해당하는 투두리스트 달성률 리스트 반환
+    public List<AchievementResponseDto> getDaylyAchievementRate(UserDetailsImpl userDetailsImpl) {
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        LocalDate endDate = timeCustom.currentDate();
+        LocalDate startDate = endDate.minusDays(endDate.getDayOfWeek().getValue() - 1).minusDays(63);
+
+        List<AchievementResponseDto> answerList = new ArrayList<>();
+        List<AchievementResponseDto> achievementResponseDtoList = achievementRepository.getDaylyAchievementRate(startDate, endDate, member.getNickname());
+
+        AchievementResponseDto achievementResponseDto = getTodayAchievementRate(member.getNickname(), endDate);
+        achievementResponseDto.setAddDate(endDate);
+        achievementResponseDtoList.add(achievementResponseDto);
+
+        int dtoListSize = achievementResponseDtoList.size();
+        int j = 0;
+        for (int i = 0; i < 70; i++) {
+            if (achievementResponseDtoList.get(j).getAddDate().isBefore(startDate.plusDays(i)) ||
+                    achievementResponseDtoList.get(j).getAddDate().isAfter(startDate.plusDays(i))) {
+                answerList.add(AchievementResponseDto.builder().achievementRate(0).build());
+            } else {
+                answerList.add(AchievementResponseDto.builder().achievementRate(achievementResponseDtoList.get(j).getAchievementRate()).build());
+                if (j < dtoListSize - 1)
+                    j++;
+            }
+        }
+        return answerList;
+    }
+
+    //한 주차에 TRUE or FALSE만 존재할 경우 indexOutOfBound 에러 발생
+    //중간에 주차가 모두 비어있을 경우는 0%로 반환
+    public List<AchievementResponseDto> getWeeklyAchievementRate(UserDetailsImpl userDetailsImpl) {
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+//        if (!todoRepository.existsByMember(member))
+//            throw new CustomException(ErrorCode.TODO_NOT_FOUND);   //가짜데이터라 주석처리
+        TodoDateResponseDto todoDateResponseDto = todoRepository.getFirstandLastTodoAddDate(member);
+        LocalDate firstTodoAddDate = todoDateResponseDto.getFirstTodoAddDate();
+        LocalDate lastTodoAddDate = todoDateResponseDto.getLastTodoAddDate();
+        FirstWeekResponseDto firstWeekResponseDto = timeCustom.getDayOfWeek(firstTodoAddDate);
+        LocalDate startDate = firstWeekResponseDto.getStartDate();
+        LocalDate endDate = firstWeekResponseDto.getEndDate();
+
+        List<AchievementResponseDto> achievementResponseDtoList = new ArrayList<>();
+        do {
+            List<TodoResponseDto> todoResponseDtoList = achievementRepository.getWeeklyAchievementRate(startDate, endDate, member);
+            long totalCnt;
+            float percent;
+            if (todoResponseDtoList.size() == 2) {
+                totalCnt = todoResponseDtoList.get(0).getCount() + todoResponseDtoList.get(1).getCount();
+                percent = (float) todoResponseDtoList.get(1).getCount() / totalCnt;
+
+                achievementResponseDtoList.add(AchievementResponseDto.builder()
+                        .totalCnt(totalCnt)
+                        .completeCnt(todoResponseDtoList.get(1).getCount())
+                        .achievementRate(Math.round(percent * 10000) / 100.0)
+                        .build());
+            } else if (todoResponseDtoList.size() == 1) {
+                totalCnt = todoResponseDtoList.get(0).getCount();
+                if (todoResponseDtoList.get(0).isComplete()) {
+                    achievementResponseDtoList.add(AchievementResponseDto.builder()
+                            .totalCnt(totalCnt)
+                            .completeCnt(totalCnt)
+                            .achievementRate(100)
+                            .build());
+                } else {
+                    achievementResponseDtoList.add(AchievementResponseDto.builder()
+                            .totalCnt(totalCnt)
+                            .completeCnt(0)
+                            .achievementRate(0)
+                            .build());
+                }
+            } else {
+                achievementResponseDtoList.add(null);
+            }
+
+            if (endDate.equals(lastTodoAddDate))
+                break;
+
+            startDate = endDate.plusDays(1);
+            endDate = endDate.plusDays(7);
+        } while (lastTodoAddDate.isAfter(startDate));
+        return achievementResponseDtoList;
+    }
+
+    public AchievementResponseDto getTotalAchievementRate(String nickname) {
+        AchievementResponseDto achievementResponseDto = achievementRepository.getTotalAchievementRate(nickname);
+        if (!achievementRepository.existsByNickname(nickname))
+            return AchievementResponseDto.builder()
+                    .plannerCnt(0)
+                    .achievementRate(0)
+                    .build();
+        return AchievementResponseDto.builder()
+                .plannerCnt(achievementResponseDto.getPlannerCnt())
+                .achievementRate(achievementResponseDto.getAchievementRate() / achievementResponseDto.getPlannerCnt())
+                .build();
+
+    }
+
+
 }
+

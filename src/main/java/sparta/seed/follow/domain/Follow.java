@@ -1,0 +1,31 @@
+package sparta.seed.follow.domain;
+
+import lombok.*;
+import sparta.seed.follow.dto.FollowRequestDto;
+import sparta.seed.login.domain.Member;
+
+import javax.persistence.*;
+
+@Getter
+@NoArgsConstructor
+@Entity
+public class Follow {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn
+    private Member fromMember; // 구독을 하는 유저
+
+    @ManyToOne
+    @JoinColumn
+     private Member toMember; // 구독 받는 유저
+
+    public Follow(Member fromMember, Member toMember) {
+        this.fromMember = fromMember;
+        this.toMember = toMember;
+
+    }
+}

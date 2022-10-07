@@ -22,10 +22,17 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
     public TodoRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
-
+    public List<TodoResponseDto> getTodayTodo(LocalDate localDate, Member member) {
+        return queryFactory
+                .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate, todo.category))
+                .from(todo)
+                .where(todo.nickname.eq(member.getNickname()),
+                        todo.addDate.eq(localDate))
+                .fetch();
+    }
     public List<TodoResponseDto> getTodo(LocalDate addDate, Member member) {
         return queryFactory
-                .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate))
+                .select(new QTodoResponseDto(todo.id, todo.content, todo.isComplete, todo.addDate, todo.category))
                 .from(todo)
                 .where(todo.nickname.eq(member.getNickname()),
                         todo.addDate.eq(addDate))
@@ -38,5 +45,31 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .from(todo)
                 .where(todo.nickname.eq(member.getNickname()))
                 .fetchOne();
+    }
+
+    public TodoResponseDto getTotalCnt(String nickname){
+        return queryFactory
+                .select(new QTodoResponseDto(todo.count()))
+                .from(todo)
+                .where(todo.nickname.eq(nickname))
+                .groupBy(todo.nickname)
+                .fetchOne();
+    }
+    public void deleteTodayTodoOfCategory(String nickname, String title, LocalDate today){
+        queryFactory
+                .delete(todo)
+                .where(todo.nickname.eq(nickname),
+                        todo.addDate.eq(today),
+                        todo.category.eq(title))
+                .execute();
+    }
+    public void updateTodayTodoOfCategory(String nickname, String title, LocalDate today, String requestedTitle){
+        queryFactory
+                .update(todo)
+                .set(todo.category, requestedTitle)
+                .where(todo.nickname.eq(nickname),
+                        todo.addDate.eq(today),
+                        todo.category.eq(title))
+                .execute();
     }
 }

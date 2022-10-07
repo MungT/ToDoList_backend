@@ -3,7 +3,6 @@ package sparta.seed.login.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jose.util.StandardCharset;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -18,17 +17,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.domain.Authority;
 import sparta.seed.login.domain.Member;
+import sparta.seed.login.domain.RefreshToken;
 import sparta.seed.login.dto.SocialMemberRequestDto;
 import sparta.seed.login.dto.MemberResponseDto;
-import sparta.seed.jwt.TokenProvider;
 import sparta.seed.login.repository.MemberRepository;
+import sparta.seed.login.repository.RefreshTokenRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -43,6 +42,7 @@ public class GoogleUserService {
   String googleRedirectUri;
   private final MemberRepository memberRepository;
   private final TokenProvider tokenProvider;
+  private final RefreshTokenRepository refreshTokenRepository;
 
   public MemberResponseDto googleLogin(String code, HttpServletResponse response) throws JsonProcessingException {
 
@@ -137,7 +137,7 @@ public class GoogleUserService {
 
     // 구글에서 이미지 가져오기
 //    String profileImage = jsonNode.get("picture").asText();
-    String defaultImage = "https://mytest-coffick.s3.ap-northeast-2.amazonaws.com/coffindBasicImage.png";
+    String defaultImage = "";
 //    if (profileImage == null) {
 //      profileImage = defaultImage;
 //    }
@@ -149,7 +149,6 @@ public class GoogleUserService {
             .build();
   }
 
-  // 3. 유저확인 & 회원가입
   private Member getUser(SocialMemberRequestDto requestDto) {
     // 다른 소셜로그인이랑 이메일이 겹쳐서 잘못 로그인 될까봐. 다른 사용자인줄 알고 로그인이 된다. 그래서 소셜아이디로 구분해보자
     String username = requestDto.getUsername();
@@ -167,6 +166,7 @@ public class GoogleUserService {
               .profileImage(profileImage)
               .socialId(socialId)
               .authority(Authority.ROLE_USER)
+//              .nickname(requestDto.getNickname()) // nickname을 null로 하기위해
               .build();
       memberRepository.save(signUpMember);
       return signUpMember;
@@ -190,6 +190,14 @@ public class GoogleUserService {
     MemberResponseDto responseDto = tokenProvider.generateTokenDto(authentication);
     String token = responseDto.getAccessToken();
     response.addHeader("Authorization", "Bearer " + token);
+
+    RefreshToken refreshToken = RefreshToken.builder()
+            .key(authentication.getName())
+            .value(responseDto.getRefreshToken())
+            .build();
+
+    refreshTokenRepository.save(refreshToken);
+
     return MemberResponseDto.builder()
             .id(member.getId())
             .username(member.getUsername())

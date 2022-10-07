@@ -29,13 +29,17 @@ public class Todo extends Timestamped {
     @Column(nullable = false)
     private String nickname;
 
+    @Column(nullable = false)
+    private String category;
+
     @Builder
-    public Todo(Long id, String content, Boolean isComplete, LocalDate addDate, String nickname) {
+    public Todo(Long id, String content, Boolean isComplete, LocalDate addDate, String nickname, String category) {
         this.id = id;
         this.content = content;
         this.isComplete = isComplete;
         this.addDate = addDate;
         this.nickname = nickname;
+        this.category = category;
     }
 
     public void update(TodoRequestDto todoRequestDto) {

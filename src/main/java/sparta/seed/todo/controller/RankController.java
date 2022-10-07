@@ -6,13 +6,15 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import sparta.seed.exception.CustomException;
+import sparta.seed.exception.ErrorCode;
+import sparta.seed.login.domain.Member;
+import sparta.seed.login.repository.MemberRepository;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Rank;
 import sparta.seed.todo.dto.AchievementResponseDto;
+import sparta.seed.todo.dto.RankResponseDto;
 import sparta.seed.todo.repository.RankRepository;
 import sparta.seed.todo.service.RankService;
 
@@ -25,15 +27,17 @@ public class RankController {
 
     private final RankService rankService;
     private final RankRepository rankRepository;
+    private final MemberRepository memberRepository;
 
     //(서버)주간 랭킹 저장
-    @Transactional
+    @Transactional //update, delete 경우 필요 (없으면 TransactionRequiredException 발생)
     @PostMapping("/api/rank/weekly")
     public ResponseEntity<List<Rank>> saveWeeklyRank() {
         return ResponseEntity.ok()
                 .body(rankService.saveWeeklyRank());
     }
     //(서버)월간 랭킹 저장
+    @Transactional
     @PostMapping("/api/rank/monthly")
     public ResponseEntity<List<Rank>> saveMonthlyRank() {
         return ResponseEntity.ok()
@@ -49,22 +53,32 @@ public class RankController {
     public ResponseEntity<Slice<AchievementResponseDto>> getMonthlyPage(Pageable pageable) {
         return ResponseEntity.ok(rankRepository.getMonthlyPage(pageable));
     }
+    //주간 랭킹 유저 수 조회
+    @GetMapping("/api/rank/weekly/count")
+    public ResponseEntity<RankResponseDto> getWeeklyRankCnt(){
+        return ResponseEntity.ok()
+                .body(rankRepository.getWeeklyRankCnt());
+    }
+    @GetMapping("/api/rank/monthly/count")
+    public ResponseEntity<RankResponseDto> getMonthlyRankCnt(){
+        return ResponseEntity.ok()
+                .body(rankRepository.getMonthlyRankCnt());
+    }
     //유저의 지난 주 랭킹 조회
     @GetMapping("/api/rank/lastweek/member")
     public ResponseEntity<Rank> getLastweekRank(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
-        String nickname = userDetailsImpl.getNickname();
-        return ResponseEntity.ok(rankRepository.getLastweekRank(nickname));
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        return ResponseEntity.ok(rankService.getLastweekRank(member.getNickname()));
     }
     //유저의 주간 랭킹 조회
-    @GetMapping("/api/rank/weekly/member")
-    public ResponseEntity<Rank> getMonthlyRank(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        String nickname = userDetailsImpl.getNickname();
-        return ResponseEntity.ok(rankRepository.getWeeklyRank(nickname));
+    @GetMapping("/api/rank/weekly/member/{nickname}")
+    public ResponseEntity<Rank> getWeeklyRank(@PathVariable String nickname) {
+        return ResponseEntity.ok(rankService.getWeeklyRank(nickname));
     }
     //유저의 월간 랭킹 조회
-    @GetMapping("/api/rank/monthly/member")
-    public ResponseEntity<Rank> getWeeklyRank(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        String nickname = userDetailsImpl.getNickname();
-        return ResponseEntity.ok(rankRepository.getMonthlyRank(nickname));
+    @GetMapping("/api/rank/monthly/member/{nickname}")
+    public ResponseEntity<RankResponseDto> getMonthlyRank(@PathVariable String nickname) {
+        return ResponseEntity.ok(rankService.getMonthlyRank(nickname));
     }
 }

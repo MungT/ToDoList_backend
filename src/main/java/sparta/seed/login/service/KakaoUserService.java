@@ -70,7 +70,8 @@ public class KakaoUserService {
     MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
     body.add("grant_type", "authorization_code");
     body.add("client_id", "7961d1dae4bcc3e0b41dac5ca7150775");
-    body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
+    body.add("redirect_uri", "https://www.todo2do.com/user/kakao/callback");
+//    body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
     body.add("code", code);
     /**
      * 받은 인가코드로 카카오에 엑세스토큰 요청
@@ -126,14 +127,14 @@ public class KakaoUserService {
     }
 
     String id = jsonNode.get("id").toString();
-    String nickname = "K" + "_" + rdNick;
+//    String nickname = "K" + "_" + rdNick;
     String username = jsonNode.get("kakao_account").get("email").asText();
     String defaultImage = "https://mytest-coffick.s3.ap-northeast-2.amazonaws.com/coffindBasicImage.png";
 
     return SocialMemberRequestDto.builder()
             .socialId(id)
             .username(username)
-            .nickname(nickname)
+//            .nickname(nickname)
             .profileImage(defaultImage)
             .build();
   }
@@ -147,7 +148,7 @@ public class KakaoUserService {
     Member member = memberRepository.findBySocialId(socialId).orElse(null);
     if (member == null) {      // 회원가입
       String username = kakaoUserInfo.getUsername();
-      String nickname = kakaoUserInfo.getNickname();
+//      String nickname = kakaoUserInfo.getNickname();
       String password = passwordEncoder.encode(UUID.randomUUID().toString());
       String profileImage = kakaoUserInfo.getProfileImage();
       String highschool = kakaoUserInfo.getHighschool();
@@ -156,10 +157,11 @@ public class KakaoUserService {
       Member signUp = Member.builder()
               .socialId(socialId)
               .username(username)
-              .nickname(nickname)
+//              .nickname(nickname)
               .password(password)
               .profileImage(profileImage)
               .highschool(highschool)
+              .profileImage(profileImage)
               .grade(grade)
               .authority(Authority.ROLE_USER)
               .build();
@@ -180,12 +182,12 @@ public class KakaoUserService {
     response.setHeader("Authorization", "Bearer " + memberResponseDto.getAccessToken());
     response.setHeader("Access-Token-Expire-Time", String.valueOf(memberResponseDto.getAccessTokenExpiresIn()));
 
-//    RefreshToken refreshToken = RefreshToken.builder()
-//            .refreshKey(authentication.getName())
-//            .refreshValue(memberResponseDto.getRefreshToken())
-//            .build();
+    RefreshToken refreshToken = RefreshToken.builder()
+            .key(authentication.getName())
+            .value(memberResponseDto.getRefreshToken())
+            .build();
 //
-//    refreshTokenRepository.save(refreshToken);
+    refreshTokenRepository.save(refreshToken);
     //로그인이 실제로 일어나는 부분
     SecurityContextHolder.getContext().setAuthentication(authentication);
     return MemberResponseDto.builder()

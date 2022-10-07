@@ -29,27 +29,45 @@ public class AchievementRepositoryImpl implements AchievementRepositoryCustom{
         return queryFactory
                 .select(new QTodoResponseDto(todo.nickname, todo.isComplete, todo.addDate, todo.count()))
                 .from(todo)
-//                .where(todo.addDate.eq(yesterDay)) //실 서비스에서는 하루 단위로 스케쥴러
-                .where(todo.addDate.between(yesterDay.minusDays(30), yesterDay))
+                .where(todo.addDate.eq(yesterDay)) //실 서비스에서는 하루 단위로 스케쥴러
+//                .where(todo.addDate.between(yesterDay.minusDays(30), yesterDay)) //테스트용
                 .groupBy( todo.nickname,todo.addDate, todo.isComplete)
                 .fetch();
     }
-    public List<TodoResponseDto> getAchievementRateByDate(LocalDate selectedDate, Member member){
+    public List<TodoResponseDto> getAchievementRateByDate(LocalDate selectedDate, String nickname){
         return queryFactory
                 .select(new QTodoResponseDto(todo.isComplete, todo.count()))
                 .from(todo)
-                .where(todo.nickname.eq(member.getNickname()),
+                .where(todo.nickname.eq(nickname),
                         todo.addDate.eq(selectedDate))
                 .groupBy(todo.isComplete)
                 .fetch();
     }
-    public List<TodoResponseDto> getDaylyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member) {
+    public List<AchievementResponseDto> getThisWeekAchievementRate(LocalDate startDate, LocalDate endDate, String nickname){
         return queryFactory
-                .select(new QTodoResponseDto(todo.isComplete, todo.addDate, todo.count()))
-                .from(todo)
-                .where(todo.nickname.eq(member.getNickname()),
-                        todo.addDate.between(stardDate,endDate))
-                .groupBy(todo.addDate, todo.isComplete)
+                .select(new QAchievementResponseDto(achievement.id, achievement.addDate, achievement.score))
+                .from(achievement)
+                .where(achievement.nickname.eq(nickname),
+                       achievement.addDate.between(startDate,endDate))
+                .orderBy(achievement.id.asc())
+                .fetch();
+    }
+    public AchievementResponseDto getThisMonthAchievementRate(LocalDate startDate, LocalDate endDate, String nickname){
+        return queryFactory
+                .select(new QAchievementResponseDto(achievement.score.sum(), achievement.count()))
+                .from(achievement)
+                .where(achievement.nickname.eq(nickname),
+                        achievement.addDate.between(startDate,endDate))
+                .groupBy(achievement.nickname)
+                .fetchOne();
+    }
+    public List<AchievementResponseDto> getDaylyAchievementRate(LocalDate stardDate, LocalDate endDate, String nickname) {
+        return queryFactory
+                .select(new QAchievementResponseDto(achievement.id, achievement.addDate, achievement.score))
+                .from(achievement)
+                .where(achievement.nickname.eq(nickname),
+                        achievement.addDate.between(stardDate,endDate))
+                .orderBy(achievement.id.asc())
                 .fetch();
     }
     public List<TodoResponseDto> getWeeklyAchievementRate(LocalDate stardDate, LocalDate endDate, Member member) {
@@ -61,11 +79,11 @@ public class AchievementRepositoryImpl implements AchievementRepositoryCustom{
                 .groupBy(todo.isComplete)
                 .fetch();
     }
-    public AchievementResponseDto getTotalAchievementRate(Member member) {
+    public AchievementResponseDto getTotalAchievementRate(String nickname) {
         return queryFactory
                 .select(new QAchievementResponseDto(MathExpressions.round(achievement.score.sum(), 2), achievement.count()))
                 .from(achievement)
-                .where(achievement.nickname.eq(member.getNickname())) //가짜데이터라 주석처리
+                .where(achievement.nickname.eq(nickname)) //가짜데이터라 주석처리
                 .groupBy(achievement.nickname)
                 .fetchOne();
     }

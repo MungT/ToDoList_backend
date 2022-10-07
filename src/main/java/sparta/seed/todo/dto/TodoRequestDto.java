@@ -14,4 +14,5 @@ public class TodoRequestDto {
     private String content;
 
     private Boolean isComplete;
+    private String category;
 }

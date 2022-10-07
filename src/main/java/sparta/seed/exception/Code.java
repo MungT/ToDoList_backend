@@ -21,5 +21,4 @@ public enum Code {
     private String code;
     private String message;
 
-
 }

@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sparta.seed.image.dto.ImageResponseDto;
+import sparta.seed.image.dto.MottoRequestDto;
 import sparta.seed.image.repository.ImageRepository;
 import sparta.seed.image.service.ImageService;
 import sparta.seed.login.dto.MemberResponseDto;
@@ -25,8 +27,10 @@ public class ImageController {
 
     //프로필 이미지 등록
     @PostMapping("/profile")
-    public ResponseEntity<String> saveProfileImage(@RequestPart MultipartFile multipartFile, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) throws IOException {
-        return ResponseEntity.ok(imageService.saveProfileImage(multipartFile, userDetailsImpl));
+    public ResponseEntity<String> saveProfileImageAndMotto(
+            @RequestPart(required = false, value = "dto") MottoRequestDto mottoRequestDto,
+            @RequestPart(required = false) MultipartFile multipartFile, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) throws IOException {
+        return ResponseEntity.ok(imageService.saveProfileImageAndMotto(mottoRequestDto, multipartFile, userDetailsImpl));
     }
     //프로필 이미지 삭제
     @DeleteMapping("/profile")
@@ -34,9 +38,9 @@ public class ImageController {
         return ResponseEntity.ok(imageService.deleteProfileImage(userDetailsImpl));
     }
     //자랑 이미지 조회
-    @GetMapping("/boast")
-    public ResponseEntity<List<String>> getBoastImage(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
-        return ResponseEntity.ok(imageService.getBoastImage(userDetailsImpl));
+    @GetMapping("/boast/{nickname}")
+    public ResponseEntity<List<ImageResponseDto>> getBoastImage(@PathVariable String nickname){
+        return ResponseEntity.ok(imageService.getBoastImage(nickname));
     }
     //자랑 이미지 저장
     @PostMapping("/boast")

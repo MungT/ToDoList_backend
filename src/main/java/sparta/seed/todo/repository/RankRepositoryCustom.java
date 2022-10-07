@@ -7,22 +7,23 @@ import sparta.seed.login.domain.Member;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Rank;
 import sparta.seed.todo.dto.AchievementResponseDto;
+import sparta.seed.todo.dto.RankResponseDto;
 import sparta.seed.todo.dto.TodoResponseDto;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public interface RankRepositoryCustom {
-    List<AchievementResponseDto> saveRank(LocalDate stardDate, LocalDate endDate);
+    List<AchievementResponseDto> getUserByOrderByScoreDesc(LocalDate stardDate, LocalDate endDate);
     Slice<AchievementResponseDto> getWeeklyPage(Pageable pageable);
     Slice<AchievementResponseDto> getMonthlyPage(Pageable pageable);
     Rank getLastweekRank(String nickname);
     Rank getWeeklyRank(String nickname);
     Rank getMonthlyRank(String nickname);
-    void deleteLastWeek(String lastWeek);
+    RankResponseDto getWeeklyRankCnt();
+    RankResponseDto getMonthlyRankCnt();
+    void deleteRank(String lastWeek);
     void setThisWeekToLastWeek();
-
-
 
 }
 

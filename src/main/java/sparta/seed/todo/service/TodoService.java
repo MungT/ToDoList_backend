@@ -1,22 +1,23 @@
 package sparta.seed.todo.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.jni.Local;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.seed.exception.CustomException;
 import sparta.seed.exception.ErrorCode;
 import sparta.seed.login.domain.Member;
+import sparta.seed.login.repository.MemberRepository;
+import sparta.seed.message.Message;
 import sparta.seed.sercurity.UserDetailsImpl;
 import sparta.seed.todo.domain.Todo;
-import sparta.seed.todo.dto.*;
+import sparta.seed.todo.dto.TodoRequestDto;
+import sparta.seed.todo.dto.TodoResponseDto;
 import sparta.seed.todo.repository.TodoRepository;
 import sparta.seed.util.TimeCustom;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,31 +26,42 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
     private final TimeCustom timeCustom;
+    private final MemberRepository memberRepository;
 
 
+    // 5to5를 하루로 보는데, 프론트에서 만약 22일 새벽 1시에 api 호출할 때
+    //달력 라이브러리로 인해 21일이 아닌 22일로 호출된다고해서 아래 메소드를 따로 생성함.
+    public List<TodoResponseDto> getTodayTodo(String nickname) {
+        LocalDate localDate = timeCustom.currentDate();
+        Member member = memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        if(!todoRepository.existsByNickname(nickname))
+            return null;
+        return todoRepository.getTodayTodo(localDate, member);
+    }
     //없을 시 빈 리스트 반환
-    public List<TodoResponseDto> getTodo(String selectDate, UserDetailsImpl userDetails) {
-
+    public List<TodoResponseDto> getTodo(String nickname, String selectDate) {
+        Member member = memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         LocalDate selectedDate = LocalDate.parse(selectDate, DateTimeFormatter.ISO_DATE);
-        return todoRepository.getTodo(selectedDate, userDetails.getMember());
+        if(!todoRepository.existsByNickname(nickname))
+            return null;
+        return todoRepository.getTodo(selectedDate, member);
     }
 
-    public TodoResponseDto addTodo(TodoRequestDto todoRequestDto, UserDetailsImpl userDetailsImpl) {
-
+    public String addTodo(TodoRequestDto todoRequestDto, UserDetailsImpl userDetailsImpl) {
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         Todo todo = Todo.builder()
                 .content(todoRequestDto.getContent())
                 .isComplete(todoRequestDto.getIsComplete())
                 .addDate(timeCustom.currentDate())
-                .nickname(userDetailsImpl.getMember().getNickname())
+                .nickname(member.getNickname())
+                .category(todoRequestDto.getCategory())
                 .build();
         todoRepository.save(todo);
 
-        return TodoResponseDto.builder()
-                .todoId(todo.getId())
-                .content(todo.getContent())
-                .isComplete(todo.getIsComplete())
-                .addDate(todo.getAddDate())
-                .build();
+        return Message.TODO_UPLOAD_SUCCESS.getMessage();
     }
 
     @Transactional
@@ -57,7 +69,8 @@ public class TodoService {
         Todo todo = todoRepository.findById(todoId).orElseThrow(
                 () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
         );
-        Member member = userDetailsImpl.getMember();
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         isWriter(todo, member);
         isPassedAvailableTime(todo);
 
@@ -69,14 +82,19 @@ public class TodoService {
         Todo todo = todoRepository.findById(todoId).orElseThrow(
                 () -> new CustomException(ErrorCode.TODO_NOT_FOUND)
         );
-        Member member = userDetailsImpl.getMember();
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         isWriter(todo, member);
         isPassedAvailableTime(todo);
 
         todoRepository.deleteById(todoId);
     }
 
-
+    public TodoResponseDto getTotalCnt(UserDetailsImpl userDetailsImpl) {
+        Member member = memberRepository.findByUsername(userDetailsImpl.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        return todoRepository.getTotalCnt(member.getNickname());
+    }
 
     public void isWriter(Todo todo, Member member) {
 
@@ -91,9 +109,4 @@ public class TodoService {
         }
     }
 
-    public void test() {
-        SecurityContextHolder.getContext().getAuthentication();
-
-
-    }
 }

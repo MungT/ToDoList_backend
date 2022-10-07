@@ -3,10 +3,14 @@ package sparta.seed.todo.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Getter
+@Setter
+@NoArgsConstructor
 public class AchievementResponseDto {
     private long id;
     private double achievementRate;
@@ -39,9 +43,14 @@ public class AchievementResponseDto {
         this.achievementRate = achievementRate;
         this.plannerCnt = plannerCnt;
     }
+    @QueryProjection
+    public AchievementResponseDto(long id, LocalDate addDate, double achievementRate) {
+        this.id = id;
+        this.addDate = addDate;
+        this.achievementRate = achievementRate;
 
-    public void setRank(int rank) {
-        this.rank = rank;
     }
+
+
 }
 

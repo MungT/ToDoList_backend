@@ -6,7 +6,7 @@
 - 고등학생들의  위한 공부 플래너입니다.
 ###  2. 서비스 아키텍쳐
 
-   ![서비스 아키텍쳐](서비스 아키텍쳐.png)
+   ![서비스 아키텍쳐](https://github.com/MungT/ToDoList_backend/blob/main/%EC%84%9C%EB%B9%84%EC%8A%A4%20%EC%95%84%ED%82%A4%ED%85%8D%EC%B3%90.png)
 
 
 ### 3. 기술 스택
